@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="inema-course" content="jarvis">
+  <title>Modulo 3.5 — Agentes: o loop que trabalha sozinho | Jarvis · INEMA.CLUB</title>
+  <meta name="description" content="O que torna um Jarvis um agente: o loop autonomo, sub-agentes, multi-agente, cadencia (heartbeat/cron), limites de seguranca e o salto de reativo para proativo.">
+
+  <!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+
+  <!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+  <script type="application/json" data-inema-manifest>
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/learn.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .bg-purple-900\/20 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .bg-purple-900\/30 { background-color: rgba(124,58,237,0.10); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a href="#conteudo" class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg">Pular para o conteudo</a>
+
+  <!-- NAVIGATION (completo, identico em todas as paginas) -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-3">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🤖</span>
+            <span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a id="nav-t1" href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a id="nav-t2" href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+          </a>
+          <a id="nav-t3" href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span>
+          </a>
+          <a id="nav-t4" href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+          </a>
+          <a id="nav-t5" href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+          </a>
+          <a id="nav-t6" href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span>
+          </a>
+
+          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Minha jornada">
+            <span aria-hidden="true">◷</span><span class="hidden md:inline">Jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge data-count="0"></span>
+          </button>
+
+          <div class="relative">
+            <button type="button" data-inema-appearance-toggle="[data-inema-appearance]" aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Aparencia">
+              <span aria-hidden="true">◑</span><span class="hidden md:inline">Aparencia</span>
+            </button>
+            <div data-inema-appearance class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left">
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-theme="inema-dark" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Escuro</button>
+                  <button data-inema-set-theme="claro" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Claro</button>
+                  <button data-inema-set-theme="sepia" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sepia</button>
+                  <button data-inema-set-theme="foco" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Foco</button>
+                  <button data-inema-set-theme="contraste" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Alto contraste</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Fonte</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-font="inter" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Inter</button>
+                  <button data-inema-set-font="system" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sistema</button>
+                  <button data-inema-set-font="leitura" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Leitura</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tamanho</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-fontscale="100" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A</button>
+                  <button data-inema-set-fontscale="112" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A+</button>
+                  <button data-inema-set-fontscale="125" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A++</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Entrelinha</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-leading="1.45" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Compacto</button>
+                  <button data-inema-set-leading="1.7" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Confortavel</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+                <div class="inema-accent-grid flex flex-wrap gap-2">
+                  <button data-inema-set-accent="emerald" class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" title="Emerald"></button>
+                  <button data-inema-set-accent="blue" class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" title="Blue"></button>
+                  <button data-inema-set-accent="purple" class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" title="Purple"></button>
+                  <button data-inema-set-accent="amber" class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" title="Amber"></button>
+                  <button data-inema-set-accent="teal" class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" title="Teal"></button>
+                  <button data-inema-set-accent="rose" class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" title="Rose"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" title="Alternar claro/escuro">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo">
+    <header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+          <a href="../../index.html" class="hover:text-purple-400">Inicio</a><span>/</span>
+          <a href="index.html" class="hover:text-purple-400">Trilha 3</a><span>/</span>
+          <span class="text-purple-400">Modulo 3.5</span>
+        </nav>
+        <span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">MODULO 3-5</span>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">🤝 Agentes — o loop que trabalha sozinho</h1>
+        <p class="text-lg text-neutral-400 max-w-3xl">Ate aqui voce deu ao Jarvis canais, identidade, ferramentas e skills. Mas o que faz dele um <strong>agente</strong> — e nao so um chat esperto — e o <strong>loop autonomo</strong>: a capacidade de pensar, agir, ler o resultado e continuar sozinho ate terminar. Neste modulo voce vai entender esse loop, como delegar trabalho a sub-agentes, quando vale ter varios agentes, como ele acorda no horario certo, e onde colocar as travas para que tudo isso seja seguro.</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">6</div><div class="text-xs text-neutral-400">Topicos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">~50</div><div class="text-xs text-neutral-400">Minutos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Intermediario</div><div class="text-xs text-neutral-400">Nivel</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Anatomia</div><div class="text-xs text-neutral-400">Tipo</div></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="lg:flex lg:gap-10">
+
+        <!-- TOC sticky -->
+        <aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+          <nav data-inema-toc aria-label="Indice da pagina" class="lg:sticky lg:top-20">
+            <p class="text-sm text-neutral-400 mb-2">Secao <span class="inema-toc-pos" data-inema-section-counter>1</span> de 6</p>
+            <ol class="space-y-1 text-sm">
+              <li><a href="#topico-1" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">1. Loop + autonomia</a></li>
+              <li><a href="#topico-2" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">2. Sub-agentes</a></li>
+              <li><a href="#topico-3" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">3. Multi-agente</a></li>
+              <li><a href="#topico-4" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">4. Cadencia</a></li>
+              <li><a href="#topico-5" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">5. Limites e seguranca</a></li>
+              <li><a href="#topico-6" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">6. Proativo vs reativo</a></li>
+            </ol>
+            <div class="mt-4" data-inema-meter="modulo:3-5" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 3.5">
+              <div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-purple-500" data-inema-meter-fill style="width:0%"></div></div>
+              <span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span>
+            </div>
+          </nav>
+        </aside>
+
+        <div class="lg:flex-1 min-w-0 inema-prose">
+
+          <!-- TOPICO 1 -->
+          <section id="topico-1" data-inema-topic="modulo-3-5#topico-1" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">1</span>
+              <h2 class="text-2xl font-bold">🔁 Agente = loop + autonomia</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m35-t1-p1">Um chatbot comum faz uma coisa: voce pergunta, ele responde, fim. Um <strong class="text-purple-400">agente</strong> e diferente — ele nao para na primeira resposta. Ele recebe um pedido, <strong>pensa</strong> no que fazer, <strong>usa uma ferramenta</strong> (busca na web, le um arquivo, manda um e-mail), <strong>le o resultado</strong> dessa ferramenta, e decide se ja terminou ou se precisa dar mais um passo. Esse vai-e-volta que se repete sozinho ate a tarefa estar pronta e o que chamamos de <strong class="text-purple-400">loop agentico</strong>.</p>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> Um <strong>agente</strong> e um modelo de IA (o "cerebro" de texto que voce viu na Trilha 1) que ganhou <strong>maos</strong> — as ferramentas — e a permissao de usa-las em ciclo. "Loop" e so a palavra para "repetir um ciclo". "Autonomia" aqui nao quer dizer que ele faz o que quer; quer dizer que ele encadeia varios passos sem precisar que voce digite a cada um.</p>
+            </div>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m35-t1-p2">Na Trilha 1 voce viu esse loop pela primeira vez como uma <em>ideia</em>. Aqui ele vira uma <strong>camada da anatomia</strong>: a peca que transforma "modelo + ferramentas" num assistente que executa. Sem o loop, voce teria que orquestrar cada chamada na mao ("agora busca", "agora resume", "agora manda"). Com o loop, voce diz o objetivo e ele mesmo descobre a sequencia de passos.</p>
+
+            <div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+              <svg viewBox="0 0 980 240" class="w-full h-auto" role="img" aria-label="O loop agentico: pedido entra, o agente pensa, chama uma ferramenta, le o resultado e decide se repete ou responde; um contador limita as voltas">
+                <defs>
+                  <filter id="m35-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  <pattern id="m35-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#a855f7" opacity="0.12"/></pattern>
+                  <marker id="m35-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#c084fc"/></marker>
+                  <marker id="m35-ahc" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+                </defs>
+                <rect x="0" y="0" width="980" height="240" fill="url(#m35-grid)"/>
+                <text x="490" y="26" text-anchor="middle" fill="#c084fc" font-family="Inter,sans-serif" font-size="13" font-weight="600">O LOOP AGENTICO</text>
+                <g font-family="Inter,sans-serif">
+                  <rect x="30" y="98" width="120" height="52" rx="13" fill="#1a1230" stroke="#c084fc" stroke-width="2"/><text x="90" y="129" text-anchor="middle" fill="#e9d5ff" font-size="13">pedido</text>
+                  <path d="M150,124 L210,124" fill="none" stroke="#c084fc" stroke-width="2" marker-end="url(#m35-ah)"/>
+                  <g filter="url(#m35-glow)"><rect x="210" y="92" width="150" height="64" rx="14" fill="#1a1230" stroke="#c084fc" stroke-width="2.5"/></g>
+                  <text x="285" y="120" text-anchor="middle" fill="#c084fc" font-size="14" font-weight="700">pensa</text><text x="285" y="138" text-anchor="middle" fill="#e9d5ff" font-size="11">o que falta?</text>
+                  <path d="M360,124 L430,124" fill="none" stroke="#c084fc" stroke-width="2" marker-end="url(#m35-ah)"/>
+                  <rect x="430" y="92" width="160" height="64" rx="14" fill="#0e1622" stroke="#38bdf8" stroke-width="2" class="wf-a"/><text x="510" y="118" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="700">ferramenta</text><text x="510" y="137" text-anchor="middle" fill="#bae6fd" font-size="11">busca · le · envia</text>
+                  <path d="M590,124 L660,124" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m35-ahc)"/>
+                  <rect x="660" y="92" width="150" height="64" rx="14" fill="#1a1230" stroke="#c084fc" stroke-width="2"/><text x="735" y="120" text-anchor="middle" fill="#c084fc" font-size="14" font-weight="700">le resultado</text><text x="735" y="138" text-anchor="middle" fill="#e9d5ff" font-size="11">e avalia</text>
+                  <path d="M735,156 C735,200 285,200 285,160" fill="none" stroke="#c084fc" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#m35-ah)"/>
+                  <text x="510" y="216" text-anchor="middle" fill="#9ca3af" font-size="11">se ainda nao terminou, volta a pensar (repete)</text>
+                  <path d="M810,124 L900,124" fill="none" stroke="#34d399" stroke-width="2" marker-end="url(#m35-ah)"/>
+                  <rect x="900" y="98" width="70" height="52" rx="13" fill="#0e2018" stroke="#34d399" stroke-width="2"/><text x="935" y="123" text-anchor="middle" fill="#34d399" font-size="12" font-weight="700">pronto</text><text x="935" y="139" text-anchor="middle" fill="#a7f3d0" font-size="10">responde</text>
+                </g>
+              </svg>
+              <p class="text-xs text-neutral-400 mt-1 px-1">Leia o diagrama da esquerda para a direita: o <span class="text-purple-400">agente pensa</span>, chama uma <span class="text-sky-400">ferramenta</span>, le o que voltou e <strong>decide</strong>. Enquanto faltar algo, a seta tracejada o leva de volta ao "pensa". Quando termina, sai pela direita em <span class="text-emerald-400">"pronto"</span>. Esse ciclo que se fecha sozinho e o coracao de qualquer agente.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Agente</span><p class="text-sm text-neutral-400 mt-1">Um LLM que pode usar ferramentas em ciclo para cumprir um objetivo.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Loop agentico</span><p class="text-sm text-neutral-400 mt-1">Pensa → age → le resultado → decide; repete ate terminar.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Autonomia</span><p class="text-sm text-neutral-400 mt-1">Encadear varios passos sozinho, sem voce digitar cada um.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Delegar &gt; perguntar</span><p class="text-sm text-neutral-400 mt-1">Voce diz o objetivo; ele descobre a sequencia.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 2 -->
+          <section id="topico-2" data-inema-topic="modulo-3-5#topico-2" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">2</span>
+              <h2 class="text-2xl font-bold">🧑‍🚀 Sub-agentes: delegar e voltar leve</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m35-t2-p1">Toda conversa do Jarvis vive dentro de uma <strong>janela de contexto</strong> — a memoria de trabalho dele, limitada, como a RAM de um computador (voce viu isso na Trilha 1). Se uma tarefa for grande — ler 30 paginas, vasculhar um repositorio inteiro, pesquisar 15 fontes — ela <strong>entope</strong> essa janela com texto bruto, e o agente principal fica lento, confuso e caro. A solucao elegante e o <strong class="text-purple-400">sub-agente</strong>.</p>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> Um <strong>sub-agente</strong> e um segundo agente que o agente principal cria so para uma tarefa pesada. Ele abre a <em>propria</em> janela de contexto, faz o trabalho sujo (le tudo, processa, descarta o lixo) e devolve so a <strong>resposta limpa</strong>. A bagunca fica na cabeca dele; o agente principal recebe so o resumo.</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">📦</span> A analogia do estagiario</h3>
+              <p class="text-neutral-300 mb-4">Imagine que voce e um gerente ocupado. Chega uma tarefa: "leia este relatorio de 200 paginas e me diga os 3 pontos principais". Voce nao le as 200 paginas e enche sua propria cabeca — voce manda um estagiario ler. Ele queima o tempo <strong>dele</strong> com as 200 paginas e volta com um bilhete de 3 linhas. Sua mesa continua limpa. O sub-agente e exatamente esse estagiario.</p>
+              <ul class="space-y-2 text-neutral-300 text-sm">
+                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span>O sub-agente queima o <strong>proprio contexto</strong> com o material bruto.</span></li>
+                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span>Ele devolve so a <strong>resposta destilada</strong> — nao o material todo.</span></li>
+                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span>A sessao principal fica <strong>leve, focada e barata</strong>.</span></li>
+              </ul>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+                <h4 class="font-bold text-purple-400 mb-4">✓ Quando usar sub-agente</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Tarefa que gera MUITO texto intermediario (busca ampla, leitura longa).</span></li>
+                  <li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Trabalho isolavel: tem um pedido claro e devolve um resultado claro.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Quer proteger a conversa principal de virar uma bagunca.</span></li>
+                </ul>
+              </div>
+              <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+                <h4 class="font-bold text-red-400 mb-4">✗ Quando NAO compensa</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Tarefa curtinha — abrir um sub-agente custa mais do que resolver direto.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Passos que dependem de muito vai-e-volta com voce no meio.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Quando voce PRECISA ver o material bruto, nao so o resumo.</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Sub-agente</span><p class="text-sm text-neutral-400 mt-1">Agente auxiliar que faz a tarefa pesada e devolve so a resposta.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Janela de contexto</span><p class="text-sm text-neutral-400 mt-1">A memoria de trabalho, limitada, do agente (a "RAM").</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Isolamento de contexto</span><p class="text-sm text-neutral-400 mt-1">A bagunca fica no sub-agente; o principal nao se contamina.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Resposta destilada</span><p class="text-sm text-neutral-400 mt-1">So o essencial volta — economia de contexto e de custo.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 3 -->
+          <section id="topico-3" data-inema-topic="modulo-3-5#topico-3" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">3</span>
+              <h2 class="text-2xl font-bold">🐝 Multi-agente: um time de especialistas</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m35-t3-p1">Se um sub-agente e um estagiario, o <strong class="text-purple-400">multi-agente</strong> e um time inteiro. Em vez de um agente fazendo tudo, voce monta varios <strong>especialistas</strong> — um que so pesquisa, um que so escreve, um que so revisa — e um <strong>orquestrador</strong> que distribui as partes e junta o resultado. Cada especialista tem o proprio contexto, o proprio foco, e ate pode usar um cerebro diferente (um modelo barato para a busca, um potente para a redacao).</p>
+
+            <div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+              <svg viewBox="0 0 980 270" class="w-full h-auto" role="img" aria-label="Padrao multi-agente: um orquestrador no centro distribui partes da tarefa a tres especialistas (pesquisa, escrita, revisao) e junta as respostas num resultado final">
+                <defs>
+                  <filter id="m35b-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  <pattern id="m35b-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#a855f7" opacity="0.12"/></pattern>
+                  <marker id="m35b-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#c084fc"/></marker>
+                  <marker id="m35b-ahc" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+                </defs>
+                <rect x="0" y="0" width="980" height="270" fill="url(#m35b-grid)"/>
+                <text x="490" y="26" text-anchor="middle" fill="#c084fc" font-family="Inter,sans-serif" font-size="13" font-weight="600">PADRAO MULTI-AGENTE</text>
+                <g font-family="Inter,sans-serif">
+                  <g filter="url(#m35b-glow)"><rect x="395" y="48" width="190" height="60" rx="14" fill="#1a1230" stroke="#c084fc" stroke-width="2.5"/></g>
+                  <text x="490" y="74" text-anchor="middle" fill="#c084fc" font-size="14" font-weight="700">orquestrador</text><text x="490" y="93" text-anchor="middle" fill="#e9d5ff" font-size="11">divide e junta</text>
+
+                  <path d="M430,108 C360,150 250,150 200,160" fill="none" stroke="#c084fc" stroke-width="2" marker-end="url(#m35b-ah)"/>
+                  <path d="M490,108 L490,160" fill="none" stroke="#c084fc" stroke-width="2" marker-end="url(#m35b-ah)"/>
+                  <path d="M550,108 C620,150 730,150 780,160" fill="none" stroke="#c084fc" stroke-width="2" marker-end="url(#m35b-ah)"/>
+
+                  <rect x="110" y="162" width="180" height="58" rx="13" fill="#0e1622" stroke="#38bdf8" stroke-width="2" class="wf-a"/><text x="200" y="187" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="700">pesquisa</text><text x="200" y="205" text-anchor="middle" fill="#bae6fd" font-size="11">busca fontes</text>
+                  <rect x="400" y="162" width="180" height="58" rx="13" fill="#0e1622" stroke="#38bdf8" stroke-width="2" class="wf-a"/><text x="490" y="187" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="700">escrita</text><text x="490" y="205" text-anchor="middle" fill="#bae6fd" font-size="11">redige</text>
+                  <rect x="690" y="162" width="180" height="58" rx="13" fill="#0e1622" stroke="#38bdf8" stroke-width="2" class="wf-a"/><text x="780" y="187" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="700">revisao</text><text x="780" y="205" text-anchor="middle" fill="#bae6fd" font-size="11">confere</text>
+
+                  <path d="M200,220 C200,248 470,248 470,224" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="5 5" marker-end="url(#m35b-ahc)"/>
+                  <path d="M780,220 C780,248 510,248 510,224" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="5 5" marker-end="url(#m35b-ahc)"/>
+                  <text x="490" y="263" text-anchor="middle" fill="#9ca3af" font-size="11">as partes voltam e o orquestrador junta num resultado unico</text>
+                </g>
+              </svg>
+              <p class="text-xs text-neutral-400 mt-1 px-1">O <span class="text-purple-400">orquestrador</span> reparte a tarefa entre <span class="text-sky-400">especialistas</span> e depois costura tudo. Mais paralelismo e mais foco — mas tambem mais pecas para coordenar e mais chance de uma falhar. Por isso multi-agente so compensa quando a tarefa e grande o bastante para justificar a complexidade.</p>
+            </div>
+
+            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> A armadilha do "mais agentes = melhor"</h3>
+              <p class="text-neutral-300 text-sm">E tentador montar um exercito de agentes para tudo. Quase sempre e exagero. Cada agente extra adiciona coordenacao, custo, latencia e novos pontos de falha — se a "revisao" interpreta mal o que a "escrita" entregou, o erro se propaga. <strong>Regra pratica:</strong> comece com um agente so e o loop. So quebre em multi-agente quando uma tarefa real esta grande demais ou exige especializacoes que realmente nao convivem na mesma cabeca.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Multi-agente</span><p class="text-sm text-neutral-400 mt-1">Varios agentes especialistas trabalhando juntos numa tarefa.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Orquestrador</span><p class="text-sm text-neutral-400 mt-1">O agente que divide o trabalho e junta os resultados.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Especializacao</span><p class="text-sm text-neutral-400 mt-1">Cada agente foca em uma coisa (pesquisa, escrita, revisao).</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Custo de coordenacao</span><p class="text-sm text-neutral-400 mt-1">Mais agentes = mais pecas para alinhar e mais falhas possiveis.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 4 -->
+          <section id="topico-4" data-inema-topic="modulo-3-5#topico-4" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">4</span>
+              <h2 class="text-2xl font-bold">⏰ Cadencia: ele acorda sozinho</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m35-t4-p1">Ate agora o agente so age quando voce fala com ele. A <strong class="text-purple-400">cadencia</strong> muda isso: ela faz o Jarvis agir <strong>no horario certo, sem ninguem chamar</strong>. As 7h, ele monta o resumo do seu dia; a cada 30 minutos, dá uma olhada na sua caixa de e-mail; toda sexta, ele organiza suas anotacoes. Tudo isso enquanto voce dorme, trabalha ou — como dizem os criadores desses sistemas — "com o laptop fechado".</p>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>Cron</strong> e um agendador de tarefas que existe ha decadas nos computadores: voce escreve "rode isto todo dia as 7h" e ele obedece. <strong>Heartbeat</strong> ("batimento cardiaco") e o mesmo principio aplicado ao agente: um pulso regular que o acorda de tempos em tempos para checar se ha algo a fazer. <strong>Routines</strong> e so o nome amigavel que alguns sistemas dão para essas tarefas agendadas.</p>
+            </div>
+
+            <div class="space-y-4 mb-6">
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">1</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">O relogio dispara</h4><p class="text-sm text-neutral-400">Chega o horario marcado (ex.: 7h). O agendador acorda o agente — sem voce digitar nada.</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">2</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Ele roda o loop</h4><p class="text-sm text-neutral-400">O agente executa a tarefa programada: le a agenda, busca os e-mails, monta o resumo.</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">3</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Te avisa pelo canal</h4><p class="text-sm text-neutral-400">A resposta chega no Telegram (ou no canal que voce usa). Voce acorda com o trabalho ja feito.</p></div>
+              </div>
+            </div>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Onde isso aparece nos sistemas reais</h3>
+              <ul class="space-y-2 text-neutral-300 text-sm">
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>O <strong>OpenClaw</strong> popularizou o <strong>heartbeat</strong> — um pulso que mantem o agente "vivo" e checando coisas.</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>O <strong>GravityClaw</strong> usa <strong>node-cron</strong> para tarefas agendadas, mantendo tudo enxuto.</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Na arquitetura das "4 C" (Trilha 4), isso e a <strong>Cadence</strong> — o "quando ele age".</span></li>
+              </ul>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Cadencia</span><p class="text-sm text-neutral-400 mt-1">A camada que faz o agente agir no horario, sem ser chamado.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Cron</span><p class="text-sm text-neutral-400 mt-1">Agendador classico: "rode isto neste horario".</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Heartbeat</span><p class="text-sm text-neutral-400 mt-1">Pulso regular que acorda o agente para checar tarefas.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Routines</span><p class="text-sm text-neutral-400 mt-1">Tarefas agendadas com nome amigavel (resumo das 7h etc.).</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 5 -->
+          <section id="topico-5" data-inema-topic="modulo-3-5#topico-5" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">5</span>
+              <h2 class="text-2xl font-bold">🛡️ Limites e seguranca do loop</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m35-t5-p1">Um agente que age sozinho e poderoso — e por isso mesmo precisa de freios. Sem travas, o loop pode girar para sempre (e gastar uma fortuna), ou executar uma acao perigosa sem ninguem perceber. Tres travas resolvem a maior parte disso: um <strong class="text-purple-400">teto de iteracoes</strong>, <strong class="text-purple-400">gates de aprovacao</strong> e um <strong class="text-purple-400">audit log</strong>.</p>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>Teto (ou limite) de iteracoes</strong> e um numero maximo de voltas que o loop pode dar antes de parar (ex.: "no maximo 15"). <strong>Gate de aprovacao</strong> e um pedido de "voce confirma?" antes de uma acao arriscada. <strong>Audit log</strong> e um diario que registra cada passo que o agente deu — uma "memoria forense" para voce revisar depois o que ele fez e por que.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-5">
+                <h4 class="font-bold text-purple-400 mb-2 flex items-center"><span class="mr-2">🔢</span> Teto de iteracoes</h4>
+                <p class="text-sm text-neutral-300">Limita quantas voltas o loop pode dar. Impede o agente de ficar preso "pensando" eternamente e de queimar dinheiro a toa.</p>
+              </div>
+              <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-5">
+                <h4 class="font-bold text-purple-400 mb-2 flex items-center"><span class="mr-2">✋</span> Gates de aprovacao</h4>
+                <p class="text-sm text-neutral-300">Acoes perigosas (apagar arquivos, gastar dinheiro, rodar comandos) param e pedem seu "ok" antes de acontecer.</p>
+              </div>
+              <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-5">
+                <h4 class="font-bold text-purple-400 mb-2 flex items-center"><span class="mr-2">📜</span> Audit log</h4>
+                <p class="text-sm text-neutral-300">Cada passo fica registrado. Se algo der errado, voce abre o diario e ve exatamente o que ele fez e quando.</p>
+              </div>
+            </div>
+
+            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> Por que isso nao e opcional</h3>
+              <p class="text-neutral-300 text-sm mb-3">Lembre da Trilha 2: o OpenClaw teve <strong>42.665 instancias publicas</strong>, sendo <strong>93,4% sem nenhuma autenticacao</strong>, e <strong>341 skills maliciosas</strong> na comunidade. Um agente exposto e sem travas e um agente que qualquer um pode mandar agir. A postura correta e <strong>zero-trust</strong>: trate toda entrada como um possivel ataque (incluindo <strong>prompt-injection</strong>, quando um texto malicioso tenta dar ordens disfarcadas ao agente).</p>
+              <p class="text-neutral-400 text-xs">A combinacao segura, repetida em todo o curso: sem portas expostas + so MCP auditavel + whitelist de quem pode falar + secrets no .env + as tres travas acima.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Teto de iteracoes</span><p class="text-sm text-neutral-400 mt-1">Numero maximo de voltas do loop — evita loop infinito e gasto.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Gate de aprovacao</span><p class="text-sm text-neutral-400 mt-1">Confirmacao humana antes de uma acao perigosa.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Audit log</span><p class="text-sm text-neutral-400 mt-1">Registro forense de cada acao do agente.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Prompt-injection</span><p class="text-sm text-neutral-400 mt-1">Texto malicioso que tenta dar ordens disfarcadas ao agente.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 6 -->
+          <section id="topico-6" data-inema-topic="modulo-3-5#topico-6" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">6</span>
+              <h2 class="text-2xl font-bold">🚀 Proativo vs reativo: de assistente a parceiro</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m35-t6-p1">Junte tudo deste modulo — o loop, os sub-agentes, a cadencia — e voce chega ao maior salto de todos: o Jarvis deixa de ser <strong class="text-purple-400">reativo</strong> (so responde quando voce chama) e passa a ser <strong class="text-purple-400">proativo</strong> (te avisa <em>antes</em> de voce pedir). Em vez de voce perguntar "tem algo importante na minha agenda hoje?", ele te manda, as 7h: "voce tem reuniao as 10h e o relatorio vence amanha — quer que eu prepare um rascunho?".</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+                <h4 class="font-bold text-neutral-300 mb-4">😐 Reativo (o assistente)</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-neutral-500">→</span><span>Espera voce iniciar a conversa.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-neutral-500">→</span><span>So sabe o que voce digitou agora.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-neutral-500">→</span><span>Util, mas voce ainda carrega a carga mental de lembrar de tudo.</span></li>
+                </ul>
+              </div>
+              <div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+                <h4 class="font-bold text-purple-400 mb-4">🤝 Proativo (o parceiro)</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-purple-400">→</span><span>Inicia a conversa quando faz sentido (cadencia).</span></li>
+                  <li class="flex items-start gap-2"><span class="text-purple-400">→</span><span>Conecta agenda, e-mail e memoria para antecipar.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-purple-400">→</span><span>Tira a carga mental de voce — vira um socio, nao uma ferramenta.</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">🧩</span> A receita do salto proativo</h3>
+              <p class="text-neutral-300 text-sm mb-3">Proatividade nao e magia — e a soma das pecas que voce ja conhece. <strong>Loop</strong> (ele executa sozinho) + <strong>cadencia</strong> (ele acorda no horario) + <strong>ferramentas</strong> (ele ve sua agenda e e-mail, da Trilha 3-3) + <strong>memoria</strong> (ele lembra do que importa, vem na 3-6). Tire qualquer peca e ele volta a ser reativo.</p>
+              <p class="text-neutral-400 text-xs">Cuidado com o equilibrio: um agente proativo demais vira um chato que interrompe o tempo todo. A boa proatividade e seletiva — avisa do que importa, fica quieto no resto.</p>
+            </div>
+
+            <!-- CHECAGEM LEVE -->
+            <div data-inema-check="modulo-3-5#q1" class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6">
+              <p class="font-medium mb-4">Auto-checagem (opcional): qual e a melhor descricao de um sub-agente?</p>
+              <div class="inema-check-options space-y-2">
+                <button type="button" data-inema-check-option="0" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Um segundo cerebro/modelo que vota junto com o principal para dar a melhor resposta.</button>
+                <button type="button" data-inema-check-option="1" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Um agente auxiliar que faz a tarefa pesada na propria janela de contexto e devolve so a resposta destilada.</button>
+                <button type="button" data-inema-check-option="2" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Um agendador que faz o Jarvis agir as 7h da manha.</button>
+              </div>
+              <div data-inema-check-feedback class="mt-4 text-sm" role="status" aria-live="polite"></div>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3 mt-8">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Reativo</span><p class="text-sm text-neutral-400 mt-1">So age quando voce chama — o modo "assistente".</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Proativo</span><p class="text-sm text-neutral-400 mt-1">Te avisa antes de voce pedir — o modo "parceiro".</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Carga mental</span><p class="text-sm text-neutral-400 mt-1">O peso de lembrar de tudo; o proativo tira isso de voce.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Proatividade seletiva</span><p class="text-sm text-neutral-400 mt-1">Avisar do que importa, ficar quieto no resto.</p></div>
+            </div>
+
+            <div class="flex justify-start mt-6">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- RESUMO -->
+          <section class="mb-8">
+            <div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+              <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumo do modulo</h2>
+              <div class="space-y-4 mb-8">
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Agente = loop + autonomia</strong><span class="text-neutral-400"> — pensa, age, le o resultado e decide; repete sozinho ate terminar.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Sub-agentes</strong><span class="text-neutral-400"> — o "estagiario" queima o proprio contexto e devolve so a resposta; a sessao principal fica leve.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Multi-agente com parcimonia</strong><span class="text-neutral-400"> — time de especialistas + orquestrador; so vale quando a tarefa justifica a complexidade.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Cadencia</strong><span class="text-neutral-400"> — cron/heartbeat fazem o Jarvis agir no horario, "com o laptop fechado".</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Travas do loop</strong><span class="text-neutral-400"> — teto de iteracoes, gates de aprovacao e audit log; postura zero-trust.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Proativo vs reativo</strong><span class="text-neutral-400"> — loop + cadencia + ferramentas + memoria = o salto de assistente para parceiro.</span></div></div>
+              </div>
+              <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+                <h3 class="font-semibold text-purple-400 mb-2">Proximo modulo:</h3>
+                <p class="text-neutral-300">Modulo 3-6: Cerebros — o motor que pensa e a memoria organizada</p>
+              </div>
+              <div class="flex flex-col sm:flex-row gap-4">
+                <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para a Trilha</a>
+                <a href="modulo-3-6.html" class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors">Proximo modulo →</a>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-dark-600 py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
+    </div>
+  </footer>
+
+  <!-- Scripts nucleo v1 -->
+  <script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+
+  <!-- Camada de aprendizagem -->
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-3-5#q1', {
+          answer: 1,
+          explain: {
+            0: 'Esse e o mito do "conselho de modelos" — sub-agente nao e votacao de cerebros. Veremos isso no modulo 3-6.',
+            1: 'Isso! O sub-agente isola a tarefa pesada no proprio contexto e devolve so o essencial.',
+            2: 'Esse e o agendador (cron/heartbeat) do topico 4, nao o sub-agente.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

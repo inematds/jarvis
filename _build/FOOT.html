@@ -1,0 +1,47 @@
+<!--
+  FOOT.html  ·  curso jarvis  ·  rodape + scripts-nucleo + learn.js + init
+  ========================================================================
+  Cole IMEDIATAMENTE depois de </main>. Troque {{REL}} pelo prefixo dos assets:
+    - landing (raiz):        {{REL}} = ""        ->  src="assets/learn.js"
+    - paginas em trilhaN/:   {{REL}} = "../../"  ->  src="../../assets/learn.js"
+  Nao edite os scripts.
+-->
+  <footer class="border-t border-dark-600 py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
+    </div>
+  </footer>
+
+  <!-- Scripts nucleo v1 -->
+  <script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+
+  <!-- Camada de aprendizagem -->
+  <script src="{{REL}}assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+  </script>
+</body>
+</html>

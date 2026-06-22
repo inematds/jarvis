@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="inema-course" content="jarvis">
+  <title>Modulo 3.6 — Cerebros: o motor que pensa e a memoria organizada | Jarvis · INEMA.CLUB</title>
+  <meta name="description" content="O cerebro do Jarvis tem dois sentidos: o motor LLM trocavel (hot-swap por .env) e a memoria organizada em 3 cerebros. Sem conselho magico de modelos — substituicao e portabilidade.">
+
+  <!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+
+  <!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+  <script type="application/json" data-inema-manifest>
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/learn.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .bg-purple-900\/20 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .bg-purple-900\/30 { background-color: rgba(124,58,237,0.10); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a href="#conteudo" class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg">Pular para o conteudo</a>
+
+  <!-- NAVIGATION (completo, identico em todas as paginas) -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-3">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🤖</span>
+            <span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a id="nav-t1" href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a id="nav-t2" href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+          </a>
+          <a id="nav-t3" href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span>
+          </a>
+          <a id="nav-t4" href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+          </a>
+          <a id="nav-t5" href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+          </a>
+          <a id="nav-t6" href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span>
+          </a>
+
+          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Minha jornada">
+            <span aria-hidden="true">◷</span><span class="hidden md:inline">Jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge data-count="0"></span>
+          </button>
+
+          <div class="relative">
+            <button type="button" data-inema-appearance-toggle="[data-inema-appearance]" aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Aparencia">
+              <span aria-hidden="true">◑</span><span class="hidden md:inline">Aparencia</span>
+            </button>
+            <div data-inema-appearance class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left">
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-theme="inema-dark" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Escuro</button>
+                  <button data-inema-set-theme="claro" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Claro</button>
+                  <button data-inema-set-theme="sepia" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sepia</button>
+                  <button data-inema-set-theme="foco" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Foco</button>
+                  <button data-inema-set-theme="contraste" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Alto contraste</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Fonte</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-font="inter" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Inter</button>
+                  <button data-inema-set-font="system" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sistema</button>
+                  <button data-inema-set-font="leitura" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Leitura</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tamanho</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-fontscale="100" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A</button>
+                  <button data-inema-set-fontscale="112" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A+</button>
+                  <button data-inema-set-fontscale="125" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A++</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Entrelinha</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-leading="1.45" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Compacto</button>
+                  <button data-inema-set-leading="1.7" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Confortavel</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+                <div class="inema-accent-grid flex flex-wrap gap-2">
+                  <button data-inema-set-accent="emerald" class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" title="Emerald"></button>
+                  <button data-inema-set-accent="blue" class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" title="Blue"></button>
+                  <button data-inema-set-accent="purple" class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" title="Purple"></button>
+                  <button data-inema-set-accent="amber" class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" title="Amber"></button>
+                  <button data-inema-set-accent="teal" class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" title="Teal"></button>
+                  <button data-inema-set-accent="rose" class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" title="Rose"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" title="Alternar claro/escuro">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo">
+    <header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+          <a href="../../index.html" class="hover:text-purple-400">Inicio</a><span>/</span>
+          <a href="index.html" class="hover:text-purple-400">Trilha 3</a><span>/</span>
+          <span class="text-purple-400">Modulo 3.6</span>
+        </nav>
+        <span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">MODULO 3-6</span>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">🧠 Cerebros — o motor que pensa e a memoria organizada</h1>
+        <p class="text-lg text-neutral-400 max-w-3xl">"Cerebro" do Jarvis tem dois sentidos, e os dois importam. O primeiro e o <strong class="text-purple-400">motor LLM</strong> — o modelo que pensa, e que voce pode trocar sem mexer no codigo. O segundo e a <strong class="text-purple-400">memoria organizada</strong> — o "segundo cerebro" dividido em zonas. Neste modulo, ultimo da Anatomia, voce vai entender os dois — e por que NAO existe um "conselho magico de modelos" votando.</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">6</div><div class="text-xs text-neutral-400">Topicos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">~50</div><div class="text-xs text-neutral-400">Minutos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Intermediario</div><div class="text-xs text-neutral-400">Nivel</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Pratico</div><div class="text-xs text-neutral-400">Tipo</div></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="lg:flex lg:gap-10">
+
+        <!-- TOC sticky -->
+        <aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+          <nav data-inema-toc aria-label="Indice da pagina" class="lg:sticky lg:top-20">
+            <p class="text-sm text-neutral-400 mb-2">Secao <span class="inema-toc-pos" data-inema-section-counter>1</span> de 6</p>
+            <ol class="space-y-1 text-sm">
+              <li><a href="#topico-1" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">1. O cerebro = o motor LLM</a></li>
+              <li><a href="#topico-2" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">2. Trocar de cerebro sem mexer no codigo</a></li>
+              <li><a href="#topico-3" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">3. O mito do "conselho de modelos"</a></li>
+              <li><a href="#topico-4" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">4. O "segundo cerebro" vira memoria</a></li>
+              <li><a href="#topico-5" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">5. Os 3 cerebros (memoria)</a></li>
+              <li><a href="#topico-6" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">6. Memoria = filesystem + indice</a></li>
+            </ol>
+            <div class="mt-4" data-inema-meter="modulo:3-6" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 3.6">
+              <div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-purple-500" data-inema-meter-fill style="width:0%"></div></div>
+              <span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span>
+            </div>
+          </nav>
+        </aside>
+
+        <div class="lg:flex-1 min-w-0 inema-prose">
+
+          <!-- TOPICO 1 -->
+          <section id="topico-1" data-inema-topic="modulo-3-6#topico-1" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">1</span>
+              <h2 class="text-2xl font-bold">⚙️ O cerebro = o motor LLM</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m36-t1-p1">Ao longo da Anatomia voce montou canais (por onde fala), identidade (quem ele e), ferramentas (as maos), skills (as receitas) e agentes (o loop que trabalha sozinho). Falta a peca que de fato <strong>pensa</strong>: o <strong class="text-purple-400">cerebro</strong>. No primeiro sentido, "cerebro" e o <strong>motor LLM</strong> — o modelo de linguagem que recebe o contexto, raciocina e devolve texto. Tudo o que voce construiu so ganha vida quando esse motor esta plugado.</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m36-t1-p2">A grande ideia deste modulo: esse motor e uma <strong class="text-purple-400">peca plugavel</strong>. Ele nao esta soldado ao resto do Jarvis. O codigo do agente fala com o motor por uma <strong>interface</strong> padrao (uma "tomada"), entao da pra desencaixar um modelo e encaixar outro sem reescrever nada. Por isso a frase que resume tudo: <em>"um cerebro, varias bocas"</em> — e, aqui, <em>varios cerebros possiveis, uma so arquitetura</em>.</p>
+
+            <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">🧩</span> O motor por baixo de tudo</h3>
+              <p class="text-neutral-300 mb-4 text-sm">Pense no Jarvis como um carro que voce ja montou: a carroceria (canais), o painel (identidade), as rodas (ferramentas). O <strong>motor</strong> e o LLM. O carro inteiro depende dele — mas o motor e so mais uma peca, e pecas se trocam.</p>
+              <ul class="space-y-2 text-neutral-300 text-sm">
+                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span>O motor recebe: contexto (sua mensagem + SOUL.md + memoria + resultados de ferramentas).</span></li>
+                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span>O motor devolve: texto — uma resposta, ou um pedido de ferramenta para o loop agentico.</span></li>
+                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span>O resto do Jarvis nao "sabe" qual motor esta rodando — so conversa com a tomada.</span></li>
+              </ul>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>LLM</strong> ("Large Language Model", modelo de linguagem grande) e o programa treinado em muito texto que prevê a proxima palavra — e o cerebro que roda atras do ChatGPT, do Claude ou de modelos locais. <strong>Provedor</strong> e quem fornece esse cerebro: Anthropic, OpenAI, OpenRouter (que junta varios) ou o seu proprio PC via Ollama. <strong>Interface</strong> aqui e o "encaixe" padrao pelo qual o codigo fala com qualquer um deles do mesmo jeito.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Motor LLM</span><p class="text-sm text-neutral-400 mt-1">O modelo que de fato pensa: recebe contexto, devolve texto.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Peca plugavel</span><p class="text-sm text-neutral-400 mt-1">O cerebro nao esta soldado: encaixa e desencaixa por uma tomada.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Um cerebro, varias bocas</span><p class="text-sm text-neutral-400 mt-1">O mesmo modelo atende Telegram, voz, web — vozes diferentes, um cerebro.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Provedor</span><p class="text-sm text-neutral-400 mt-1">Quem fornece o motor: Anthropic, OpenRouter, Ollama local...</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 2 -->
+          <section id="topico-2" data-inema-topic="modulo-3-6#topico-2" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">2</span>
+              <h2 class="text-2xl font-bold">🔌 Trocar de cerebro sem mexer no codigo</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m36-t2-p1">Se o motor e plugavel, trocar de cerebro deveria ser tao simples quanto trocar uma lampada — e e. Em um Jarvis bem feito, o modelo nao aparece espalhado pelo codigo: ele e declarado em <strong>um unico lugar</strong>, o arquivo <code class="px-1.5 py-0.5 rounded bg-dark-700 text-purple-300 text-sm">.env</code>. Mude duas linhas la, reinicie, e o Jarvis inteiro passa a pensar com outro modelo. Isso se chama <strong class="text-purple-400">hot-swap</strong> (troca a quente).</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m36-t2-p2">Por que isso importa tanto? Porque cada tarefa tem um motor ideal. Uma pergunta boba ("que horas sao em Tokio?") nao precisa do modelo mais caro do mundo; um problema cabeludo de raciocinio merece o de fronteira. Trocar de cerebro vira uma <strong>decisao economica</strong> — voce escolhe potencia ou custo conforme a tarefa, e nao fica refem de um unico fornecedor.</p>
+
+            <!-- DADOS azul -->
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Tres motores, tres perfis</h3>
+              <ul class="space-y-2 text-neutral-300 text-sm">
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Nuvem potente</strong> (Anthropic Claude, GPT): melhor raciocinio, paga por <strong>token</strong>. Para tarefas dificeis.</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Nuvem barata</strong> (via OpenRouter): acesso a dezenas de modelos baratos por uma so chave. Para tarefas medias.</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Local</strong> (Ollama no seu PC): $0 por uso, privado, offline. Modelos por RAM (3B@8GB, 8B@16GB); CPU e lento (30–60s).</span></li>
+              </ul>
+            </div>
+
+            <!-- COPY-RUN real -->
+            <div class="rounded-xl border border-purple-500/30 bg-dark-900/60 overflow-hidden mb-6">
+              <div class="flex items-center justify-between px-4 py-2 bg-purple-500/10 border-b border-purple-500/30">
+                <span class="text-xs font-semibold text-purple-300 uppercase tracking-wide">Copy-run · trocar o cerebro no .env</span>
+                <span class="text-xs text-neutral-500">font-mono</span>
+              </div>
+              <div class="p-4 space-y-4">
+                <p class="text-sm text-neutral-300"><strong class="text-purple-400">Objetivo:</strong> fazer o Jarvis pensar com um modelo diferente <strong>sem tocar no codigo</strong> — so editando o arquivo <code class="px-1 rounded bg-dark-700 text-purple-300">.env</code> na raiz do projeto.</p>
+                <div>
+                  <p class="text-xs text-neutral-400 mb-2">1) Nuvem potente (Anthropic). Cole no seu <code class="px-1 rounded bg-dark-700 text-purple-300">.env</code>:</p>
+                  <pre class="font-mono text-xs sm:text-sm bg-black/40 text-neutral-200 rounded-lg p-4 overflow-x-auto border border-dark-600"><code>LLM_PROVIDER=anthropic
+LLM_MODEL=claude-sonnet-4-5
+ANTHROPIC_API_KEY=&lt;sua-chave-anthropic&gt;</code></pre>
+                </div>
+                <div>
+                  <p class="text-xs text-neutral-400 mb-2">2) Quer nuvem barata via OpenRouter? Troque so estas linhas:</p>
+                  <pre class="font-mono text-xs sm:text-sm bg-black/40 text-neutral-200 rounded-lg p-4 overflow-x-auto border border-dark-600"><code>LLM_PROVIDER=openrouter
+LLM_MODEL=&lt;modelo-barato-ex-meta-llama/llama-3.1-8b-instruct&gt;
+OPENROUTER_API_KEY=&lt;sua-chave-openrouter&gt;</code></pre>
+                </div>
+                <div>
+                  <p class="text-xs text-neutral-400 mb-2">3) Quer 100% local e gratis? Suba o Ollama e aponte pra ele:</p>
+                  <pre class="font-mono text-xs sm:text-sm bg-black/40 text-neutral-200 rounded-lg p-4 overflow-x-auto border border-dark-600"><code>LLM_PROVIDER=ollama
+LLM_MODEL=&lt;modelo-local-ex-llama3.2&gt;
+OLLAMA_HOST=http://localhost:11434</code></pre>
+                </div>
+                <div class="bg-emerald-900/20 border border-emerald-500/30 rounded-lg p-4">
+                  <p class="text-sm text-neutral-300"><strong class="text-emerald-400">Como verificar:</strong> reinicie o Jarvis e mande no canal: <em>"qual modelo voce esta usando agora?"</em>. Se o codigo loga o provedor na inicializacao, voce vê algo como <code class="px-1 rounded bg-dark-700 text-emerald-300">[brain] provider=ollama model=llama3.2</code>. O comportamento muda (velocidade, qualidade), mas <strong>voce nao tocou em nenhuma linha de codigo</strong> — so no <code class="px-1 rounded bg-dark-700 text-emerald-300">.env</code>. Isso e o hot-swap funcionando.</p>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Hot-swap</span><p class="text-sm text-neutral-400 mt-1">Trocar o motor mudando o .env e reiniciando — sem mexer no codigo.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">.env</span><p class="text-sm text-neutral-400 mt-1">Arquivo de configuracao/segredos; o unico lugar onde o modelo e declarado.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Decisao economica</span><p class="text-sm text-neutral-400 mt-1">Modelo barato para tarefa simples, premium para a dificil.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">OpenRouter / Ollama</span><p class="text-sm text-neutral-400 mt-1">Um agregador de modelos na nuvem; um runtime de modelos no seu PC.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 3 -->
+          <section id="topico-3" data-inema-topic="modulo-3-6#topico-3" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">3</span>
+              <h2 class="text-2xl font-bold">🪧 O mito do "conselho de modelos"</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m36-t3-p1">Quando alguem ouve "varios cerebros", a imaginacao corre solta: cinco modelos sentados a uma mesa, debatendo, votando, e um juiz escolhendo a melhor resposta. E uma imagem bonita — e, nos projetos reais deste curso, <strong class="text-purple-400">ela nao existe</strong>. Nao ha um roteador magico que consulta N modelos ao mesmo tempo e tira a media. Seja honesto sobre isso: e marketing, nao arquitetura.</p>
+
+            <!-- ALERTA red -->
+            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> Cuidado com a promessa do "conselho"</h3>
+              <p class="text-neutral-300 text-sm mb-3">Rodar varios LLMs de fronteira em paralelo, para cada mensagem, custa caro, fica lento e raramente melhora a resposta de forma confiavel. Quem te vende um "comite de IAs votando" geralmente esta vendendo complexidade que voce nao precisa — e que voce nao consegue auditar.</p>
+              <p class="text-neutral-400 text-xs">A tese deste curso e o oposto: <strong>menos e mais</strong>. Codigo que voce entende vale mais que um conselho que voce nunca vai conseguir depurar.</p>
+            </div>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m36-t3-p2">Entao, quando os projetos falam em "multiplos modelos", o que isso significa de verdade? Duas coisas concretas e honestas: <strong class="text-purple-400">substituicao</strong> (o hot-swap do topico 2 — trocar um pelo outro) e <strong class="text-purple-400">portabilidade</strong> — a mesma skill rodando em runtimes diferentes (Claude Code, Codex) via a spec de Agent Skills e ferramentas como o <code class="px-1.5 py-0.5 rounded bg-dark-700 text-purple-300 text-sm">polyskill</code>. Nao e votacao simultanea; e a mesma fonte funcionando em mais de um cerebro.</p>
+
+            <!-- GRID ✓/✗ -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+                <h4 class="font-bold text-purple-400 mb-4">✓ "Multiplos modelos" honesto</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span><strong>Substituicao:</strong> trocar o motor por .env quando convem.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span><strong>Portabilidade:</strong> a mesma skill roda em Claude Code E Codex.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span><strong>Sub-agente delega</strong> a um modelo proprio e devolve so a resposta (T3-5).</span></li>
+                  <li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Voce <strong>entende e audita</strong> cada peca.</span></li>
+                </ul>
+              </div>
+              <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+                <h4 class="font-bold text-red-400 mb-4">✗ O mito do conselho</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>5 modelos votando em cada mensagem.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Um "juiz" magico que escolhe a melhor resposta.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Custo e latencia multiplicados sem ganho garantido.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Uma caixa-preta que voce nao consegue depurar.</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>Runtime</strong> e o "ambiente" onde a IA roda (Claude Code, Codex, Cursor...). <strong>Portabilidade</strong> e a mesma receita funcionar em mais de um runtime sem reescrever. <strong>polyskill</strong> e uma ferramenta que empacota uma skill numa fonte unica e a faz rodar em runtimes diferentes — o "multiplos modelos" de verdade.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Conselho de modelos (mito)</span><p class="text-sm text-neutral-400 mt-1">A ideia de N LLMs votando ao vivo — que os projetos reais nao usam.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Substituicao</span><p class="text-sm text-neutral-400 mt-1">Um motor por vez, trocado conforme a tarefa.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Portabilidade (cross-runtime)</span><p class="text-sm text-neutral-400 mt-1">A mesma skill em Claude Code, Codex etc. (polyskill).</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Menos e mais</span><p class="text-sm text-neutral-400 mt-1">Codigo auditavel vence complexidade impressionante.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 4 -->
+          <section id="topico-4" data-inema-topic="modulo-3-6#topico-4" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">4</span>
+              <h2 class="text-2xl font-bold">📒 O "segundo cerebro" vira memoria</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m36-t4-p1">Agora o segundo sentido de "cerebro". Voce ja viu na Identidade (T3-2) que a conversa <strong>esquece</strong> ao fechar — a janela de contexto e como a RAM, esvazia. Para o Jarvis lembrar de voce de verdade, ele precisa de <strong class="text-purple-400">memoria persistente</strong>: anotacoes que sobrevivem entre as sessoes. Esse acervo e o que chamamos de <strong>segundo cerebro</strong> — emprestando o termo da produtividade pessoal (o "Building a Second Brain" do Tiago Forte): um sistema externo onde voce guarda o que nao cabe na cabeca.</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m36-t4-p2">Mas aqui vem o perigo. Se voce simplesmente joga TUDO num monte de notas — decisoes, fatos, sentimentos, lembretes — o segundo cerebro <strong>incha</strong> e vira um sotao bagunçado. Quando o Jarvis precisa achar algo, encontra ruido. A solucao nao e ter menos memoria; e <strong class="text-purple-400">organiza-la em zonas</strong>, cada uma com um proposito. E dai que nasce a ideia dos "3 cerebros" (proximo topico).</p>
+
+            <!-- TIMELINE -->
+            <div class="space-y-4 mb-6">
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">1</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Sem memoria</h4><p class="text-sm text-neutral-400">Cada conversa comeca do zero. Ele te trata como estranho todo dia.</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">2</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Memoria como monte unico</h4><p class="text-sm text-neutral-400">Ele lembra — mas tudo no mesmo balde. Acha ruido, mistura fato com sentimento, incha.</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">3</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Memoria organizada em zonas</h4><p class="text-sm text-neutral-400">Cada coisa no seu lugar (Projeto / Self / Conhecimento). Ele acha rapido e raciocina melhor.</p></div>
+              </div>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>Memoria persistente</strong> e a que sobrevive ao fechar a conversa — guardada em arquivos no disco, nao na janela de contexto. <strong>Segundo cerebro</strong> e o nome desse acervo externo de notas. <strong>Inbox</strong> (caixa de entrada) e onde toda nota nova cai primeiro, antes de ser arquivada na zona certa.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Segundo cerebro</span><p class="text-sm text-neutral-400 mt-1">Acervo externo de notas que sobrevive entre sessoes.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Memoria persistente</span><p class="text-sm text-neutral-400 mt-1">O que fica no disco, ao contrario da janela de contexto que esvazia.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Inchaco do monte unico</span><p class="text-sm text-neutral-400 mt-1">Tudo no mesmo balde vira ruido; o problema nao e quantidade, e ordem.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Organizar em zonas</span><p class="text-sm text-neutral-400 mt-1">Separar por proposito da ordem e melhora a busca.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 5 -->
+          <section id="topico-5" data-inema-topic="modulo-3-6#topico-5" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">5</span>
+              <h2 class="text-2xl font-bold">🧠 Os 3 cerebros (memoria)</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m36-t5-p1">Aqui esta o coracao do segundo sentido de "cerebros". Em vez de um monte de notas, a memoria do Jarvis se divide em <strong class="text-purple-400">tres zonas</strong>, cada uma com uma natureza diferente. Pense em tres gavetas de um arquivo: o que muda toda hora nao mora junto com o que quase nunca muda.</p>
+
+            <!-- SVG principal: motor trocavel + 3 cerebros -->
+            <div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+              <svg viewBox="0 0 980 320" class="w-full h-auto" role="img" aria-label="A esquerda, o motor LLM trocavel (anthropic, openrouter, ollama) ligado por uma tomada ao agente; a direita, a memoria dividida em tres cerebros — Projeto, Self e Conhecimento — alimentados por uma inbox unica">
+                <defs>
+                  <filter id="m36-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  <pattern id="m36-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#a855f7" opacity="0.12"/></pattern>
+                  <marker id="m36-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#c084fc"/></marker>
+                  <marker id="m36-ahc" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+                </defs>
+                <rect x="0" y="0" width="980" height="320" fill="url(#m36-grid)"/>
+
+                <text x="225" y="30" text-anchor="middle" fill="#c084fc" font-family="Inter,sans-serif" font-size="14" font-weight="600">CEREBRO 1 · o motor LLM (trocavel)</text>
+                <g font-family="Inter,sans-serif">
+                  <rect x="40" y="58" width="150" height="38" rx="9" fill="#1a1230" stroke="#a855f7" stroke-width="2" class="wf-a"/><text x="115" y="82" text-anchor="middle" fill="#e9d5ff" font-size="13">anthropic</text>
+                  <rect x="40" y="108" width="150" height="38" rx="9" fill="#1a1230" stroke="#a855f7" stroke-width="2" class="wf-a"/><text x="115" y="132" text-anchor="middle" fill="#e9d5ff" font-size="13">openrouter</text>
+                  <rect x="40" y="158" width="150" height="38" rx="9" fill="#1a1230" stroke="#a855f7" stroke-width="2" class="wf-a"/><text x="115" y="182" text-anchor="middle" fill="#e9d5ff" font-size="13">ollama (local)</text>
+                  <path d="M190,127 L262,127" fill="none" stroke="#c084fc" stroke-width="2" marker-end="url(#m36-ah)"/>
+                  <text x="226" y="118" text-anchor="middle" fill="#9ca3af" font-size="11">.env</text>
+                  <g filter="url(#m36-glow)"><rect x="262" y="98" width="128" height="60" rx="13" fill="#1a1230" stroke="#c084fc" stroke-width="2.5"/></g>
+                  <text x="326" y="124" text-anchor="middle" fill="#c084fc" font-size="13" font-weight="700">agente</text>
+                  <text x="326" y="142" text-anchor="middle" fill="#a7f3d0" font-size="11">a tomada</text>
+                </g>
+
+                <line x1="450" y1="36" x2="450" y2="290" stroke="#374151" stroke-width="1.5" stroke-dasharray="6 6"/>
+
+                <text x="715" y="30" text-anchor="middle" fill="#38bdf8" font-family="Inter,sans-serif" font-size="14" font-weight="600">CEREBRO 2 · a memoria (3 zonas)</text>
+                <g font-family="Inter,sans-serif">
+                  <rect x="630" y="50" width="170" height="40" rx="10" fill="#0c2030" stroke="#38bdf8" stroke-width="2"/><text x="715" y="68" text-anchor="middle" fill="#bae6fd" font-size="13">📥 inbox unica</text><text x="715" y="84" text-anchor="middle" fill="#7dd3fc" font-size="10">/triagem roteia</text>
+                  <path d="M660,90 L545,150" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m36-ahc)"/>
+                  <path d="M715,90 L715,150" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m36-ahc)"/>
+                  <path d="M770,90 L885,150" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m36-ahc)"/>
+                  <rect x="475" y="152" width="140" height="116" rx="12" fill="#1a1230" stroke="#a855f7" stroke-width="2"/><text x="545" y="178" text-anchor="middle" fill="#c084fc" font-size="13" font-weight="700">Projeto</text><text x="545" y="200" text-anchor="middle" fill="#cbd5e1" font-size="10">episodico</text><text x="545" y="218" text-anchor="middle" fill="#94a3b8" font-size="10">o que rolou,</text><text x="545" y="232" text-anchor="middle" fill="#94a3b8" font-size="10">decisoes</text>
+                  <rect x="645" y="152" width="140" height="116" rx="12" fill="#1a1230" stroke="#a855f7" stroke-width="2"/><text x="715" y="178" text-anchor="middle" fill="#c084fc" font-size="13" font-weight="700">Self</text><text x="715" y="200" text-anchor="middle" fill="#cbd5e1" font-size="10">identidade</text><text x="715" y="218" text-anchor="middle" fill="#94a3b8" font-size="10">valores, duvidas</text><text x="715" y="232" text-anchor="middle" fill="#94a3b8" font-size="10">muda devagar</text>
+                  <rect x="815" y="152" width="140" height="116" rx="12" fill="#1a1230" stroke="#a855f7" stroke-width="2"/><text x="885" y="178" text-anchor="middle" fill="#c084fc" font-size="13" font-weight="700">Conhecimento</text><text x="885" y="200" text-anchor="middle" fill="#cbd5e1" font-size="10">referencia</text><text x="885" y="218" text-anchor="middle" fill="#94a3b8" font-size="10">fatos que so</text><text x="885" y="232" text-anchor="middle" fill="#94a3b8" font-size="10">acumulam</text>
+                  <path d="M615,210 L645,210" fill="none" stroke="#7dd3fc" stroke-width="1.5" stroke-dasharray="3 3"/><path d="M785,210 L815,210" fill="none" stroke="#7dd3fc" stroke-width="1.5" stroke-dasharray="3 3"/>
+                  <text x="715" y="290" text-anchor="middle" fill="#7dd3fc" font-size="11">[[wikilinks]] cruzam as tres zonas</text>
+                </g>
+              </svg>
+              <p class="text-xs text-neutral-400 mt-1 px-1">A esquerda, o <span class="text-purple-400">motor LLM</span> e trocavel: tres provedores entram na mesma "tomada" do agente via <code class="px-1 rounded bg-dark-700 text-purple-300">.env</code>. A direita, a <span class="text-sky-400">memoria</span> e dividida: uma <span class="text-sky-400">inbox unica</span> recebe tudo e a skill <code class="px-1 rounded bg-dark-700 text-sky-300">/triagem</code> roteia para <strong>Projeto</strong> (o que rolou), <strong>Self</strong> (quem ele e) ou <strong>Conhecimento</strong> (fatos). Os <code class="px-1 rounded bg-dark-700 text-sky-300">[[wikilinks]]</code> costuram as tres.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-5">
+                <h4 class="font-bold text-purple-400 mb-2">📦 Projeto <span class="text-xs font-normal text-neutral-400">(episodico)</span></h4>
+                <p class="text-sm text-neutral-300">O que aconteceu: tarefas, decisoes, o andamento das coisas. Muda toda hora — e o "diario" do Jarvis.</p>
+              </div>
+              <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-5">
+                <h4 class="font-bold text-purple-400 mb-2">🪪 Self <span class="text-xs font-normal text-neutral-400">(identidade)</span></h4>
+                <p class="text-sm text-neutral-300">Quem ele e e quem voce e: valores, tom, preferencias, duvidas em aberto. Muda <strong>devagar</strong> — e estavel de proposito.</p>
+              </div>
+              <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-5">
+                <h4 class="font-bold text-purple-400 mb-2">📚 Conhecimento <span class="text-xs font-normal text-neutral-400">(referencia)</span></h4>
+                <p class="text-sm text-neutral-300">Fatos que so acumulam: receitas, contatos, anotacoes de estudo. Quase nunca apaga — so cresce.</p>
+              </div>
+            </div>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🔗</span> A cola entre as zonas</h3>
+              <p class="text-neutral-300 text-sm mb-3">Uma <strong>inbox unica</strong> recebe toda nota nova; uma skill <code class="px-1 rounded bg-dark-700 text-blue-300">/triagem</code> le e roteia cada uma para a zona certa — voce nao precisa decidir na hora. E os <strong>[[wikilinks]]</strong> (aquele "[[nome]]" entre colchetes duplos, herdado de wikis e do Obsidian) ligam uma nota a outra <strong>atravessando as tres zonas</strong>: uma decisao de Projeto pode apontar para um valor de Self e para um fato de Conhecimento.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Projeto (episodico)</span><p class="text-sm text-neutral-400 mt-1">O que rolou e as decisoes — a memoria que muda toda hora.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Self (identidade)</span><p class="text-sm text-neutral-400 mt-1">Valores e duvidas — a memoria que muda devagar.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Conhecimento (referencia)</span><p class="text-sm text-neutral-400 mt-1">Fatos que so acumulam.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Inbox + /triagem + [[wikilinks]]</span><p class="text-sm text-neutral-400 mt-1">Uma entrada que roteia, e links que cruzam as tres zonas.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 6 -->
+          <section id="topico-6" data-inema-topic="modulo-3-6#topico-6" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">6</span>
+              <h2 class="text-2xl font-bold">🗂️ Memoria = filesystem + indice</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m36-t6-p1">Como, na pratica, essa memoria existe no disco? A resposta e desconcertantemente simples — e por isso ela e robusta. A memoria do Jarvis sao <strong class="text-purple-400">arquivos de texto</strong> (formato <code class="px-1.5 py-0.5 rounded bg-dark-700 text-purple-300 text-sm">.md</code>, Markdown) que voce mesmo consegue abrir e ler. Esses arquivos sao <strong>a verdade</strong>. Por cima deles roda um <strong class="text-purple-400">indice de busca</strong> (SQLite com FTS5/BM25) que e so um atalho para achar a nota certa rapido — se o indice sumir, voce reconstroi a partir dos arquivos.</p>
+
+            <!-- SVG 2: filesystem (verdade) + indice (atalho) -->
+            <div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+              <svg viewBox="0 0 980 210" class="w-full h-auto" role="img" aria-label="Os arquivos .md sao a verdade; o indice SQLite FTS5 e um atalho descartavel que pode ser reconstruido a partir dos arquivos; o CLAUDE.md e o roteador lido no inicio de cada sessao">
+                <defs>
+                  <filter id="m36b-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  <pattern id="m36b-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#a855f7" opacity="0.12"/></pattern>
+                  <marker id="m36b-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#c084fc"/></marker>
+                  <marker id="m36b-ahc" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+                </defs>
+                <rect x="0" y="0" width="980" height="210" fill="url(#m36b-grid)"/>
+
+                <text x="170" y="28" text-anchor="middle" fill="#c084fc" font-family="Inter,sans-serif" font-size="13" font-weight="600">A VERDADE · arquivos .md</text>
+                <g font-family="Inter,sans-serif">
+                  <g filter="url(#m36b-glow)"><rect x="60" y="46" width="220" height="120" rx="13" fill="#1a1230" stroke="#c084fc" stroke-width="2.5"/></g>
+                  <text x="170" y="74" text-anchor="middle" fill="#e9d5ff" font-size="12">projeto/decisoes.md</text>
+                  <text x="170" y="98" text-anchor="middle" fill="#e9d5ff" font-size="12">self/valores.md</text>
+                  <text x="170" y="122" text-anchor="middle" fill="#e9d5ff" font-size="12">conhecimento/notas.md</text>
+                  <text x="170" y="150" text-anchor="middle" fill="#a7f3d0" font-size="11">legivel · versionavel · so texto</text>
+                </g>
+
+                <path d="M280,106 L360,106" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m36b-ahc)"/>
+                <text x="320" y="96" text-anchor="middle" fill="#9ca3af" font-family="Inter,sans-serif" font-size="11">indexa</text>
+                <path d="M360,128 L280,128" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#m36b-ah)"/>
+                <text x="320" y="148" text-anchor="middle" fill="#9ca3af" font-family="Inter,sans-serif" font-size="10">reconstroi</text>
+
+                <text x="470" y="28" text-anchor="middle" fill="#38bdf8" font-family="Inter,sans-serif" font-size="13" font-weight="600">O ATALHO · indice (descartavel)</text>
+                <g font-family="Inter,sans-serif">
+                  <rect x="370" y="58" width="200" height="96" rx="13" fill="#0c2030" stroke="#38bdf8" stroke-width="2"/>
+                  <text x="470" y="92" text-anchor="middle" fill="#bae6fd" font-size="13" font-weight="700">SQLite FTS5 / BM25</text>
+                  <text x="470" y="116" text-anchor="middle" fill="#7dd3fc" font-size="11">busca por palavra</text>
+                  <text x="470" y="136" text-anchor="middle" fill="#94a3b8" font-size="10">sumiu? reconstroi dos .md</text>
+                </g>
+
+                <line x1="610" y1="40" x2="610" y2="170" stroke="#374151" stroke-width="1.5" stroke-dasharray="6 6"/>
+
+                <text x="800" y="28" text-anchor="middle" fill="#c084fc" font-family="Inter,sans-serif" font-size="13" font-weight="600">O ROTEADOR · CLAUDE.md</text>
+                <g font-family="Inter,sans-serif">
+                  <rect x="660" y="50" width="280" height="50" rx="11" fill="#1a1230" stroke="#a855f7" stroke-width="2"/>
+                  <text x="800" y="80" text-anchor="middle" fill="#e9d5ff" font-size="12">CLAUDE.md / AGENTS.md</text>
+                  <path d="M800,100 L800,128" fill="none" stroke="#c084fc" stroke-width="2" marker-end="url(#m36b-ah)"/>
+                  <rect x="660" y="130" width="280" height="48" rx="11" fill="#0e2018" stroke="#34d399" stroke-width="2"/>
+                  <text x="800" y="152" text-anchor="middle" fill="#a7f3d0" font-size="12">lido no INICIO de cada sessao</text>
+                  <text x="800" y="170" text-anchor="middle" fill="#86efac" font-size="10">aponta onde achar cada coisa</text>
+                </g>
+              </svg>
+              <p class="text-xs text-neutral-400 mt-1 px-1">Os <span class="text-purple-400">arquivos .md</span> sao a verdade — legiveis e versionaveis. O <span class="text-sky-400">indice SQLite</span> e so um atalho de busca: se sumir, reconstroi a partir dos arquivos. E o <code class="px-1 rounded bg-dark-700 text-purple-300">CLAUDE.md</code> e o <span class="text-purple-400">roteador</span> lido no inicio de cada sessao, dizendo ao Jarvis onde achar cada cerebro de memoria.</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">🧭</span> O CLAUDE.md e o roteador</h3>
+              <p class="text-neutral-300 text-sm mb-3">No comeco de cada sessao, o Jarvis le um arquivo-mestre — o <strong>CLAUDE.md</strong> (ou AGENTS.md). Ele nao guarda tudo: ele <strong>aponta</strong>. "Decisoes ficam em projeto/. Meus valores em self/. Para buscar fato, use o indice." E o mapa que diz onde estao os tres cerebros — por isso e a primeira coisa lida.</p>
+              <p class="text-neutral-400 text-xs">E a mesma logica do contrato de Identidade (T3-2): o arquivo no inicio define o jogo.</p>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <h3 class="text-base font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Por que isso sobrevive ao hype</h3>
+              <p class="text-sm text-neutral-300">Modas de IA vem e vao, mas <strong>texto e texto</strong>. Sua memoria em arquivos <code class="px-1 rounded bg-dark-700 text-primary">.md</code> abre em qualquer editor, entra no Git, migra para qualquer ferramenta futura. Voce nao fica refem de um banco de dados proprietario nem de um formato que so uma empresa entende. "Sobrevive porque e so texto."</p>
+            </div>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-blue-400">Novo aqui?</strong> <strong>Filesystem</strong> e simplesmente o sistema de arquivos do seu computador — pastas e arquivos. <strong>SQLite</strong> e um banco de dados que cabe num unico arquivo. <strong>FTS5/BM25</strong> sao o mecanismo de "busca por texto completo" do SQLite e a formula que ordena os resultados por relevancia (busca por <em>palavra</em>). Um <strong>banco vetorial</strong> e uma alternativa que busca por <em>significado</em> em vez de palavra — util quando voce nao lembra o termo exato.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Arquivos .md = a verdade</span><p class="text-sm text-neutral-400 mt-1">Texto legivel no disco; tudo o mais e derivado deles.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">SQLite FTS5/BM25</span><p class="text-sm text-neutral-400 mt-1">Indice de busca por palavra; um atalho descartavel e reconstruivel.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">CLAUDE.md = roteador</span><p class="text-sm text-neutral-400 mt-1">Lido no inicio da sessao; aponta onde mora cada cerebro.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Banco vetorial</span><p class="text-sm text-neutral-400 mt-1">Busca por significado, alternativa/complemento ao FTS5.</p></div>
+            </div>
+
+            <!-- CHECAGEM LEVE -->
+            <div data-inema-check="modulo-3-6#q1" class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6">
+              <p class="font-medium mb-4">Auto-checagem (opcional): no modelo deste curso, o que "cerebros" significa?</p>
+              <div class="inema-check-options space-y-2">
+                <button type="button" data-inema-check-option="0" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Um conselho de varios LLMs que votam ao vivo e um juiz escolhe a melhor resposta.</button>
+                <button type="button" data-inema-check-option="1" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">(a) o motor LLM trocavel por .env e (b) a memoria organizada em 3 zonas — Projeto, Self, Conhecimento.</button>
+                <button type="button" data-inema-check-option="2" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Um banco de dados proprietario onde toda a memoria fica trancada num formato unico.</button>
+              </div>
+              <div data-inema-check-feedback class="mt-4 text-sm" role="status" aria-live="polite"></div>
+            </div>
+
+            <div class="flex justify-start mt-6">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- RESUMO -->
+          <section class="mb-8">
+            <div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+              <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumo do modulo</h2>
+              <div class="space-y-4 mb-8">
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">O cerebro = o motor LLM</strong><span class="text-neutral-400"> — a peca que pensa, plugavel por uma tomada padrao. "Um cerebro, varias bocas."</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Hot-swap por .env</strong><span class="text-neutral-400"> — troca de motor (anthropic / openrouter / ollama) sem mexer no codigo; decisao economica por tarefa.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Nao existe "conselho de modelos"</strong><span class="text-neutral-400"> — "multiplos modelos" honesto = substituicao + portabilidade (polyskill), nao votacao simultanea.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">O segundo cerebro vira memoria</strong><span class="text-neutral-400"> — um monte unico incha; organizar em zonas da ordem.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Os 3 cerebros</strong><span class="text-neutral-400"> — Projeto (episodico), Self (identidade), Conhecimento (referencia) + inbox/triagem + [[wikilinks]].</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Memoria = filesystem + indice</strong><span class="text-neutral-400"> — .md sao a verdade, SQLite FTS5 e o atalho, CLAUDE.md e o roteador. Sobrevive porque e so texto.</span></div></div>
+              </div>
+              <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+                <h3 class="font-semibold text-purple-400 mb-2">Voce concluiu a Anatomia (Trilha 3):</h3>
+                <p class="text-neutral-300">Canais · Identidade · Ferramentas · Skills · Agentes · <strong>Cerebros</strong>. As 6 camadas que viram um chat num assistente que vê, lembra e age. Proximo: na Trilha 4 voce junta tudo isso numa arquitetura e constroi.</p>
+              </div>
+              <div class="flex flex-col sm:flex-row gap-4">
+                <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para a Trilha</a>
+                <a href="index.html" class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors">Concluir a trilha →</a>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-dark-600 py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
+    </div>
+  </footer>
+
+  <!-- Scripts nucleo v1 -->
+  <script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+
+  <!-- Camada de aprendizagem -->
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-3-6#q1', {
+          answer: 1,
+          explain: {
+            0: 'Esse e justamente o mito que o modulo desmonta — nao ha conselho de LLMs votando ao vivo.',
+            1: 'Isso! Cerebros = (a) o motor LLM trocavel por .env e (b) a memoria em 3 zonas (Projeto, Self, Conhecimento).',
+            2: 'Ao contrario: a memoria sao arquivos .md legiveis; o indice e descartavel e reconstruivel. Nada fica trancado.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

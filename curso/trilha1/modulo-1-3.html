@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="inema-course" content="jarvis">
+  <title>Modulo 1.3 — De chatbot a agente: quando a IA passa a agir | Jarvis · INEMA.CLUB</title>
+  <meta name="description" content="O salto de responder para fazer: o loop agentico, as ferramentas (tools), a metafora LLM-OS de Karpathy e como ela virou produto (AIOS, Operator, Project Jarvis).">
+
+  <!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+
+  <!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+  <script type="application/json" data-inema-manifest>
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/learn.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .bg-emerald-900\/30 { background-color: rgba(5,150,105,0.10); }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== vermelho (alertas) no claro ===== */
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a href="#conteudo" class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg">Pular para o conteudo</a>
+
+  <!-- NAVIGATION (completo, identico em todas as paginas) -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-3">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🤖</span>
+            <span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a id="nav-t1" href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a id="nav-t2" href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+          </a>
+          <a id="nav-t3" href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span>
+          </a>
+          <a id="nav-t4" href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+          </a>
+          <a id="nav-t5" href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+          </a>
+          <a id="nav-t6" href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span>
+          </a>
+
+          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Minha jornada">
+            <span aria-hidden="true">◷</span><span class="hidden md:inline">Jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge data-count="0"></span>
+          </button>
+
+          <div class="relative">
+            <button type="button" data-inema-appearance-toggle="[data-inema-appearance]" aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Aparencia">
+              <span aria-hidden="true">◑</span><span class="hidden md:inline">Aparencia</span>
+            </button>
+            <div data-inema-appearance class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left">
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-theme="inema-dark" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Escuro</button>
+                  <button data-inema-set-theme="claro" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Claro</button>
+                  <button data-inema-set-theme="sepia" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sepia</button>
+                  <button data-inema-set-theme="foco" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Foco</button>
+                  <button data-inema-set-theme="contraste" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Alto contraste</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Fonte</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-font="inter" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Inter</button>
+                  <button data-inema-set-font="system" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sistema</button>
+                  <button data-inema-set-font="leitura" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Leitura</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tamanho</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-fontscale="100" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A</button>
+                  <button data-inema-set-fontscale="112" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A+</button>
+                  <button data-inema-set-fontscale="125" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A++</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Entrelinha</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-leading="1.45" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Compacto</button>
+                  <button data-inema-set-leading="1.7" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Confortavel</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+                <div class="inema-accent-grid flex flex-wrap gap-2">
+                  <button data-inema-set-accent="emerald" class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" title="Emerald"></button>
+                  <button data-inema-set-accent="blue" class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" title="Blue"></button>
+                  <button data-inema-set-accent="purple" class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" title="Purple"></button>
+                  <button data-inema-set-accent="amber" class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" title="Amber"></button>
+                  <button data-inema-set-accent="teal" class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" title="Teal"></button>
+                  <button data-inema-set-accent="rose" class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" title="Rose"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" title="Alternar claro/escuro">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo">
+    <header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+          <a href="../../index.html" class="hover:text-emerald-400">Inicio</a><span>/</span>
+          <a href="index.html" class="hover:text-emerald-400">Trilha 1</a><span>/</span>
+          <span class="text-emerald-400">Modulo 1.3</span>
+        </nav>
+        <span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">MODULO 1.3</span>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">⚙️ De chatbot a agente: quando a IA passa a agir</h1>
+        <p class="text-lg text-neutral-400 max-w-3xl">Um chatbot responde. Um <strong class="text-emerald-400">agente</strong> faz. Neste modulo voce vai entender a diferenca mais importante de todo o curso: o momento em que a IA deixa de ser uma caixinha que devolve texto e passa a usar ferramentas, num ciclo, para mudar o mundo de verdade — mandar um email, ler sua agenda, terminar uma tarefa sozinha.</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">6</div><div class="text-xs text-neutral-400">Topicos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">~30</div><div class="text-xs text-neutral-400">Minutos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Basico</div><div class="text-xs text-neutral-400">Nivel</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Teoria</div><div class="text-xs text-neutral-400">Tipo</div></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="lg:flex lg:gap-10">
+
+        <!-- TOC sticky -->
+        <aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+          <nav data-inema-toc aria-label="Indice da pagina" class="lg:sticky lg:top-20">
+            <p class="text-sm text-neutral-400 mb-2">Secao <span class="inema-toc-pos" data-inema-section-counter>1</span> de 6</p>
+            <ol class="space-y-1 text-sm">
+              <li><a href="#topico-1" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400">1. De responder a fazer</a></li>
+              <li><a href="#topico-2" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400">2. O loop agentico</a></li>
+              <li><a href="#topico-3" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400">3. Ferramentas (tools)</a></li>
+              <li><a href="#topico-4" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400">4. A metafora LLM-OS</a></li>
+              <li><a href="#topico-5" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400">5. AIOS, Operator, Jarvis</a></li>
+              <li><a href="#topico-6" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400">6. O que muda pra voce</a></li>
+            </ol>
+            <div class="mt-4" data-inema-meter="modulo:1-3" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 1.3">
+              <div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-emerald-500" data-inema-meter-fill style="width:0%"></div></div>
+              <span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span>
+            </div>
+          </nav>
+        </aside>
+
+        <div class="lg:flex-1 min-w-0 inema-prose">
+
+          <!-- TOPICO 1 -->
+          <section id="topico-1" data-inema-topic="modulo-1-3#topico-1" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">1</span>
+              <h2 class="text-2xl font-bold">🚀 O salto: de responder a fazer</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m13-t1-p1">Nos modulos 1.1 e 1.2 voce viu o cerebro: o <strong>LLM</strong>, aquele programa treinado em muito texto que preve a proxima palavra. Sozinho, ele e brilhante e <strong>completamente preso</strong>: so sabe fazer uma coisa — produzir texto. Voce pergunta, ele responde. Como uma pessoa genial trancada num quarto branco, sem janela, sem telefone, sem mãos. Ela conversa muito bem, mas nao consegue tocar em nada do lado de fora.</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m13-t1-p2">O salto deste modulo — e a fronteira entre um <strong>chatbot</strong> e um <strong class="text-emerald-400">Jarvis</strong> — e dar a essa pessoa um telefone, um teclado e uma porta. De repente ela nao so fala sobre marcar uma reuniao: ela <strong>abre a sua agenda e marca</strong>. Esse "fazer no mundo" tem um nome: <strong class="text-emerald-400">agente</strong>.</p>
+
+            <div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-emerald-400 mb-3 flex items-center"><span class="mr-2">🧭</span> A definicao que voce vai levar pro curso inteiro</h3>
+              <p class="text-neutral-300 mb-4">Um <strong>agente</strong> nao e um modelo "mais inteligente". E o <strong>mesmo</strong> LLM, ganhando duas coisas:</p>
+              <ul class="space-y-2 text-neutral-300">
+                <li class="flex items-start gap-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Ferramentas</strong> — meios para tocar no mundo real (buscar na web, ler um arquivo, mandar mensagem).</span></li>
+                <li class="flex items-start gap-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Um ciclo</strong> — a liberdade de usar essas ferramentas em sequencia, decidindo o proximo passo a cada rodada, ate terminar a tarefa.</span></li>
+              </ul>
+              <p class="text-neutral-400 text-sm mt-4">Em uma frase: <em>agente = LLM + ferramentas + um loop que decide o que fazer a seguir.</em></p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+                <h4 class="font-bold text-red-400 mb-4">✗ Chatbot — so RESPONDE</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>"Aqui esta um modelo de email que voce pode enviar..."</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Devolve texto e para. O trabalho real fica com voce.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Nao ve sua agenda, nao acessa seus arquivos.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Toda acao depende de voce copiar, colar e clicar.</span></li>
+                </ul>
+              </div>
+              <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+                <h4 class="font-bold text-emerald-400 mb-4">✓ Agente — AGE no mundo</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>"Pronto, enviei o email para a Ana e marquei a call de 15h."</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Executa a tarefa de ponta a ponta e te avisa do resultado.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Le sua agenda, busca na web, abre arquivos — com permissao.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Voce delega; ele faz os passos sozinho.</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>Chatbot</strong> = um programa de IA que so troca mensagens com voce (ChatGPT na tela e o exemplo classico). <strong>Agente</strong> = uma IA que, alem de conversar, pode <em>executar acoes</em> usando ferramentas, num ciclo, ate concluir uma tarefa. A diferenca nao e "ser mais esperto" — e ter <strong>maos</strong> e a <strong>liberdade de usa-las em sequencia</strong>.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Chatbot</span><p class="text-sm text-neutral-400 mt-1">IA que so conversa: voce pergunta, ela responde, fim.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Agente</span><p class="text-sm text-neutral-400 mt-1">LLM + ferramentas + um loop: alem de falar, ele faz.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Acao no mundo</span><p class="text-sm text-neutral-400 mt-1">A marca do agente: mudar algo de fato (email, agenda, arquivo).</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Delegar &gt; perguntar</span><p class="text-sm text-neutral-400 mt-1">Voce para de pedir respostas e passa a entregar tarefas.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 2 -->
+          <section id="topico-2" data-inema-topic="modulo-1-3#topico-2" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">2</span>
+              <h2 class="text-2xl font-bold">🔁 O loop agentico</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m13-t2-p1">O coracao de um agente e um ciclo simples, repetido ate a tarefa acabar. Chamamos de <strong class="text-emerald-400">loop agentico</strong>. Em vez de uma unica resposta, o agente roda voltas: a cada volta ele pensa, talvez use uma ferramenta, le o que voltou e decide o proximo passo. Quando ja tem o que precisa, ele para e responde a voce.</p>
+
+            <div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+              <svg viewBox="0 0 980 320" class="w-full h-auto" role="img" aria-label="Diagrama do loop agentico: o pedido entra; o agente pensa, chama uma ferramenta, le o resultado e decide se repete o ciclo ou responde; um teto de iteracoes limita o numero de voltas.">
+                <defs>
+                  <filter id="m13-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  <pattern id="m13-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#10b981" opacity="0.12"/></pattern>
+                  <marker id="m13-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#34d399"/></marker>
+                  <marker id="m13-ahc" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+                </defs>
+                <rect x="0" y="0" width="980" height="320" fill="url(#m13-grid)"/>
+                <text x="490" y="30" text-anchor="middle" fill="#34d399" font-family="Inter,sans-serif" font-size="14" font-weight="600">O loop agentico — uma volta de cada vez</text>
+
+                <!-- pedido -->
+                <g font-family="Inter,sans-serif">
+                  <rect x="40" y="135" width="130" height="56" rx="13" fill="#0e2018" stroke="#34d399" stroke-width="2"/>
+                  <text x="105" y="160" text-anchor="middle" fill="#a7f3d0" font-size="13">seu</text>
+                  <text x="105" y="178" text-anchor="middle" fill="#a7f3d0" font-size="13">pedido</text>
+                  <path d="M170,163 L228,163" fill="none" stroke="#34d399" stroke-width="2" marker-end="url(#m13-ah)"/>
+                </g>
+
+                <!-- pensa (foco, com glow) -->
+                <g font-family="Inter,sans-serif" filter="url(#m13-glow)">
+                  <rect x="230" y="120" width="150" height="86" rx="15" fill="#0e2018" stroke="#34d399" stroke-width="2.5"/>
+                </g>
+                <g font-family="Inter,sans-serif">
+                  <text x="305" y="152" text-anchor="middle" fill="#34d399" font-size="14" font-weight="700">1. PENSA</text>
+                  <text x="305" y="174" text-anchor="middle" fill="#a7f3d0" font-size="11">"o que falta</text>
+                  <text x="305" y="190" text-anchor="middle" fill="#a7f3d0" font-size="11">para resolver?"</text>
+                  <path d="M380,163 L438,163" fill="none" stroke="#34d399" stroke-width="2" marker-end="url(#m13-ah)"/>
+                </g>
+
+                <!-- chama ferramenta (ciano) -->
+                <g font-family="Inter,sans-serif">
+                  <rect x="440" y="120" width="150" height="86" rx="15" fill="#0e1f24" stroke="#38bdf8" stroke-width="2"/>
+                  <text x="515" y="152" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="700">2. CHAMA</text>
+                  <text x="515" y="172" text-anchor="middle" fill="#bae6fd" font-size="11">uma ferramenta</text>
+                  <text x="515" y="190" text-anchor="middle" fill="#7dd3fc" font-size="11">(buscar, ler...)</text>
+                  <path d="M590,163 L648,163" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m13-ahc)"/>
+                </g>
+
+                <!-- le resultado -->
+                <g font-family="Inter,sans-serif">
+                  <rect x="650" y="120" width="150" height="86" rx="15" fill="#0e1f24" stroke="#38bdf8" stroke-width="2"/>
+                  <text x="725" y="152" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="700">3. LE</text>
+                  <text x="725" y="172" text-anchor="middle" fill="#bae6fd" font-size="11">o resultado</text>
+                  <text x="725" y="190" text-anchor="middle" fill="#7dd3fc" font-size="11">que voltou</text>
+                </g>
+
+                <!-- volta para pensa (loop) -->
+                <path d="M725,206 L725,260 L305,260 L305,206" fill="none" stroke="#34d399" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#m13-ah)"/>
+                <text x="515" y="283" text-anchor="middle" fill="#34d399" font-family="Inter,sans-serif" font-size="12" font-weight="600">repete enquanto faltar — ate o teto de iteracoes</text>
+
+                <!-- resposta -->
+                <g font-family="Inter,sans-serif">
+                  <path d="M800,163 L862,163" fill="none" stroke="#34d399" stroke-width="2" marker-end="url(#m13-ah)"/>
+                  <rect x="864" y="135" width="100" height="56" rx="13" fill="#0e2018" stroke="#34d399" stroke-width="2"/>
+                  <text x="914" y="160" text-anchor="middle" fill="#a7f3d0" font-size="12">terminou:</text>
+                  <text x="914" y="178" text-anchor="middle" fill="#a7f3d0" font-size="12">responde ✓</text>
+                </g>
+              </svg>
+              <p class="text-xs text-neutral-400 mt-1 px-1">Em <span class="text-emerald-400">verde</span>, o raciocinio do modelo; em <span class="text-sky-400">ciano</span>, a parte que toca o mundo (a ferramenta). A seta tracejada e o <strong>loop</strong>: o agente volta a pensar quantas vezes precisar — limitado por um <span class="text-emerald-400">teto de iteracoes</span> para nao girar para sempre.</p>
+            </div>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Um exemplo concreto: "qual a previsao pra amanha em Salvador?"</h3>
+              <ul class="space-y-2 text-neutral-300 text-sm">
+                <li class="flex items-start gap-2"><span class="text-blue-400">1.</span><span><strong>Pensa:</strong> "Nao sei a previsao de hoje — preciso buscar."</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">2.</span><span><strong>Chama a ferramenta</strong> de busca na web com "previsao Salvador amanha".</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">3.</span><span><strong>Le o resultado:</strong> "27°C, pancadas de chuva a tarde".</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">4.</span><span><strong>Decide:</strong> "Ja tenho o que preciso." Para o loop e responde com a previsao.</span></li>
+              </ul>
+              <p class="text-neutral-400 text-xs mt-3">Se faltasse algo (ex.: confirmar a cidade), ele daria mais uma volta. Esse vai-e-volta e o que separa um agente de uma resposta unica.</p>
+            </div>
+
+            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> Por que o teto de iteracoes existe</h3>
+              <p class="text-neutral-300 text-sm">Sem um limite, um agente confuso pode entrar em loop infinito — buscando, relendo, buscando de novo — e, na nuvem, gastando dinheiro a cada volta. Por isso todo sistema serio poe um <strong>teto</strong> (ex.: "no maximo 10 voltas"). E um cinto de seguranca: melhor ele parar e dizer "nao consegui" do que rodar sem fim. Voltaremos a isso na Anatomia (Trilha 3) e em "Operar" (Trilha 4).</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Loop agentico</span><p class="text-sm text-neutral-400 mt-1">Pensa → chama ferramenta → le → decide → repete ou responde.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Iteracao</span><p class="text-sm text-neutral-400 mt-1">Uma volta do ciclo. O agente pode dar varias.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Teto de iteracoes</span><p class="text-sm text-neutral-400 mt-1">Limite de voltas para evitar loop infinito e gasto descontrolado.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Criterio de parada</span><p class="text-sm text-neutral-400 mt-1">"Ja tenho o que precisava" — o agente decide quando terminou.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 3 -->
+          <section id="topico-3" data-inema-topic="modulo-1-3#topico-3" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">3</span>
+              <h2 class="text-2xl font-bold">🤲 Ferramentas (tools) = as maos</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m13-t3-p1">Se o loop e o ciclo, as <strong class="text-emerald-400">ferramentas</strong> (em ingles, <strong>tools</strong>) sao o que da poder a cada volta. Uma ferramenta e simplesmente uma <strong>acao que o agente pode pedir</strong>: buscar na web, rodar um pedaco de codigo, ler um arquivo, mandar uma mensagem, consultar sua agenda. Sao as maos e os olhos do Jarvis.</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m13-t3-p2">Tem uma frase que resume bem por que isso importa: sem ferramentas, o modelo <strong>"responde como um estranho"</strong>. Ele nao sabe nada de voce — nao viu sua agenda, nao leu seus emails, nao conhece seus arquivos. Da conselhos genericos. Com ferramentas, ele acessa os <strong>seus</strong> dados reais e vira um assistente de verdade.</p>
+
+            <div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-emerald-400 mb-3 flex items-center"><span class="mr-2">🔧</span> Como o agente "pede" uma ferramenta (tool calling)</h3>
+              <p class="text-neutral-300 text-sm mb-3">O modelo nao executa nada sozinho — ele nao sabe abrir um navegador. O que ele faz e <strong>pedir</strong>: gera um texto estruturado dizendo "quero usar a ferramenta <em>buscar_web</em> com o termo <em>previsao Salvador</em>". O sistema ao redor (o seu Jarvis) e quem realmente executa, pega o resultado e devolve para o modelo na proxima volta do loop. Esse mecanismo tem nome: <strong>tool calling</strong> (ou function calling — "chamada de funcao").</p>
+              <p class="text-neutral-400 text-xs">Pense no modelo como um chefe que dita ordens e num assistente (o sistema) que sai e executa. O chefe nunca toca nas ferramentas — ele decide <em>quais</em> usar e <em>quando</em>.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Exemplos de ferramentas comuns</h3>
+            <div class="space-y-4 mb-6">
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">🔎</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Buscar na web</h4><p class="text-sm text-neutral-400">Resolve o "ele nao sabe de coisas recentes": traz noticia, preco, previsao de hoje.</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">📄</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Ler / escrever arquivos</h4><p class="text-sm text-neutral-400">Abrir um documento seu, resumir, salvar uma nota. O Jarvis passa a trabalhar com o SEU material.</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">💻</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Rodar codigo</h4><p class="text-sm text-neutral-400">Fazer uma conta exata, gerar um grafico, automatizar algo. (Poder forte — pede cuidado, veremos na T4.)</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">📨</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Mandar mensagem / agenda</h4><p class="text-sm text-neutral-400">Enviar um email, marcar um evento, te avisar no Telegram. Aqui a IA realmente AGE no mundo.</p></div>
+              </div>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>Ferramenta / tool</strong> = uma acao isolada que o agente pode acionar. <strong>Tool calling</strong> (ou <em>function calling</em>) = o mecanismo pelo qual o modelo "pede" uma ferramenta em vez de execu-la diretamente. Mais para a frente (Trilha 3) voce vai ver o <strong>MCP</strong>, um padrao que conecta ferramentas a qualquer agente de forma segura — o "USB das ferramentas de IA".</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Ferramenta (tool)</span><p class="text-sm text-neutral-400 mt-1">Uma acao que o agente pode pedir: buscar, ler, mandar, rodar.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Tool / function calling</span><p class="text-sm text-neutral-400 mt-1">O modelo PEDE a acao; o sistema EXECUTA e devolve o resultado.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">"Responde como estranho"</span><p class="text-sm text-neutral-400 mt-1">Sem ferramentas, o modelo so da conselho generico — nao ve seus dados.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Maos e olhos</span><p class="text-sm text-neutral-400 mt-1">A metafora: ferramentas dao corpo ao cerebro que so falava.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 4 -->
+          <section id="topico-4" data-inema-topic="modulo-1-3#topico-4" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">4</span>
+              <h2 class="text-2xl font-bold">🧠 A metafora LLM-OS (Karpathy)</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m13-t4-p1">Em setembro de 2023, <strong>Andrej Karpathy</strong> — um dos pesquisadores de IA mais influentes, ex-OpenAI e ex-Tesla — propos uma imagem que mudou como a industria inteira pensa o assunto. A ideia: o LLM nao e "so um chatbot". Ele e o <strong class="text-emerald-400">kernel de um novo sistema operacional</strong>. Karpathy chamou isso de <strong>LLM-OS</strong>.</p>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> O <strong>kernel</strong> e o nucleo de um sistema operacional (como o Windows ou o Android) — a parte central que coordena tudo: a memoria, os programas, os perifericos (impressora, tela, teclado). Dizer que "o LLM e o kernel de um SO de IA" e dizer que ele e o <strong>coracao coordenador</strong> de um sistema novo, com o agente no comando das pecas ao redor.</p>
+            </div>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m13-t4-p2">A forca da metafora esta nas correspondencias. Cada peca de um computador comum tem um equivalente no mundo do agente — e voce ja conheceu todas elas nos modulos anteriores e neste:</p>
+
+            <div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+              <svg viewBox="0 0 980 300" class="w-full h-auto" role="img" aria-label="A metafora LLM-OS: o LLM e o kernel; a janela de contexto e a RAM; as ferramentas sao os perifericos; os agentes e sub-tarefas sao os processos.">
+                <defs>
+                  <filter id="m13b-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  <pattern id="m13b-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#10b981" opacity="0.12"/></pattern>
+                  <marker id="m13b-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+                </defs>
+                <rect x="0" y="0" width="980" height="300" fill="url(#m13b-grid)"/>
+                <text x="490" y="30" text-anchor="middle" fill="#34d399" font-family="Inter,sans-serif" font-size="14" font-weight="600">LLM-OS — o computador, traduzido para o mundo do agente</text>
+
+                <!-- kernel central com glow -->
+                <g filter="url(#m13b-glow)">
+                  <rect x="400" y="115" width="180" height="86" rx="16" fill="#0e2018" stroke="#34d399" stroke-width="2.5"/>
+                </g>
+                <g font-family="Inter,sans-serif">
+                  <text x="490" y="150" text-anchor="middle" fill="#34d399" font-size="16" font-weight="700">LLM</text>
+                  <text x="490" y="172" text-anchor="middle" fill="#a7f3d0" font-size="12">= o KERNEL</text>
+                  <text x="490" y="190" text-anchor="middle" fill="#6ee7b7" font-size="11">o nucleo que coordena</text>
+                </g>
+
+                <!-- RAM: contexto (esquerda) -->
+                <g font-family="Inter,sans-serif">
+                  <rect x="70" y="120" width="190" height="76" rx="14" fill="#0e1f24" stroke="#38bdf8" stroke-width="2"/>
+                  <text x="165" y="150" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="700">janela de contexto</text>
+                  <text x="165" y="172" text-anchor="middle" fill="#bae6fd" font-size="12">= a RAM</text>
+                  <text x="165" y="189" text-anchor="middle" fill="#7dd3fc" font-size="11">memoria de trabalho</text>
+                  <path d="M260,158 L394,158" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m13b-ah)"/>
+                </g>
+
+                <!-- Perifericos: ferramentas (direita) -->
+                <g font-family="Inter,sans-serif">
+                  <rect x="720" y="120" width="190" height="76" rx="14" fill="#0e1f24" stroke="#38bdf8" stroke-width="2"/>
+                  <text x="815" y="150" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="700">ferramentas / tools</text>
+                  <text x="815" y="172" text-anchor="middle" fill="#bae6fd" font-size="12">= os PERIFERICOS</text>
+                  <text x="815" y="189" text-anchor="middle" fill="#7dd3fc" font-size="11">web, arquivos, agenda</text>
+                  <path d="M580,158 L714,158" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m13b-ah)"/>
+                </g>
+
+                <!-- Processos: agentes (abaixo) -->
+                <g font-family="Inter,sans-serif">
+                  <rect x="380" y="232" width="220" height="50" rx="13" fill="#0e1f24" stroke="#38bdf8" stroke-width="2"/>
+                  <text x="490" y="253" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="700">agentes / sub-tarefas = os PROCESSOS</text>
+                  <text x="490" y="271" text-anchor="middle" fill="#7dd3fc" font-size="11">trabalhos que o kernel dispara e coordena</text>
+                  <path d="M490,201 L490,228" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m13b-ah)"/>
+                </g>
+              </svg>
+              <p class="text-xs text-neutral-400 mt-1 px-1">No centro, em <span class="text-emerald-400">verde</span>, o LLM como <strong>kernel</strong> (o coordenador). Em <span class="text-sky-400">ciano</span>, as pecas que ele comanda: a <strong>janela de contexto</strong> faz o papel da RAM (memoria de trabalho do modulo 1.2), as <strong>ferramentas</strong> sao os perifericos, e os <strong>agentes</strong> sao os processos. Mesmo desenho de sempre — so trocando os nomes.</p>
+            </div>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🗺️</span> A tabela de traducao</h3>
+              <ul class="space-y-2 text-neutral-300 text-sm">
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>LLM</strong> &rarr; o <strong>kernel</strong> (o nucleo que coordena tudo).</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Janela de contexto</strong> &rarr; a <strong>RAM</strong> (memoria de trabalho, limitada, esvazia ao fechar — voce viu no modulo 1.2).</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Ferramentas</strong> &rarr; os <strong>perifericos</strong> (teclado, tela, impressora — o que toca o mundo).</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Agentes / sub-tarefas</strong> &rarr; os <strong>processos</strong> (trabalhos que rodam e sao coordenados).</span></li>
+              </ul>
+            </div>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m13-t4-p3">Por que isso importa para voce, leigo? Porque essa metafora virou o <strong>modelo mental da industria inteira</strong>. Quando alguem fala em "Agentic OS" ou "Sistema Operacional de IA" — inclusive o titulo deste curso — esta usando a ideia do Karpathy. Voce nao precisa construir nada agora; basta guardar a imagem: <em>o LLM coordena memoria, ferramentas e tarefas, como um SO coordena um computador.</em></p>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">LLM-OS</span><p class="text-sm text-neutral-400 mt-1">A metafora de Karpathy (2023): o LLM como kernel de um SO novo.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Kernel</span><p class="text-sm text-neutral-400 mt-1">O nucleo coordenador de um sistema operacional.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Contexto = RAM</span><p class="text-sm text-neutral-400 mt-1">A memoria de trabalho do modelo, equivalente a RAM.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Modelo mental</span><p class="text-sm text-neutral-400 mt-1">O "Agentic OS" que toda a industria (e este curso) adotou.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 5 -->
+          <section id="topico-5" data-inema-topic="modulo-1-3#topico-5" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">5</span>
+              <h2 class="text-2xl font-bold">🌐 AIOS, Operator, Project Jarvis</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m13-t5-p1">A metafora do Karpathy nao ficou no papel. Em poucos anos ela <strong class="text-emerald-400">virou produto e pesquisa de verdade</strong>. Vale conhecer tres exemplos — nao para usar agora, mas para perceber que "agente" e "SO de IA" sao a direcao real para onde as maiores empresas e laboratorios estao indo.</p>
+
+            <!-- TIMELINE -->
+            <div class="space-y-4 mb-6">
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">📄</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+                  <div class="flex items-center justify-between mb-1"><h4 class="font-semibold text-neutral-100">AIOS — o kernel virou paper</h4><span class="text-xs text-emerald-400 font-mono">COLM 2025</span></div>
+                  <p class="text-sm text-neutral-400">Pesquisadores construiram um <strong>kernel real para agentes de IA</strong>: um sistema que organiza varios agentes rodando ao mesmo tempo, com escalonador (quem roda quando), memoria e storage — exatamente as pecas de um SO. Resultado: ate <strong>2,1× mais rapido</strong>. A metafora "LLM-OS" deixou de ser so imagem e virou sistema medido.</p>
+                </div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">🖥️</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+                  <div class="flex items-center justify-between mb-1"><h4 class="font-semibold text-neutral-100">OpenAI Operator</h4><span class="text-xs text-emerald-400 font-mono">OpenAI</span></div>
+                  <p class="text-sm text-neutral-400">Um agente que <strong>usa o computador como um humano</strong>: ele <em>ve</em> a tela, move o cursor, clica e digita para fazer tarefas no navegador (reservar, comprar, preencher formularios). E o loop agentico com uma ferramenta poderosa: a propria tela do computador.</p>
+                </div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">🤖</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+                  <div class="flex items-center justify-between mb-1"><h4 class="font-semibold text-neutral-100">Google Project Jarvis</h4><span class="text-xs text-emerald-400 font-mono">Google</span></div>
+                  <p class="text-sm text-neutral-400">Sim, "Jarvis" mesmo. Um agente do Google que <strong>navega o navegador Chrome por voce</strong> — lendo a estrutura da pagina e executando passos (pesquisar, comparar, preencher). O nome nao e coincidencia: a fantasia do filme virou linha de produto.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-emerald-400 mb-3 flex items-center"><span class="mr-2">🧩</span> O fio que liga os tres</h3>
+              <p class="text-neutral-300 text-sm">Repare: AIOS, Operator e Project Jarvis sao a <strong>mesma ideia deste modulo</strong> em escalas diferentes. Todos sao agentes — LLM + ferramentas + loop. O AIOS organiza muitos agentes (o lado "sistema operacional"); Operator e Project Jarvis dao ao agente a ferramenta mais ampla possivel (o computador inteiro). Voce nao vai precisar de nenhum deles para ter o seu Jarvis: ao longo do curso vamos montar uma versao <strong>enxuta, sua e segura</strong>. Mas e bom saber que voce esta na mesma estrada das gigantes.</p>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>AIOS</strong> = "AI Operating System", um sistema de pesquisa que serve de kernel para varios agentes. <strong>Operator</strong> (OpenAI) e <strong>Project Jarvis</strong> (Google) sao agentes que controlam o computador/navegador "olhando" a tela. <strong>Paper</strong> = artigo cientifico; <strong>COLM</strong> e uma conferencia academica de modelos de linguagem. Voce nao precisa decorar — basta saber que a ideia de agente esta no centro da industria.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">AIOS</span><p class="text-sm text-neutral-400 mt-1">Kernel de pesquisa para coordenar varios agentes (2,1× mais rapido).</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Operator</span><p class="text-sm text-neutral-400 mt-1">Agente da OpenAI que ve a tela e usa o computador como um humano.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Project Jarvis</span><p class="text-sm text-neutral-400 mt-1">Agente do Google que navega o Chrome por voce.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Mesma ideia, escalas diferentes</span><p class="text-sm text-neutral-400 mt-1">Todos sao LLM + ferramentas + loop — o que voce acabou de aprender.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 6 -->
+          <section id="topico-6" data-inema-topic="modulo-1-3#topico-6" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">6</span>
+              <h2 class="text-2xl font-bold">🪄 O que muda pra voce</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m13-t6-p1">Toda a teoria deste modulo aterrissa numa mudanca pratica e bem concreta no seu dia a dia: voce para de <strong>perguntar</strong> e comeca a <strong class="text-emerald-400">delegar</strong>. E uma troca de postura — de "me ajuda a pensar nisso" para "resolve isso pra mim e me avisa".</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+                <h4 class="font-bold text-red-400 mb-4">✗ Antes: voce PERGUNTA</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>"Me da ideias de assunto pra um email de cobranca."</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Voce ainda escreve, abre o Gmail, copia, cola e envia.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>A IA e um conselheiro; o trabalho braçal continua seu.</span></li>
+                </ul>
+              </div>
+              <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+                <h4 class="font-bold text-emerald-400 mb-4">✓ Depois: voce DELEGA</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>"Cobra o cliente X pelo boleto vencido e me confirma."</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Ele consulta o dado, escreve, envia e te devolve o resultado.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>A IA e um assistente; voce supervisiona, nao executa.</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Expectativa honesta (igual ao modulo 1.1)</h3>
+              <p class="text-neutral-300 text-sm mb-3">Delegar e poderoso, mas nao e magica. Um agente ainda pode <strong>errar</strong> (lembra da alucinacao, do modulo 1.2) e tropeçar em tarefas longas sem supervisao. Por isso bom Jarvis tem <strong>freios</strong>: confirmacao para acoes serias (enviar dinheiro, apagar arquivo), teto de iteracoes e um registro do que ele fez. O ponto nao e confiar cegamente — e <strong>delegar com redes de seguranca</strong>.</p>
+              <p class="text-neutral-400 text-xs">Esses freios sao tema da Trilha 4 ("Construir") — aqui basta saber que existem e que sao parte de um agente bem-feito.</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-emerald-400 mb-3 flex items-center"><span class="mr-2">🌉</span> A ponte para a Anatomia (Trilha 3)</h3>
+              <p class="text-neutral-300 text-sm">Voce ja tem as tres pecas fundamentais: <strong>cerebro</strong> (o LLM, modulo 1.2), <strong>maos</strong> (as ferramentas) e <strong>movimento</strong> (o loop). Com isso a Trilha 1 esta completa. A partir daqui o curso vai abrir esse agente em <strong>seis camadas</strong> — canais, identidade, ferramentas, skills, agentes e cerebros — uma de cada vez. E como sair da ideia "um Jarvis age" para o detalhe de <em>como</em> cada parte funciona e se monta.</p>
+            </div>
+
+            <!-- CHECAGEM LEVE -->
+            <div data-inema-check="modulo-1-3#q1" class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6">
+              <p class="font-medium mb-4">Auto-checagem (opcional): qual frase resume melhor o que faz uma IA virar um "agente"?</p>
+              <div class="inema-check-options space-y-2">
+                <button type="button" data-inema-check-option="0" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Um modelo maior e mais inteligente, treinado em mais texto.</button>
+                <button type="button" data-inema-check-option="1" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">O mesmo LLM ganhando ferramentas e a liberdade de usa-las num loop ate concluir a tarefa.</button>
+                <button type="button" data-inema-check-option="2" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Uma IA que responde com frases mais longas e detalhadas.</button>
+              </div>
+              <div data-inema-check-feedback class="mt-4 text-sm" role="status" aria-live="polite"></div>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3 mt-8">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Delegar</span><p class="text-sm text-neutral-400 mt-1">Entregar a tarefa inteira, nao so pedir uma resposta.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Supervisao</span><p class="text-sm text-neutral-400 mt-1">Voce confere o resultado; o agente faz os passos.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Redes de seguranca</span><p class="text-sm text-neutral-400 mt-1">Confirmacao, teto de iteracoes e registro do que foi feito.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Ponte para a Anatomia</span><p class="text-sm text-neutral-400 mt-1">Cerebro + maos + loop, abertos em 6 camadas na Trilha 3.</p></div>
+            </div>
+
+            <div class="flex justify-start mt-6">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- RESUMO -->
+          <section class="mb-8">
+            <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+              <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumo do modulo</h2>
+              <div class="space-y-4 mb-8">
+                <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">De responder a fazer</strong><span class="text-neutral-400"> — chatbot so conversa; agente = LLM + ferramentas + loop, e age no mundo.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">O loop agentico</strong><span class="text-neutral-400"> — pensa → chama ferramenta → le → decide → repete ou responde, com teto de iteracoes.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Ferramentas sao as maos</strong><span class="text-neutral-400"> — via tool calling, o modelo pede e o sistema executa; sem elas, "responde como estranho".</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">LLM-OS (Karpathy)</strong><span class="text-neutral-400"> — o LLM e o kernel; contexto=RAM, ferramentas=perifericos, agentes=processos.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">A metafora virou produto</strong><span class="text-neutral-400"> — AIOS, OpenAI Operator e Google Project Jarvis: a mesma ideia em escalas diferentes.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">O que muda pra voce</strong><span class="text-neutral-400"> — voce para de perguntar e passa a delegar, com redes de seguranca. Ponte para a Anatomia.</span></div></div>
+              </div>
+              <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+                <h3 class="font-semibold text-emerald-400 mb-2">Proximo:</h3>
+                <p class="text-neutral-300">Voltar para a Trilha 1 — voce concluiu os Fundamentos. A seguir vem a Trilha 2 (O Panorama) e a Trilha 3 (Anatomia), onde o agente e aberto camada por camada.</p>
+              </div>
+              <div class="flex flex-col sm:flex-row gap-4">
+                <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para a Trilha</a>
+                <a href="index.html" class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors">Concluir a Trilha 1 →</a>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-dark-600 py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
+    </div>
+  </footer>
+
+  <!-- Scripts nucleo v1 -->
+  <script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+
+  <!-- Camada de aprendizagem -->
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-1-3#q1', {
+          answer: 1,
+          explain: {
+            0: 'Nao e isso — um agente nao precisa ser um modelo maior. O MESMO LLM vira agente ao ganhar ferramentas e um loop.',
+            1: 'Isso! Agente = LLM + ferramentas + a liberdade de usa-las em ciclo ate concluir a tarefa. E o coracao do modulo.',
+            2: 'Nao — responder mais detalhado ainda e so responder. O agente AGE no mundo (email, agenda, arquivos).'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

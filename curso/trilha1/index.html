@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="inema-course" content="jarvis">
+  <title>Trilha 1 · Fundamentos | Jarvis · INEMA.CLUB</title>
+  <meta name="description" content="Do zero: o que e um Jarvis, o que e um LLM e quando a IA deixa de responder e passa a agir — sem jargao, para leigos.">
+
+  <!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+
+  <!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+  <script type="application/json" data-inema-manifest>
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/learn.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a href="#conteudo" class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg">Pular para o conteudo</a>
+
+  <!-- NAVIGATION (completo, identico em todas as paginas) -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-3">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🤖</span>
+            <span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a id="nav-t1" href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a id="nav-t2" href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+          </a>
+          <a id="nav-t3" href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span>
+          </a>
+          <a id="nav-t4" href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+          </a>
+          <a id="nav-t5" href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+          </a>
+          <a id="nav-t6" href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span>
+          </a>
+
+          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Minha jornada">
+            <span aria-hidden="true">◷</span><span class="hidden md:inline">Jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge data-count="0"></span>
+          </button>
+
+          <div class="relative">
+            <button type="button" data-inema-appearance-toggle="[data-inema-appearance]" aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Aparencia">
+              <span aria-hidden="true">◑</span><span class="hidden md:inline">Aparencia</span>
+            </button>
+            <div data-inema-appearance class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left">
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-theme="inema-dark" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Escuro</button>
+                  <button data-inema-set-theme="claro" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Claro</button>
+                  <button data-inema-set-theme="sepia" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sepia</button>
+                  <button data-inema-set-theme="foco" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Foco</button>
+                  <button data-inema-set-theme="contraste" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Alto contraste</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Fonte</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-font="inter" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Inter</button>
+                  <button data-inema-set-font="system" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sistema</button>
+                  <button data-inema-set-font="leitura" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Leitura</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tamanho</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-fontscale="100" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A</button>
+                  <button data-inema-set-fontscale="112" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A+</button>
+                  <button data-inema-set-fontscale="125" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A++</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Entrelinha</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-leading="1.45" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Compacto</button>
+                  <button data-inema-set-leading="1.7" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Confortavel</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+                <div class="inema-accent-grid flex flex-wrap gap-2">
+                  <button data-inema-set-accent="emerald" class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" title="Emerald"></button>
+                  <button data-inema-set-accent="blue" class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" title="Blue"></button>
+                  <button data-inema-set-accent="purple" class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" title="Purple"></button>
+                  <button data-inema-set-accent="amber" class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" title="Amber"></button>
+                  <button data-inema-set-accent="teal" class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" title="Teal"></button>
+                  <button data-inema-set-accent="rose" class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" title="Rose"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" title="Alternar claro/escuro">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo">
+    <header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+          <a href="../../index.html" class="hover:text-emerald-400">Inicio</a><span>/</span><span class="text-emerald-400">Trilha 1</span>
+        </nav>
+        <span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">TRILHA 1</span>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">🌱 Fundamentos</h1>
+        <p class="text-lg text-neutral-400 max-w-3xl mb-6">Comece do zero, sem nenhum jargao: o que e, afinal, um "Jarvis", o que e o LLM que pensa por tras dele, e o momento exato em que a IA deixa de so responder e passa a AGIR por voce. Tres modulos que destravam todo o resto do curso.</p>
+
+        <div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+          <svg viewBox="0 0 1000 240" class="w-full h-auto" role="img" aria-label="A escada dos fundamentos: voce comeca em um chatbot que so responde, entende o LLM como cerebro e termina em um agente que age usando ferramentas no mundo real">
+            <defs>
+              <linearGradient id="t1h-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#10b981"/></linearGradient>
+              <filter id="t1h-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <pattern id="t1h-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#10b981" opacity="0.12"/></pattern>
+              <marker id="t1h-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#34d399"/></marker>
+              <marker id="t1h-ahc" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+            </defs>
+            <rect x="0" y="0" width="1000" height="240" fill="url(#t1h-grid)"/>
+            <g font-family="Inter,sans-serif">
+              <!-- 1.1 chatbot -->
+              <rect x="40" y="138" width="200" height="74" rx="14" fill="#0e2018" stroke="#34d399" stroke-width="2"/>
+              <text x="140" y="168" text-anchor="middle" fill="#a7f3d0" font-size="14" font-weight="600">1.1 · Chatbot</text>
+              <text x="140" y="190" text-anchor="middle" fill="#6ee7b7" font-size="12">so responde</text>
+              <path d="M240,150 C310,150 320,108 388,108" fill="none" stroke="#34d399" stroke-width="2" opacity="0.8" marker-end="url(#t1h-ah)"/>
+              <!-- 1.2 LLM cerebro -->
+              <g filter="url(#t1h-glow)"><rect x="388" y="74" width="210" height="78" rx="16" fill="url(#t1h-grad)" opacity="0.16" stroke="url(#t1h-grad)" stroke-width="2.5"/></g>
+              <text x="493" y="104" text-anchor="middle" fill="#34d399" font-size="16" font-weight="700">1.2 · LLM</text>
+              <text x="493" y="128" text-anchor="middle" fill="#a7f3d0" font-size="12">o cerebro que pensa em texto</text>
+              <!-- contexto = RAM (no ciano) -->
+              <rect x="408" y="166" width="170" height="34" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/>
+              <text x="493" y="188" text-anchor="middle" fill="#9ad6ff" font-size="12">contexto = memoria</text>
+              <path d="M493,152 L493,166" fill="none" stroke="#38bdf8" stroke-width="1.8" opacity="0.6" marker-end="url(#t1h-ahc)"/>
+              <path d="M598,113 C670,113 680,150 748,150" fill="none" stroke="#34d399" stroke-width="2" opacity="0.8" marker-end="url(#t1h-ah)"/>
+              <!-- 1.3 agente -->
+              <g filter="url(#t1h-glow)"><rect x="748" y="116" width="212" height="80" rx="16" fill="#1f1604" stroke="#FACC15" stroke-width="2.5"/></g>
+              <text x="854" y="146" text-anchor="middle" fill="#FACC15" font-size="16" font-weight="700">1.3 · Agente</text>
+              <text x="854" y="170" text-anchor="middle" fill="#fde68a" font-size="12">pensa e AGE com ferramentas</text>
+              <!-- maos/tools ciano -->
+              <g font-size="11" fill="#9ad6ff">
+                <g class="wf-a"><rect x="748" y="46" width="64" height="26" rx="8" fill="#0e1b26" stroke="#38bdf8" stroke-width="1.6"/><text x="780" y="63" text-anchor="middle">web</text></g>
+                <g class="wf-a"><rect x="822" y="46" width="64" height="26" rx="8" fill="#0e1b26" stroke="#38bdf8" stroke-width="1.6"/><text x="854" y="63" text-anchor="middle">agenda</text></g>
+                <g class="wf-a"><rect x="896" y="46" width="64" height="26" rx="8" fill="#0e1b26" stroke="#38bdf8" stroke-width="1.6"/><text x="928" y="63" text-anchor="middle">email</text></g>
+              </g>
+              <g fill="none" stroke="#38bdf8" stroke-width="1.8" opacity="0.55">
+                <path d="M780,72 L800,116"/><path d="M854,72 L854,116"/><path d="M928,72 L908,116"/>
+              </g>
+            </g>
+          </svg>
+          <p class="text-xs text-neutral-400 mt-1 px-1">Leia da esquerda pra direita — e o mapa da trilha: voce parte do <span class="text-emerald-400">chatbot que so responde</span> (1.1), entende o <span class="text-emerald-400">LLM</span> como o cerebro e o <span class="text-sky-400">contexto</span> como sua memoria de trabalho (1.2), e chega ao <span class="text-yellow-400">agente</span> que pensa e AGE usando <span class="text-sky-400">ferramentas</span> reais (1.3).</p>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl">
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">3</div><div class="text-xs text-neutral-400">Modulos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">18</div><div class="text-xs text-neutral-400">Topicos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">~2h30</div><div class="text-xs text-neutral-400">Duracao</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Iniciante</div><div class="text-xs text-neutral-400">Nivel</div></div>
+        </div>
+
+        <div class="mt-6 max-w-md" data-inema-meter="trilha:1" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da trilha 1">
+          <div class="flex items-center justify-between mb-1"><span class="text-xs text-neutral-400">Progresso da trilha</span><span class="text-xs font-bold text-emerald-400" data-inema-meter-pct>0%</span></div>
+          <div class="inema-bar h-2 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-emerald-500" data-inema-meter-fill style="width:0%"></div></div>
+          <span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 18</span> topicos</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+      <!-- MAPA DA TRILHA -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold mb-6">Mapa da trilha</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <a href="#modulo-1-1" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-emerald-500/30 p-5 transition-all">
+            <div class="flex items-center justify-between mb-2"><span class="text-emerald-400 font-bold text-sm">1.1</span><span class="text-xs text-neutral-500">~50 min</span></div>
+            <h3 class="font-semibold mb-1 group-hover:text-emerald-400 transition-colors">🤖 O que e um "Jarvis"</h3>
+            <p class="text-xs text-neutral-400">Da ficcao a sua casa</p>
+          </a>
+          <a href="#modulo-1-2" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-emerald-500/30 p-5 transition-all">
+            <div class="flex items-center justify-between mb-2"><span class="text-emerald-400 font-bold text-sm">1.2</span><span class="text-xs text-neutral-500">~50 min</span></div>
+            <h3 class="font-semibold mb-1 group-hover:text-emerald-400 transition-colors">🧠 O que e um LLM</h3>
+            <p class="text-xs text-neutral-400">O cerebro, sem jargao</p>
+          </a>
+          <a href="#modulo-1-3" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-emerald-500/30 p-5 transition-all">
+            <div class="flex items-center justify-between mb-2"><span class="text-emerald-400 font-bold text-sm">1.3</span><span class="text-xs text-neutral-500">~50 min</span></div>
+            <h3 class="font-semibold mb-1 group-hover:text-emerald-400 transition-colors">⚙️ De chatbot a agente</h3>
+            <p class="text-xs text-neutral-400">Quando a IA passa a agir</p>
+          </a>
+        </div>
+      </section>
+
+      <h2 class="text-2xl font-bold mb-6">Conteudo detalhado</h2>
+
+      <!-- MODULO 1.1 -->
+      <div id="modulo-1-1" data-inema-module="1-1" data-inema-track="1" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <div class="flex items-center justify-between mb-2"><span class="text-emerald-400 font-bold">1.1</span><span class="text-xs text-neutral-500">~50 min</span></div>
+          <h3 class="text-2xl font-bold mb-2">🤖 O que e um "Jarvis" — da ficcao a sua casa</h3>
+          <p class="text-neutral-400 text-sm mb-3">A fantasia do assistente do Homem de Ferro virou algo construivel. Aqui voce entende o conceito sem jargao: por que um chatbot nao e um Jarvis, o que e um "sistema operacional de IA" e o que da (e o que ainda nao da) pra fazer hoje.</p>
+          <div data-inema-meter="modulo:1-1" class="max-w-xs" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 1.1"><div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-emerald-500" data-inema-meter-fill style="width:0%"></div></div><span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span></div>
+        </div>
+        <div class="divide-y divide-dark-600">
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t11-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+              <span class="text-lg">🎬</span><div><span class="font-medium">Da ficcao ao real</span><span class="text-neutral-500 text-sm ml-2">- a fantasia ja e construivel</span></div>
+            </button>
+            <div id="t11-1" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O Jarvis do Homem de Ferro e a fantasia de um assistente que conversa, lembra de tudo e FAZ tarefas. Neste curso, "Jarvis" = um <strong>assistente de IA pessoal</strong> que voce mesmo monta — e hoje isso e real, nao ficcao.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Ter a imagem certa na cabeca evita decepcao e exagero: voce vai mirar no que e possivel construir agora.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Assistente de IA pessoal, conversar + lembrar + agir, da fantasia ao construivel.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t11-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+              <span class="text-lg">💬</span><div><span class="font-medium">Chatbot nao e Jarvis</span><span class="text-neutral-500 text-sm ml-2">- a diferenca e AGIR</span></div>
+            </button>
+            <div id="t11-2" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Um chatbot como o ChatGPT <strong>responde</strong>. Um Jarvis <strong>age</strong> no mundo: manda um email, le sua agenda, roda uma tarefa sozinho. A diferenca nao e quao esperto e o texto — e se ele faz algo acontecer.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E a distincao que organiza o curso inteiro; sem ela, todo o resto vira so "um chat melhor".</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Responder vs agir, acao no mundo, "o salto" que define um Jarvis.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t11-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+              <span class="text-lg">🖥️</span><div><span class="font-medium">"SO de IA" em 1 frase</span><span class="text-neutral-500 text-sm ml-2">- o Windows do seu assistente</span></div>
+            </button>
+            <div id="t11-3" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Assim como o Windows organiza programas, memoria e perifericos, um <strong>sistema operacional de IA</strong> organiza modelo + memoria + ferramentas + canais para o assistente "viver". E o lar que junta as pecas.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E exatamente isso que voce vai montar nas trilhas seguintes; ter a metafora pronta facilita tudo.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">SO de IA, modelo + memoria + ferramentas + canais, orquestracao.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t11-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+              <span class="text-lg">⏰</span><div><span class="font-medium">Por que agora</span><span class="text-neutral-500 text-sm ml-2">- a onda esta no comeco</span></div>
+            </button>
+            <div id="t11-4" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Tres coisas se encontraram: modelos bons o bastante, hardware pessoal capaz e padroes abertos (como o <strong>MCP</strong>, que faz ferramentas se conectarem a qualquer agente). E por isso que da pra construir hoje o que era ficcao ontem.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Entrar cedo numa onda em formacao e onde a vantagem mora — voce aprende antes de virar obvio.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Modelos capazes, hardware pessoal, padroes abertos (MCP), timing.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t11-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+              <span class="text-lg">⚖️</span><div><span class="font-medium">O que da (e nao da) hoje</span><span class="text-neutral-500 text-sm ml-2">- expectativa realista</span></div>
+            </button>
+            <div id="t11-5" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">DA pra fazer: texto, busca, agenda, rascunhos, automacoes. NAO da (ainda): tarefas longas sem supervisao — e ele <strong>alucina</strong> (inventa coisas com confianca). Calibrar isso e meio caminho.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Saber os limites evita os dois erros classicos: confiar demais ou desistir cedo demais.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Casos fortes, alucinacao, supervisao humana, expectativa realista.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t11-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+              <span class="text-lg">🗺️</span><div><span class="font-medium">O mapa do curso</span><span class="text-neutral-500 text-sm ml-2">- as 6 trilhas em 1 olhada</span></div>
+            </button>
+            <div id="t11-6" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Fundamentos (aqui) → Panorama (o que ja existe) → Anatomia (as 6 camadas) → Construir → Celular → Criancas. Cada trilha empilha sobre a anterior; a ordem foi pensada.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Ver o caminho inteiro te da contexto pra cada parte fazer sentido na hora certa.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">6 trilhas, progressao T1→T6, do conceito a construcao.</p></div>
+            </div></div>
+          </div>
+        </div>
+        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+          <button onclick="openModal('modal-1-1')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+          <a href="modulo-1-1.html" class="px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors">Ver Completo</a>
+        </div>
+      </div>
+      <div id="modal-1-1" class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target===this) closeModal()"><div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600"><div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0"><div class="flex items-center space-x-3"><span class="text-emerald-400 font-bold">1.1</span><span class="font-semibold">O que e um Jarvis</span></div><button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button></div><iframe src="modulo-1-1.html" class="flex-1 w-full rounded-b-xl"></iframe></div></div>
+
+      <!-- MODULO 1.2 -->
+      <div id="modulo-1-2" data-inema-module="1-2" data-inema-track="1" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <div class="flex items-center justify-between mb-2"><span class="text-emerald-400 font-bold">1.2</span><span class="text-xs text-neutral-500">~50 min</span></div>
+          <h3 class="text-2xl font-bold mb-2">🧠 O cerebro da coisa: o que e um LLM (sem jargao)</h3>
+          <p class="text-neutral-400 text-sm mb-3">O motor que pensa por tras de todo Jarvis, desmistificado: o que e um LLM, como ele "pensa" prevendo a proxima palavra, o que e contexto e token, e a escolha entre rodar na nuvem ou no seu computador.</p>
+          <div data-inema-meter="modulo:1-2" class="max-w-xs" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 1.2"><div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-emerald-500" data-inema-meter-fill style="width:0%"></div></div><span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span></div>
+        </div>
+        <div class="divide-y divide-dark-600">
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t12-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+              <span class="text-lg">🧠</span><div><span class="font-medium">O que e um LLM</span><span class="text-neutral-500 text-sm ml-2">- o programa que preve palavras</span></div>
+            </button>
+            <div id="t12-1" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Um <strong>LLM</strong> ("Modelo de Linguagem Grande") e um programa treinado em MUITO texto que aprendeu a prever a proxima palavra. E o que roda atras do ChatGPT e do Claude — o <strong>cerebro</strong> que "pensa em texto".</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E a peca central de qualquer Jarvis; entender o que ela e desmistifica todo o resto.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">LLM, previsao da proxima palavra, treino em texto, "cerebro".</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t12-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+              <span class="text-lg">🎲</span><div><span class="font-medium">Como ele "pensa"</span><span class="text-neutral-500 text-sm ml-2">- previsao, nao busca</span></div>
+            </button>
+            <div id="t12-2" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Ele nao consulta um banco de dados nem "pesquisa": e <strong>previsao estatistica</strong> aprendida no treino. Por isso e criativo E as vezes erra com toda a confianca — o que chamamos de <strong>alucinacao</strong>.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Saber que e previsao explica tanto a magia quanto os erros — e te ensina a checar respostas.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Previsao estatistica, nao e banco de dados, alucinacao.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t12-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+              <span class="text-lg">🪟</span><div><span class="font-medium">Contexto = memoria de trabalho</span><span class="text-neutral-500 text-sm ml-2">- a RAM do modelo</span></div>
+            </button>
+            <div id="t12-3" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">A <strong>janela de contexto</strong> e tudo o que o modelo "esta vendo agora": sua conversa + instrucoes + arquivos. E como a <strong>RAM</strong> do computador — limitada, e esvazia quando voce fecha a conversa.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Explica por que ele "esquece" — e prepara o terreno para a memoria persistente da Trilha 3.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Janela de contexto, memoria de trabalho, analogia com RAM, esquece ao fechar.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t12-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+              <span class="text-lg">🔤</span><div><span class="font-medium">Tokens</span><span class="text-neutral-500 text-sm ml-2">- pedacos de palavra</span></div>
+            </button>
+            <div id="t12-4" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O modelo le e escreve em <strong>tokens</strong> — pedacos de palavra (um token e ~3/4 de uma palavra). A nuvem cobra por token, e a janela de contexto e medida em tokens.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E a unidade de medida de custo e de contexto; aparece em toda decisao pratica.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Token, tokenizacao, token ≠ palavra, custo por token.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t12-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+              <span class="text-lg">☁️</span><div><span class="font-medium">Modelo local vs nuvem</span><span class="text-neutral-500 text-sm ml-2">- mesmo papel, lugares diferentes</span></div>
+            </button>
+            <div id="t12-5" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm"><strong>Nuvem</strong> (Claude, GPT): potentes, voce paga por uso. <strong>Local</strong> (via <strong>Ollama</strong>): gratis depois de baixar, privado, mas exige hardware. Ambos cumprem o mesmo papel: ser o cerebro.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E o trade-off que vai voltar em todo o curso — privacidade/custo de um lado, potencia/conveniencia do outro.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Nuvem vs local, Ollama, pagar por uso vs hardware, privacidade.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t12-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+              <span class="text-lg">🧯</span><div><span class="font-medium">Limites e como contornar</span><span class="text-neutral-500 text-sm ml-2">- ferramentas e memoria salvam</span></div>
+            </button>
+            <div id="t12-6" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O LLM sozinho alucina, nao sabe de coisas posteriores ao treino e esquece o que sai do contexto. A saida: dar a ele <strong>ferramentas</strong> (buscar, ler) e <strong>memoria</strong> — exatamente o que a Trilha 3 ensina.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Cada limite tem uma solucao concreta; saber qual e te tira da frustracao.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Limites do LLM, corte de treino, ferramentas + memoria como solucao.</p></div>
+            </div></div>
+          </div>
+        </div>
+        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+          <button onclick="openModal('modal-1-2')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+          <a href="modulo-1-2.html" class="px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors">Ver Completo</a>
+        </div>
+      </div>
+      <div id="modal-1-2" class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target===this) closeModal()"><div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600"><div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0"><div class="flex items-center space-x-3"><span class="text-emerald-400 font-bold">1.2</span><span class="font-semibold">O que e um LLM</span></div><button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button></div><iframe src="modulo-1-2.html" class="flex-1 w-full rounded-b-xl"></iframe></div></div>
+
+      <!-- MODULO 1.3 -->
+      <div id="modulo-1-3" data-inema-module="1-3" data-inema-track="1" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <div class="flex items-center justify-between mb-2"><span class="text-emerald-400 font-bold">1.3</span><span class="text-xs text-neutral-500">~50 min</span></div>
+          <h3 class="text-2xl font-bold mb-2">⚙️ De chatbot a agente: quando a IA passa a agir</h3>
+          <p class="text-neutral-400 text-sm mb-3">O momento decisivo do curso: quando o LLM deixa de so responder e passa a AGIR. Aqui voce entende o loop agentico, o que sao ferramentas, e a metafora "LLM como sistema operacional" que move a industria inteira.</p>
+          <div data-inema-meter="modulo:1-3" class="max-w-xs" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 1.3"><div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-emerald-500" data-inema-meter-fill style="width:0%"></div></div><span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span></div>
+        </div>
+        <div class="divide-y divide-dark-600">
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t13-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+              <span class="text-lg">🚀</span><div><span class="font-medium">O salto: de responder a fazer</span><span class="text-neutral-500 text-sm ml-2">- nasce o agente</span></div>
+            </button>
+            <div id="t13-1" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Quando voce da ferramentas a um LLM e o deixa usa-las em ciclo, ele vira um <strong>agente</strong>: um LLM que pode AGIR, nao so responder. Esse e o salto que transforma chat em assistente.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Esta no centro de tudo: e a definicao de "agente" que carrega o curso ate o fim.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Agente, LLM + ferramentas em ciclo, responder vs fazer.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t13-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+              <span class="text-lg">🔄</span><div><span class="font-medium">O loop agentico</span><span class="text-neutral-500 text-sm ml-2">- pensa, age, le, repete</span></div>
+            </button>
+            <div id="t13-2" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O <strong>loop agentico</strong> e o ciclo: recebe o pedido → pensa → chama uma ferramenta → le o resultado → chama mais, se precisar → responde. Tem um <strong>limite de iteracoes</strong> por seguranca, pra ele nao rodar pra sempre.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E o mecanismo que faz um agente "trabalhar sozinho"; entende-lo desmistifica a autonomia.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Loop agentico, pensa-age-le-repete, limite de iteracoes.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t13-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+              <span class="text-lg">🖐️</span><div><span class="font-medium">Ferramentas (tools) = as maos</span><span class="text-neutral-500 text-sm ml-2">- sem elas, so fala</span></div>
+            </button>
+            <div id="t13-3" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm"><strong>Ferramentas</strong> (ou "tools") sao as maos e os olhos do agente: buscar na web, rodar codigo, ler um arquivo, mandar mensagem. Sem ferramentas, o modelo "responde como um estranho" — so com o que sabe de cabeca.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Sao o que conecta o cerebro ao mundo real; toda a Trilha 3 gira em torno disso.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Ferramenta/tool, maos e olhos, acao no mundo, "responder como estranho".</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t13-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+              <span class="text-lg">🧩</span><div><span class="font-medium">A metafora LLM-OS (Karpathy)</span><span class="text-neutral-500 text-sm ml-2">- o LLM como kernel</span></div>
+            </button>
+            <div id="t13-4" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Andrej Karpathy (2023) propos: o LLM e o <strong>kernel</strong> (o nucleo) de um sistema operacional novo. Contexto = RAM, ferramentas = perifericos, agentes = processos. A industria adotou esse modelo mental.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E a metafora que liga "SO de IA" ao que voce ja sabe de computadores — e que sustenta o curso.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">LLM-OS, kernel, contexto=RAM, ferramentas=perifericos, agentes=processos.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t13-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+              <span class="text-lg">🌐</span><div><span class="font-medium">AIOS, Operator, Project Jarvis</span><span class="text-neutral-500 text-sm ml-2">- a metafora virou produto</span></div>
+            </button>
+            <div id="t13-5" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">A ideia saiu do papel: <strong>AIOS</strong> (um "kernel" real para agentes), <strong>OpenAI Operator</strong> (um agente que navega telas) e o <strong>Google Project Jarvis</strong> (agente que opera o Chrome por voce). Provas de que o modelo mental funciona.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Mostra que isto nao e hype isolado — grandes laboratorios constroem na mesma direcao que voce.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">AIOS, Operator, Project Jarvis, da metafora ao produto.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t13-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+              <span class="text-lg">🎯</span><div><span class="font-medium">O que muda pra voce</span><span class="text-neutral-500 text-sm ml-2">- de perguntar a delegar</span></div>
+            </button>
+            <div id="t13-6" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-emerald-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Na pratica, voce para de "perguntar" e comeca a "delegar": em vez de pedir um texto, voce entrega uma tarefa. E a ponte direta para a Anatomia (Trilha 3), onde voce monta as 6 camadas que tornam isso possivel.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Fecha os Fundamentos com a mudanca de postura que destrava o resto do curso.</p></div>
+              <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Perguntar vs delegar, mudanca de postura, ponte para a Anatomia.</p></div>
+            </div></div>
+          </div>
+        </div>
+        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+          <button onclick="openModal('modal-1-3')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+          <a href="modulo-1-3.html" class="px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors">Ver Completo</a>
+        </div>
+      </div>
+      <div id="modal-1-3" class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target===this) closeModal()"><div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600"><div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0"><div class="flex items-center space-x-3"><span class="text-emerald-400 font-bold">1.3</span><span class="font-semibold">De chatbot a agente</span></div><button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button></div><iframe src="modulo-1-3.html" class="flex-1 w-full rounded-b-xl"></iframe></div></div>
+
+      <!-- Navegacao entre trilhas -->
+      <div class="flex flex-col sm:flex-row gap-4 mt-10">
+        <a href="../../index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Inicio</a>
+        <a href="../trilha2/index.html" class="flex-1 text-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-colors">Trilha 2: O Panorama →</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="border-t border-dark-600 py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
+    </div>
+  </footer>
+
+  <!-- Scripts nucleo v1 -->
+  <script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+
+  <!-- Camada de aprendizagem -->
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+  </script>
+</body>
+</html>

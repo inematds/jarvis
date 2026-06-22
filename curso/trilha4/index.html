@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="inema-course" content="jarvis">
+  <title>Trilha 4 · Construir um Jarvis eficaz | Jarvis · INEMA.CLUB</title>
+  <meta name="description" content="Do primeiro tijolo a uma solucao robusta: a receita minima, as 4 camadas (Context, Connections, Capabilities, Cadence) e como operar, medir e evoluir com seguranca.">
+
+  <!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+
+  <!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+  <script type="application/json" data-inema-manifest>
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/learn.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a href="#conteudo" class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg">Pular para o conteudo</a>
+
+  <!-- NAVIGATION (completo, identico em todas as paginas) -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-3">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🤖</span>
+            <span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a id="nav-t1" href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a id="nav-t2" href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+          </a>
+          <a id="nav-t3" href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span>
+          </a>
+          <a id="nav-t4" href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+          </a>
+          <a id="nav-t5" href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+          </a>
+          <a id="nav-t6" href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span>
+          </a>
+
+          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Minha jornada">
+            <span aria-hidden="true">◷</span><span class="hidden md:inline">Jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge data-count="0"></span>
+          </button>
+
+          <div class="relative">
+            <button type="button" data-inema-appearance-toggle="[data-inema-appearance]" aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Aparencia">
+              <span aria-hidden="true">◑</span><span class="hidden md:inline">Aparencia</span>
+            </button>
+            <div data-inema-appearance class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left">
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-theme="inema-dark" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Escuro</button>
+                  <button data-inema-set-theme="claro" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Claro</button>
+                  <button data-inema-set-theme="sepia" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sepia</button>
+                  <button data-inema-set-theme="foco" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Foco</button>
+                  <button data-inema-set-theme="contraste" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Alto contraste</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Fonte</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-font="inter" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Inter</button>
+                  <button data-inema-set-font="system" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sistema</button>
+                  <button data-inema-set-font="leitura" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Leitura</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tamanho</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-fontscale="100" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A</button>
+                  <button data-inema-set-fontscale="112" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A+</button>
+                  <button data-inema-set-fontscale="125" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A++</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Entrelinha</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-leading="1.45" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Compacto</button>
+                  <button data-inema-set-leading="1.7" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Confortavel</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+                <div class="inema-accent-grid flex flex-wrap gap-2">
+                  <button data-inema-set-accent="emerald" class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" title="Emerald"></button>
+                  <button data-inema-set-accent="blue" class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" title="Blue"></button>
+                  <button data-inema-set-accent="purple" class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" title="Purple"></button>
+                  <button data-inema-set-accent="amber" class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" title="Amber"></button>
+                  <button data-inema-set-accent="teal" class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" title="Teal"></button>
+                  <button data-inema-set-accent="rose" class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" title="Rose"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" title="Alternar claro/escuro">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo">
+    <header class="bg-gradient-to-br from-amber-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+          <a href="../../index.html" class="hover:text-amber-400">Inicio</a><span>/</span><span class="text-amber-400">Trilha 4</span>
+        </nav>
+        <span class="inline-block px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-semibold rounded-full mb-4">TRILHA 4</span>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">🛠️ Construir um Jarvis eficaz</h1>
+        <p class="text-lg text-neutral-400 max-w-3xl mb-6">Agora voce poe a mao na massa. Saimos do "o que e" para o "como se faz": a receita minima do seu primeiro Jarvis, a arquitetura das 4 camadas que sustenta uma solucao robusta, e como operar com confianca — barato, seguro e enxuto — sem que ele inche com o tempo.</p>
+
+        <div class="rounded-2xl border border-amber-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+          <svg viewBox="0 0 1000 240" class="w-full h-auto" role="img" aria-label="O caminho de construcao: empilhar os 5 Build Levels (Foundation, Memory, Voice, Tools, Heartbeat) sobre as 4 camadas Context, Connections, Capabilities e Cadence ate formar um Jarvis que opera, mede e evolui">
+            <defs>
+              <linearGradient id="t4h-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbbf24"/><stop offset="1" stop-color="#f59e0b"/></linearGradient>
+              <filter id="t4h-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <pattern id="t4h-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#f59e0b" opacity="0.12"/></pattern>
+              <marker id="t4h-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#fbbf24"/></marker>
+              <marker id="t4h-ahc" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+            </defs>
+            <rect x="0" y="0" width="1000" height="240" fill="url(#t4h-grid)"/>
+            <g font-family="Inter,sans-serif">
+              <!-- Tijolos / Build Levels empilhados -->
+              <text x="40" y="34" fill="#fcd34d" font-size="13" font-weight="600">Tijolo a tijolo (5 Build Levels)</text>
+              <g font-size="12" font-weight="600">
+                <g class="wf-a"><rect x="40" y="48" width="150" height="30" rx="8" fill="#1f1604" stroke="#fbbf24" stroke-width="2"/><text x="115" y="68" text-anchor="middle" fill="#fde68a">1 Foundation</text></g>
+                <g class="wf-a"><rect x="40" y="84" width="150" height="30" rx="8" fill="#1f1604" stroke="#fbbf24" stroke-width="2"/><text x="115" y="104" text-anchor="middle" fill="#fde68a">2 Memory</text></g>
+                <g class="wf-a"><rect x="40" y="120" width="150" height="30" rx="8" fill="#1f1604" stroke="#fbbf24" stroke-width="2"/><text x="115" y="140" text-anchor="middle" fill="#fde68a">3 Voice</text></g>
+                <g class="wf-a"><rect x="40" y="156" width="150" height="30" rx="8" fill="#1f1604" stroke="#fbbf24" stroke-width="2"/><text x="115" y="176" text-anchor="middle" fill="#fde68a">4 Tools / MCP</text></g>
+                <g class="wf-a"><rect x="40" y="192" width="150" height="30" rx="8" fill="#1f1604" stroke="#fbbf24" stroke-width="2"/><text x="115" y="212" text-anchor="middle" fill="#fde68a">5 Heartbeat</text></g>
+              </g>
+              <path d="M196,135 L268,135" fill="none" stroke="#9ca3af" stroke-width="1.8" stroke-dasharray="7 7" opacity="0.6" marker-end="url(#t4h-ah)"/>
+              <text x="232" y="124" text-anchor="middle" fill="#9ca3af" font-size="11">organiza</text>
+
+              <!-- As 4 camadas C -->
+              <g font-size="12.5" font-weight="600">
+                <g class="wf-a"><rect x="276" y="58" width="174" height="34" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="363" y="80" text-anchor="middle" fill="#9ad6ff">Context</text></g>
+                <g class="wf-a"><rect x="276" y="100" width="174" height="34" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="363" y="122" text-anchor="middle" fill="#9ad6ff">Connections</text></g>
+                <g class="wf-a"><rect x="276" y="142" width="174" height="34" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="363" y="164" text-anchor="middle" fill="#9ad6ff">Capabilities</text></g>
+                <g class="wf-a"><rect x="276" y="184" width="174" height="34" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="363" y="206" text-anchor="middle" fill="#9ad6ff">Cadence</text></g>
+              </g>
+              <g fill="none" stroke="#fbbf24" stroke-width="2" opacity="0.75">
+                <path d="M450,75  C540,75 560,138 640,138" marker-end="url(#t4h-ah)"/>
+                <path d="M450,117 L640,138" marker-end="url(#t4h-ah)"/>
+                <path d="M450,159 L640,138"/>
+                <path d="M450,201 C540,201 560,138 640,138"/>
+              </g>
+              <!-- Caixa-resultado: o Jarvis -->
+              <g filter="url(#t4h-glow)"><rect x="640" y="98" width="200" height="86" rx="16" fill="url(#t4h-grad)" opacity="0.16" stroke="url(#t4h-grad)" stroke-width="2.5"/></g>
+              <text x="740" y="132" text-anchor="middle" fill="#fbbf24" font-size="18" font-weight="700">Jarvis eficaz</text>
+              <text x="740" y="156" text-anchor="middle" fill="#fde68a" font-size="12">robusto e enxuto</text>
+              <!-- ciclo operar/medir/evoluir -->
+              <path d="M840,141 L900,141" fill="none" stroke="#38bdf8" stroke-width="1.8" opacity="0.7" marker-end="url(#t4h-ahc)"/>
+              <g class="wf-a"><circle cx="935" cy="100" r="26" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="935" y="104" text-anchor="middle" fill="#9ad6ff" font-size="11">operar</text></g>
+              <g class="wf-a"><circle cx="935" cy="180" r="26" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="935" y="184" text-anchor="middle" fill="#9ad6ff" font-size="11">evoluir</text></g>
+              <path d="M935,126 C972,135 972,145 935,154" fill="none" stroke="#38bdf8" stroke-width="1.6" opacity="0.55" marker-end="url(#t4h-ahc)"/>
+            </g>
+          </svg>
+          <p class="text-xs text-neutral-400 mt-1 px-1">Leia da esquerda pra direita: voce empilha <span class="text-amber-400">tijolos</span> (os 5 Build Levels), que se organizam nas <span class="text-sky-400">4 camadas C</span> (Context, Connections, Capabilities, Cadence). O resultado e um <span class="text-amber-400">Jarvis eficaz</span> que entra num ciclo de <span class="text-sky-400">operar → medir → evoluir</span> — robusto, mas sem inchar.</p>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl">
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-amber-400">3</div><div class="text-xs text-neutral-400">Modulos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-amber-400">18</div><div class="text-xs text-neutral-400">Topicos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-amber-400">~3h</div><div class="text-xs text-neutral-400">Duracao</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-amber-400">Intermediario</div><div class="text-xs text-neutral-400">Nivel</div></div>
+        </div>
+
+        <div class="mt-6 max-w-md" data-inema-meter="trilha:4" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da trilha 4">
+          <div class="flex items-center justify-between mb-1"><span class="text-xs text-neutral-400">Progresso da trilha</span><span class="text-xs font-bold text-amber-400" data-inema-meter-pct>0%</span></div>
+          <div class="inema-bar h-2 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-amber-500" data-inema-meter-fill style="width:0%"></div></div>
+          <span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 18</span> topicos</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+      <!-- MAPA DA TRILHA -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold mb-6">Mapa da trilha</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <a href="#modulo-4-1" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all">
+            <div class="flex items-center justify-between mb-2"><span class="text-amber-400 font-bold text-sm">4.1</span><span class="text-xs text-neutral-500">~60 min</span></div>
+            <h3 class="font-semibold mb-1 group-hover:text-amber-400 transition-colors">🧱 Do zero ao primeiro Jarvis</h3>
+            <p class="text-xs text-neutral-400">A receita minima, tijolo a tijolo</p>
+          </a>
+          <a href="#modulo-4-2" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all">
+            <div class="flex items-center justify-between mb-2"><span class="text-amber-400 font-bold text-sm">4.2</span><span class="text-xs text-neutral-500">~60 min</span></div>
+            <h3 class="font-semibold mb-1 group-hover:text-amber-400 transition-colors">🏗️ Arquitetura robusta</h3>
+            <p class="text-xs text-neutral-400">As 4 camadas que se encaixam</p>
+          </a>
+          <a href="#modulo-4-3" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all">
+            <div class="flex items-center justify-between mb-2"><span class="text-amber-400 font-bold text-sm">4.3</span><span class="text-xs text-neutral-500">~60 min</span></div>
+            <h3 class="font-semibold mb-1 group-hover:text-amber-400 transition-colors">📈 Operar, medir e evoluir</h3>
+            <p class="text-xs text-neutral-400">Confianca, custo e seguranca</p>
+          </a>
+        </div>
+      </section>
+
+      <h2 class="text-2xl font-bold mb-6">Conteudo detalhado</h2>
+
+      <!-- MODULO 4.1 -->
+      <div id="modulo-4-1" data-inema-module="4-1" data-inema-track="4" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <div class="flex items-center justify-between mb-2"><span class="text-amber-400 font-bold">4.1</span><span class="text-xs text-neutral-500">~60 min</span></div>
+          <h3 class="text-2xl font-bold mb-2">🧱 Do zero ao primeiro Jarvis (a receita minima)</h3>
+          <p class="text-neutral-400 text-sm mb-3">O "hello world" do Jarvis: o conjunto minimo de pecas que ja vira um assistente, os 5 Build Levels para subir um tijolo de cada vez, e como construir com a ajuda de uma IA testando cada passo.</p>
+          <div data-inema-meter="modulo:4-1" class="max-w-xs" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 4.1"><div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-amber-500" data-inema-meter-fill style="width:0%"></div></div><span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span></div>
+        </div>
+        <div class="divide-y divide-dark-600">
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t41-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+              <span class="text-lg">🧱</span><div><span class="font-medium">A receita minima</span><span class="text-neutral-500 text-sm ml-2">- 5 ingredientes ja viram Jarvis</span></div>
+            </button>
+            <div id="t41-1" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O menor conjunto de pecas que ja se comporta como um assistente: um <strong>canal</strong> (Telegram), um <strong>cerebro</strong> (1 modelo LLM), um <strong>soul.md</strong> (a personalidade), o <strong>loop agentico</strong> e <strong>1 ferramenta</strong>. Junte isso e voce tem um Jarvis que conversa e age.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Saber o minimo viavel te impede de travar tentando construir tudo de uma vez — voce comeca a usar em horas, nao em semanas.</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Receita minima, "hello world" do Jarvis, canal + cerebro + soul + loop + 1 ferramenta.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t41-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+              <span class="text-lg">🪜</span><div><span class="font-medium">Os 5 Build Levels</span><span class="text-neutral-500 text-sm ml-2">- a escada de construcao</span></div>
+            </button>
+            <div id="t41-2" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Os <strong>Build Levels</strong> sao 5 niveis em ordem: <strong>Foundation → Memory → Voice → Tools/MCP → Heartbeat</strong>. A regra de ouro e <strong>brick-by-brick</strong>: construir e testar um nivel antes de subir pro proximo.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">A escada te da uma ordem segura — voce nunca fica com 5 coisas meio-prontas que ninguem sabe se funcionam.</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Build Levels, brick-by-brick, ordem incremental.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t41-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+              <span class="text-lg">🔌</span><div><span class="font-medium">Level 1 Foundation</span><span class="text-neutral-500 text-sm ml-2">- o bot que ja responde</span></div>
+            </button>
+            <div id="t41-3" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O primeiro tijolo: um bot do Telegram conectado ao modelo, ja respondendo voce. Inclui a <strong>whitelist</strong> (so o seu ID e atendido) e os segredos no arquivo <strong>.env</strong>.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E a base de tudo: sem um canal conectado ao cerebro, nao ha o que construir por cima.</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Foundation, Telegram + modelo, whitelist, .env.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t41-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+              <span class="text-lg">🧠</span><div><span class="font-medium">Level 2 Memory</span><span class="text-neutral-500 text-sm ml-2">- quando ele comeca a lembrar</span></div>
+            </button>
+            <div id="t41-4" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O segundo tijolo: voce adiciona o <strong>soul.md</strong> (personalidade) e um banco <strong>SQLite</strong> que guarda a conversa. A partir daqui, ele lembra de voce de uma sessao pra outra.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E o salto de "um chat que esquece tudo" para "um assistente que te conhece" — a diferenca que faz parecer SEU.</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Memory, soul.md, SQLite de conversa, memoria persistente.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t41-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+              <span class="text-lg">🤝</span><div><span class="font-medium">Construir COM uma IA</span><span class="text-neutral-500 text-sm ml-2">- o prompt de inicializacao</span></div>
+            </button>
+            <div id="t41-5" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Voce nao escreve tudo na mao: usa uma IA de codigo (Claude Code / Antigravity) com um <strong>prompt de inicializacao</strong> que descreve canal, cerebro, ferramentas e seguranca — e ela gera o esqueleto pra voce.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Construir com IA derruba a barreira de "nao sei programar"; voce vira o arquiteto que descreve, e a IA escreve o codigo.</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Prompt de inicializacao, IA de codigo, "Telegram-only, MCP-only, whitelist".</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t41-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+              <span class="text-lg">✅</span><div><span class="font-medium">Testar cada tijolo</span><span class="text-neutral-500 text-sm ml-2">- saber que funcionou</span></div>
+            </button>
+            <div id="t41-6" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Para cada nivel, um teste simples de "deu certo?": o bot respondeu? Ele lembrou do que voce disse antes? A ferramenta executou? So passe ao proximo tijolo depois do verde.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Testar cedo isola o problema num tijolo so — em vez de caçar o erro num sistema inteiro que voce montou de uma vez.</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Teste de aceitacao, criterio "deu certo?", isolar a falha.</p></div>
+            </div></div>
+          </div>
+        </div>
+        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+          <button onclick="openModal('modal-4-1')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+          <a href="modulo-4-1.html" class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors">Ver Completo</a>
+        </div>
+      </div>
+      <div id="modal-4-1" class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target===this) closeModal()"><div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600"><div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0"><div class="flex items-center space-x-3"><span class="text-amber-400 font-bold">4.1</span><span class="font-semibold">Do zero ao primeiro Jarvis</span></div><button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button></div><iframe src="modulo-4-1.html" class="flex-1 w-full rounded-b-xl"></iframe></div></div>
+
+      <!-- MODULO 4.2 -->
+      <div id="modulo-4-2" data-inema-module="4-2" data-inema-track="4" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <div class="flex items-center justify-between mb-2"><span class="text-amber-400 font-bold">4.2</span><span class="text-xs text-neutral-500">~60 min</span></div>
+          <h3 class="text-2xl font-bold mb-2">🏗️ Arquitetura de uma solucao robusta (as 4 camadas C)</h3>
+          <p class="text-neutral-400 text-sm mb-3">O framework que organiza tudo que voce aprendeu na Anatomia em quatro camadas com nome e ordem: Context, Connections, Capabilities e Cadence — e como elas se encaixam numa unica arquitetura coerente.</p>
+          <div data-inema-meter="modulo:4-2" class="max-w-xs" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 4.2"><div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-amber-500" data-inema-meter-fill style="width:0%"></div></div><span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span></div>
+        </div>
+        <div class="divide-y divide-dark-600">
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t42-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+              <span class="text-lg">🔠</span><div><span class="font-medium">As 4 C</span><span class="text-neutral-500 text-sm ml-2">- Context, Connections, Capabilities, Cadence</span></div>
+            </button>
+            <div id="t42-1" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O framework <strong>CLAWS / as 4 C</strong>: <strong>Context</strong> (quem ele e), <strong>Connections</strong> (por onde fala e o que alcança), <strong>Capabilities</strong> (o que faz) e <strong>Cadence</strong> (quando age sozinho). A ordem 1-2-3-4 importa: sem conexoes nao ha cadencia; sem contexto nao ha capacidade.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Quatro palavras te dao um checklist mental: olhando seu Jarvis, voce sabe na hora qual camada esta faltando.</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">CLAWS, as 4 C, ordem 1-2-3-4, dependencia entre camadas.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t42-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+              <span class="text-lg">🪪</span><div><span class="font-medium">Context</span><span class="text-neutral-500 text-sm ml-2">- quem ele e e o que sabe de voce</span></div>
+            </button>
+            <div id="t42-2" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">A camada de <strong>identidade + memoria</strong>: o soul.md (personalidade) e os 3 cerebros de memoria (Projeto, Self, Conhecimento). E o "quem ele e" e o "o que ele sabe de voce". Liga direto aos modulos 3.2 e 3.6 da Anatomia.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E a primeira camada de proposito: sem contexto, ele responde como um estranho que nunca te viu.</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Context, identidade, soul.md, os 3 cerebros de memoria.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t42-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+              <span class="text-lg">🔗</span><div><span class="font-medium">Connections</span><span class="text-neutral-500 text-sm ml-2">- por onde fala e o que alcanca</span></div>
+            </button>
+            <div id="t42-3" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">A camada de <strong>canais + ferramentas/MCP</strong>: as portas por onde voce fala com ele (Telegram, WhatsApp, voz) e as ferramentas que ele alcança via <strong>MCP</strong> — o "USB das ferramentas de IA". Liga aos modulos 3.1 e 3.3.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Sao as conexoes que tiram o Jarvis do isolamento e o ligam ao seu mundo real (e-mail, agenda, arquivos).</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Connections, canais, ferramentas, MCP.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t42-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+              <span class="text-lg">🧩</span><div><span class="font-medium">Capabilities</span><span class="text-neutral-500 text-sm ml-2">- o que ele consegue fazer</span></div>
+            </button>
+            <div id="t42-4" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">A camada de <strong>skills + agentes/sub-agentes</strong>: as <strong>skills</strong> (receitas reutilizaveis) e os agentes que delegam tarefas pesadas a sub-agentes. E o "o que ele consegue fazer". Liga aos modulos 3.4 e 3.5.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E aqui que o Jarvis ganha repertorio: empacotar capacidades transforma "ele responde" em "ele resolve".</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Capabilities, skills, agentes, sub-agentes.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t42-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+              <span class="text-lg">⏰</span><div><span class="font-medium">Cadence</span><span class="text-neutral-500 text-sm ml-2">- quando ele age sozinho</span></div>
+            </button>
+            <div id="t42-5" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">A camada de <strong>heartbeat / cron / routines</strong>: o que faz o Jarvis agir sozinho na hora marcada — o resumo das 7h, monitorar a caixa de entrada — "com o laptop fechado". Liga ao modulo 3.5.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Cadencia e o salto de reativo ("responde quando chamo") para proativo ("me avisa antes de eu pedir").</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Cadence, heartbeat, cron, routines, proatividade.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t42-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+              <span class="text-lg">🧬</span><div><span class="font-medium">Juntando as 6 camadas</span><span class="text-neutral-500 text-sm ml-2">- da Anatomia a uma arquitetura</span></div>
+            </button>
+            <div id="t42-6" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Como as 6 camadas da Anatomia (Canais, Identidade, Ferramentas, Skills, Agentes, Cerebros) se reagrupam dentro das 4 C e formam UMA arquitetura coerente — o diagrama final do seu Jarvis.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Ver o mapa inteiro de cima evita o erro de cuidar de uma peca sem entender como ela serve ao todo.</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Arquitetura coerente, 6 camadas → 4 C, "tools change, the foundation survives".</p></div>
+            </div></div>
+          </div>
+        </div>
+        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+          <button onclick="openModal('modal-4-2')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+          <a href="modulo-4-2.html" class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors">Ver Completo</a>
+        </div>
+      </div>
+      <div id="modal-4-2" class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target===this) closeModal()"><div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600"><div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0"><div class="flex items-center space-x-3"><span class="text-amber-400 font-bold">4.2</span><span class="font-semibold">Arquitetura de uma solucao robusta</span></div><button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button></div><iframe src="modulo-4-2.html" class="flex-1 w-full rounded-b-xl"></iframe></div></div>
+
+      <!-- MODULO 4.3 -->
+      <div id="modulo-4-3" data-inema-module="4-3" data-inema-track="4" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <div class="flex items-center justify-between mb-2"><span class="text-amber-400 font-bold">4.3</span><span class="text-xs text-neutral-500">~60 min</span></div>
+          <h3 class="text-2xl font-bold mb-2">📈 Operar, medir e evoluir (confianca, custo, seguranca)</h3>
+          <p class="text-neutral-400 text-sm mb-3">Construir e so o comeco: agora voce coloca o Jarvis em producao com responsabilidade — confiabilidade, custo sob controle, seguranca zero-trust, privacidade dos dados, e como evoluir sem deixar o sistema inchar.</p>
+          <div data-inema-meter="modulo:4-3" class="max-w-xs" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 4.3"><div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-amber-500" data-inema-meter-fill style="width:0%"></div></div><span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span></div>
+        </div>
+        <div class="divide-y divide-dark-600">
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t43-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+              <span class="text-lg">🛡️</span><div><span class="font-medium">Confiabilidade</span><span class="text-neutral-500 text-sm ml-2">- conviver com erro e alucinacao</span></div>
+            </button>
+            <div id="t43-1" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O modelo erra e <strong>alucina</strong> (inventa com confianca). Confiabilidade e o conjunto de freios: <strong>gates de aprovacao</strong>, confirmacao antes de acoes perigosas e <strong>limite de iteracoes</strong> no loop.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Um Jarvis sem freios um dia faz uma besteira automatica; com freios, o estrago fica contido.</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Alucinacao, gate de aprovacao, confirmacao, limite de iteracoes.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t43-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+              <span class="text-lg">💰</span><div><span class="font-medium">Custo</span><span class="text-neutral-500 text-sm ml-2">- local vs nuvem, por resposta</span></div>
+            </button>
+            <div id="t43-2" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Local custa <strong>$0/token</strong> (paga so o hardware — <strong>CAPEX</strong>); nuvem cobra por token (<strong>OPEX</strong>). A decisao e por resposta: modelo barato pra tarefa simples, premium pra tarefa dificil.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Sem gestao de custo, um agente rodando 24/7 pode dar um susto na fatura; com ela, voce escolhe onde gastar.</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">$0/token, CAPEX vs OPEX, decisao economica por resposta.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t43-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+              <span class="text-lg">🔒</span><div><span class="font-medium">Seguranca zero-trust</span><span class="text-neutral-500 text-sm ml-2">- toda entrada e suspeita</span></div>
+            </button>
+            <div id="t43-3" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm"><strong>Zero-trust</strong> = nao confiar em nada por padrao. Toda entrada e um possivel <strong>prompt-injection</strong> (texto que tenta sequestrar o agente). Defesas: <strong>sandbox</strong>, segredos so no .env, sem portas abertas e <strong>audit log</strong> (registro forense de cada acao).</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Os maiores furos do ecossistema foram exposicao e confiar demais; zero-trust e o que separa um Jarvis seguro de um vazamento.</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Zero-trust, prompt-injection, sandbox, audit log, secrets no .env.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t43-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+              <span class="text-lg">🔐</span><div><span class="font-medium">Privacidade e dados</span><span class="text-neutral-500 text-sm ml-2">- local-first, voce decide</span></div>
+            </button>
+            <div id="t43-4" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm"><strong>Local-first</strong>: por padrao, seus dados nao saem da maquina. So vao para fora se VOCE conectar um servico de nuvem — e voce decide exatamente o que pode sair.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Privacidade deixa de ser promessa de empresa e passa a ser uma decisao sua, dado a dado.</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Local-first, soberania de dados, "o que pode sair, voce decide".</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t43-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+              <span class="text-lg">📊</span><div><span class="font-medium">Medir</span><span class="text-neutral-500 text-sm ml-2">- o que observar no painel</span></div>
+            </button>
+            <div id="t43-5" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O que vale a pena observar: uso, gasto, erros e duvidas. Um painel como o <strong>claude-hermes-os</strong> (so leitura) mostra esses numeros para voce enxergar como o Jarvis se comporta.</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">"O que nao se mede nao se melhora": sem visibilidade, voce nao sabe se gasta demais ou se algo quebrou.</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Observabilidade, painel read-only, uso/gasto/erros, claude-hermes-os.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t43-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+              <span class="text-lg">🌱</span><div><span class="font-medium">Evoluir sem inchar</span><span class="text-neutral-500 text-sm ml-2">- "menos e mais" vence o hype</span></div>
+            </button>
+            <div id="t43-6" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-amber-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Crescer por <strong>necessidade</strong>, nao por hype: adicionar uma peca so quando ela resolve um problema real, mantendo o sistema enxuto e legivel — "menos e mais".</p></div>
+              <div><span class="text-amber-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Sistemas incham ate ninguem mais entender (lembre das 100K+ linhas que ninguem le); o enxuto sobrevive ao hype.</p></div>
+              <div><span class="text-amber-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Menos e mais, adicionar por necessidade, codigo legivel, anti-inchaço.</p></div>
+            </div></div>
+          </div>
+        </div>
+        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+          <button onclick="openModal('modal-4-3')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+          <a href="modulo-4-3.html" class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors">Ver Completo</a>
+        </div>
+      </div>
+      <div id="modal-4-3" class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target===this) closeModal()"><div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600"><div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0"><div class="flex items-center space-x-3"><span class="text-amber-400 font-bold">4.3</span><span class="font-semibold">Operar, medir e evoluir</span></div><button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button></div><iframe src="modulo-4-3.html" class="flex-1 w-full rounded-b-xl"></iframe></div></div>
+
+      <!-- Navegacao entre trilhas -->
+      <div class="flex flex-col sm:flex-row gap-4 mt-10">
+        <a href="../trilha3/index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Trilha 3: Anatomia</a>
+        <a href="../trilha5/index.html" class="flex-1 text-center px-6 py-3 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-500 transition-colors">Trilha 5: Jarvis no celular →</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="border-t border-dark-600 py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
+    </div>
+  </footer>
+
+  <!-- Scripts nucleo v1 -->
+  <script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+
+  <!-- Camada de aprendizagem -->
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+  </script>
+</body>
+</html>

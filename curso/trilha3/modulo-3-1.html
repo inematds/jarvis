@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="inema-course" content="jarvis">
+  <title>Modulo 3.1 — Canais: por onde voce fala com ele | Jarvis · INEMA.CLUB</title>
+  <meta name="description" content="As portas de entrada e saida do seu Jarvis: Telegram, WhatsApp, voz e web — por que o Telegram e o preferido, o que e whitelist e como o mesmo cerebro chega em qualquer dispositivo.">
+
+  <!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+
+  <!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+  <script type="application/json" data-inema-manifest>
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/learn.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .bg-purple-900\/20 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a href="#conteudo" class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg">Pular para o conteudo</a>
+
+  <!-- NAVIGATION (completo, identico em todas as paginas) -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-3">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🤖</span>
+            <span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a id="nav-t1" href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a id="nav-t2" href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+          </a>
+          <a id="nav-t3" href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span>
+          </a>
+          <a id="nav-t4" href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+          </a>
+          <a id="nav-t5" href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+          </a>
+          <a id="nav-t6" href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span>
+          </a>
+
+          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Minha jornada">
+            <span aria-hidden="true">◷</span><span class="hidden md:inline">Jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge data-count="0"></span>
+          </button>
+
+          <div class="relative">
+            <button type="button" data-inema-appearance-toggle="[data-inema-appearance]" aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Aparencia">
+              <span aria-hidden="true">◑</span><span class="hidden md:inline">Aparencia</span>
+            </button>
+            <div data-inema-appearance class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left">
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-theme="inema-dark" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Escuro</button>
+                  <button data-inema-set-theme="claro" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Claro</button>
+                  <button data-inema-set-theme="sepia" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sepia</button>
+                  <button data-inema-set-theme="foco" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Foco</button>
+                  <button data-inema-set-theme="contraste" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Alto contraste</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Fonte</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-font="inter" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Inter</button>
+                  <button data-inema-set-font="system" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sistema</button>
+                  <button data-inema-set-font="leitura" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Leitura</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tamanho</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-fontscale="100" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A</button>
+                  <button data-inema-set-fontscale="112" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A+</button>
+                  <button data-inema-set-fontscale="125" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A++</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Entrelinha</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-leading="1.45" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Compacto</button>
+                  <button data-inema-set-leading="1.7" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Confortavel</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+                <div class="inema-accent-grid flex flex-wrap gap-2">
+                  <button data-inema-set-accent="emerald" class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" title="Emerald"></button>
+                  <button data-inema-set-accent="blue" class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" title="Blue"></button>
+                  <button data-inema-set-accent="purple" class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" title="Purple"></button>
+                  <button data-inema-set-accent="amber" class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" title="Amber"></button>
+                  <button data-inema-set-accent="teal" class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" title="Teal"></button>
+                  <button data-inema-set-accent="rose" class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" title="Rose"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" title="Alternar claro/escuro">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo">
+    <header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+          <a href="../../index.html" class="hover:text-purple-400">Inicio</a><span>/</span>
+          <a href="index.html" class="hover:text-purple-400">Trilha 3</a><span>/</span>
+          <span class="text-purple-400">Modulo 3-1</span>
+        </nav>
+        <span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">MODULO 3-1</span>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">📡 Canais — por onde voce fala com ele</h1>
+        <p class="text-lg text-neutral-400 max-w-3xl">A primeira das seis camadas da Anatomia e a mais simples de entender e a mais facil de errar: a <strong>porta</strong>. Antes de o Jarvis ter cerebro, memoria ou maos, ele precisa de um lugar por onde voce o chama e ele te responde. Neste modulo voce vai entender o que e um canal, por que o Telegram virou o predileto, o que e uma whitelist (a primeira trava de seguranca) e como o mesmo cerebro chega em qualquer aparelho.</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">6</div><div class="text-xs text-neutral-400">Topicos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">~35</div><div class="text-xs text-neutral-400">Minutos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Intermediario</div><div class="text-xs text-neutral-400">Nivel</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Pratico</div><div class="text-xs text-neutral-400">Tipo</div></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="lg:flex lg:gap-10">
+
+        <!-- TOC sticky -->
+        <aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+          <nav data-inema-toc aria-label="Indice da pagina" class="lg:sticky lg:top-20">
+            <p class="text-sm text-neutral-400 mb-2">Secao <span class="inema-toc-pos" data-inema-section-counter>1</span> de 6</p>
+            <ol class="space-y-1 text-sm">
+              <li><a href="#topico-1" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">1. O que e um canal</a></li>
+              <li><a href="#topico-2" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">2. Por que Telegram</a></li>
+              <li><a href="#topico-3" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">3. WhatsApp e o resto</a></li>
+              <li><a href="#topico-4" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">4. Whitelist: a 1a trava</a></li>
+              <li><a href="#topico-5" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">5. Texto, voz e midia</a></li>
+              <li><a href="#topico-6" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">6. Um canal, muitos aparelhos</a></li>
+            </ol>
+            <div class="mt-4" data-inema-meter="modulo:3-1" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 3-1">
+              <div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-purple-500" data-inema-meter-fill style="width:0%"></div></div>
+              <span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span>
+            </div>
+          </nav>
+        </aside>
+
+        <div class="lg:flex-1 min-w-0 inema-prose">
+
+          <!-- TOPICO 1 -->
+          <section id="topico-1" data-inema-topic="modulo-3-1#topico-1" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">1</span>
+              <h2 class="text-2xl font-bold">📨 O que e um canal</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m31-t1-p1">Imagine o seu Jarvis como uma pessoa muito capaz trancada numa sala. Ela pensa, lembra, sabe usar ferramentas — mas voce so consegue conversar com ela se houver uma <strong class="text-purple-400">porta</strong>. Um <strong>canal</strong> e exatamente isso: a porta de entrada e saida por onde voce fala com o assistente e por onde ele te responde. Sem canal, o cerebro mais inteligente do mundo fica calado.</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m31-t1-p2">Na pratica, um canal e quase sempre um aplicativo que voce ja usa: um app de mensagens (Telegram, WhatsApp), o e-mail, uma pagina web, ou ate o proprio terminal/Claude Code de quem desenvolve. O ponto importante e que o canal nao e o cerebro — ele so transporta. A mesma "pessoa na sala" pode ter varias portas ao mesmo tempo.</p>
+
+            <div class="bg-purple-500/10 rounded-xl border border-purple-500/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-purple-400">Novo aqui?</strong> <strong>Canal</strong> = a porta de comunicacao entre voce e o Jarvis (Telegram, WhatsApp, voz, web, terminal). <strong>Cerebro</strong> = o modelo de IA que pensa (vimos na Trilha 1). O canal carrega a mensagem; o cerebro decide a resposta. Sao coisas separadas — e isso e otimo, porque da pra trocar uma sem mexer na outra.</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">🔌</span> O canal e a tomada, nao o aparelho</h3>
+              <p class="text-neutral-300 mb-4">Pense numa tomada na parede. Ela nao "faz" nada sozinha — mas e por ela que a energia chega no liquidificador, no carregador ou na TV. O canal e a tomada: ele leva a sua mensagem ate o cerebro e traz a resposta de volta. Voce pode plugar varios aparelhos (canais) no mesmo Jarvis.</p>
+              <ul class="space-y-2 text-neutral-300">
+                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Entrada:</strong> voce manda texto, audio ou foto pelo canal.</span></li>
+                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Saida:</strong> o Jarvis responde por aquele mesmo canal.</span></li>
+                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Independencia:</strong> trocar de canal nao muda quem ele e — so muda a porta.</span></li>
+              </ul>
+            </div>
+
+            <!-- SVG hub multicanal -->
+            <div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+              <svg viewBox="0 0 980 280" class="w-full h-auto" role="img" aria-label="Diagrama hub: o cerebro do Jarvis no centro com raios para quatro canais — Telegram, WhatsApp, voz e web — mostrando que um cerebro atende varias portas">
+                <defs>
+                  <filter id="m31-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  <pattern id="m31-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#a855f7" opacity="0.12"/></pattern>
+                  <marker id="m31-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+                </defs>
+                <rect x="0" y="0" width="980" height="280" fill="url(#m31-grid)"/>
+                <text x="490" y="26" text-anchor="middle" fill="#c084fc" font-family="Inter,sans-serif" font-size="13" font-weight="600">UM CEREBRO · MUITOS CANAIS</text>
+                <!-- centro -->
+                <g filter="url(#m31-glow)"><rect x="400" y="105" width="180" height="72" rx="16" fill="#1a1230" stroke="#c084fc" stroke-width="2.5"/></g>
+                <text x="490" y="138" text-anchor="middle" fill="#c084fc" font-family="Inter,sans-serif" font-size="16" font-weight="700">🤖 Jarvis</text>
+                <text x="490" y="160" text-anchor="middle" fill="#a7c7f3" font-family="Inter,sans-serif" font-size="12">o cerebro</text>
+                <!-- raios + canais -->
+                <g font-family="Inter,sans-serif" font-size="13">
+                  <line class="wf-a" x1="400" y1="120" x2="220" y2="70" stroke="#38bdf8" stroke-width="2" marker-end="url(#m31-ah)"/>
+                  <rect x="60" y="48" width="150" height="48" rx="12" fill="#0c1622" stroke="#38bdf8" stroke-width="2"/><text x="135" y="78" text-anchor="middle" fill="#bae6fd">✈️ Telegram</text>
+                  <line class="wf-a" x1="400" y1="160" x2="220" y2="210" stroke="#38bdf8" stroke-width="2" marker-end="url(#m31-ah)"/>
+                  <rect x="60" y="186" width="150" height="48" rx="12" fill="#0c1622" stroke="#38bdf8" stroke-width="2"/><text x="135" y="216" text-anchor="middle" fill="#bae6fd">💬 WhatsApp</text>
+                  <line class="wf-a" x1="580" y1="120" x2="760" y2="70" stroke="#38bdf8" stroke-width="2" marker-end="url(#m31-ah)"/>
+                  <rect x="770" y="48" width="150" height="48" rx="12" fill="#0c1622" stroke="#38bdf8" stroke-width="2"/><text x="845" y="78" text-anchor="middle" fill="#bae6fd">🎙️ Voz</text>
+                  <line class="wf-a" x1="580" y1="160" x2="760" y2="210" stroke="#38bdf8" stroke-width="2" marker-end="url(#m31-ah)"/>
+                  <rect x="770" y="186" width="150" height="48" rx="12" fill="#0c1622" stroke="#38bdf8" stroke-width="2"/><text x="845" y="216" text-anchor="middle" fill="#bae6fd">🌐 Web / terminal</text>
+                </g>
+              </svg>
+              <p class="text-xs text-neutral-400 mt-1 px-1">No centro, o <span class="text-purple-400">cerebro do Jarvis</span>; nas pontas, os <span class="text-sky-400">canais</span>. A licao do diagrama: <strong>voce nao constroi varios Jarvis</strong> — voce conecta varias portas ao mesmo cerebro. Cada raio e uma porta; o cerebro e sempre o mesmo.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Canal</span><p class="text-sm text-neutral-400 mt-1">A porta de entrada/saida por onde voce conversa com o Jarvis.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Entrada e saida (I/O)</span><p class="text-sm text-neutral-400 mt-1">Voce envia pela porta; ele responde pela mesma porta.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Canal ≠ cerebro</span><p class="text-sm text-neutral-400 mt-1">A porta transporta; o modelo pensa. Trocar uma nao mexe na outra.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Multicanal</span><p class="text-sm text-neutral-400 mt-1">O mesmo Jarvis pode ter varias portas abertas ao mesmo tempo.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 2 -->
+          <section id="topico-2" data-inema-topic="modulo-3-1#topico-2" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">2</span>
+              <h2 class="text-2xl font-bold">✈️ Por que Telegram e o preferido</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m31-t2-p1">Entre todos os canais possiveis, quase todos os projetos da nossa familia (GravityClaw, Intelecto, agentejax) escolhem o <strong class="text-purple-400">Telegram</strong> como porta principal. Nao e moda nem gosto pessoal: e uma decisao de engenharia e de seguranca. O Telegram resolve, de graca, varios problemas que outros canais te dao de presente.</p>
+
+            <div class="bg-purple-500/10 rounded-xl border border-purple-500/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-purple-400">Novo aqui?</strong> <strong>Token</strong> e uma senha longa e unica que o Telegram te da para o seu robo (bot) — quem tem o token "e" o bot. <strong>Long-polling</strong> ("ficar perguntando") e quando o SEU programa pergunta de tempos em tempos ao Telegram "chegou mensagem nova?", em vez de o Telegram bater na sua porta. A diferenca parece pequena, mas e a chave da seguranca — ja explico.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+                <h4 class="font-bold text-emerald-400 mb-4">✓ Por que Telegram brilha</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span><strong>So um token:</strong> pega no @BotFather em 2 minutos, sem cadastro de empresa.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span><strong>Long-polling:</strong> seu programa PERGUNTA ao Telegram; nao precisa abrir nenhuma porta no seu PC.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span><strong>Sem servidor web exposto:</strong> nada da internet "alcanca" sua maquina.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span><strong>Gratis e multiplataforma:</strong> PC, celular, web — ja roda em tudo.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span><strong>"Ja e mobile":</strong> voce nao precisa publicar app nenhum.</span></li>
+                </ul>
+              </div>
+              <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+                <h4 class="font-bold text-red-400 mb-4">✗ O que um "servidor web" cobra</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Precisa abrir uma porta publica para a internet te achar.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Essa porta vira alvo: qualquer um pode bater nela.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Exige dominio, certificado, configuracao — atrito real.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Foi exatamente o furo do OpenClaw (vamos ver os numeros).</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> O dado que decide a discussao</h3>
+              <p class="text-neutral-300 text-sm mb-3">No Panorama (Trilha 2) vimos que o OpenClaw, o sistema original, expunha um servidor web. O resultado foi um desastre de seguranca: pesquisadores encontraram <strong class="text-blue-400">42.665 instancias publicas na internet</strong>, e <strong class="text-blue-400">93,4% delas sem nenhuma senha</strong> — qualquer pessoa podia conversar com o "Jarvis" alheio.</p>
+              <p class="text-neutral-400 text-sm">A reacao da familia lean (GravityClaw e cia.) foi direta: <strong>so Telegram, com long-polling, zero portas abertas</strong>. Se nao ha porta exposta, nao ha o que escanear. A escolha do canal virou uma decisao de seguranca.</p>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <h3 class="text-base font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Dica pratica</h3>
+              <p class="text-sm text-neutral-300">A regra mental para escolher canal: <strong>"meu PC precisa ficar acessivel de fora?"</strong> Se a resposta for nao, voce esta no caminho seguro. Telegram com long-polling te da isso de graca — por isso ele e o ponto de partida recomendado, e por isso quase todo projeto da familia comeca por ele.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Token (@BotFather)</span><p class="text-sm text-neutral-400 mt-1">A senha unica do seu bot, criada no robo oficial do Telegram.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Long-polling</span><p class="text-sm text-neutral-400 mt-1">Seu programa pergunta ao Telegram; ninguem bate na sua porta.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Zero portas abertas</span><p class="text-sm text-neutral-400 mt-1">Nada da internet alcanca sua maquina — superficie de ataque minima.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">"Ja e mobile"</span><p class="text-sm text-neutral-400 mt-1">Telegram roda em tudo; voce nao publica app de loja.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 3 -->
+          <section id="topico-3" data-inema-topic="modulo-3-1#topico-3" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">3</span>
+              <h2 class="text-2xl font-bold">💬 WhatsApp e o resto</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m31-t3-p1">Telegram e o ponto de partida, mas nao e o unico destino. No Brasil, em particular, muita gente vive no <strong class="text-purple-400">WhatsApp</strong> — e faz sentido querer o Jarvis ali. O projeto <em>agentevoz</em> conecta o assistente ao WhatsApp atraves de uma ferramenta chamada <strong>Evolution API</strong>, que faz a ponte entre o WhatsApp e o seu codigo. Pela mesma porta passam texto, imagem e ate audio.</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m31-t3-p2">Alem desses dois, ha outras portas: <strong>e-mail</strong> (o Jarvis le e responde sua caixa), uma <strong>pagina web</strong> (um chat no navegador) e o <strong>terminal / Claude Code</strong> (o canal de quem desenvolve). A grande ideia da camada de canais e que esses caminhos sao <strong class="text-purple-400">intercambiaveis e somaveis</strong>: o mesmo cerebro pode atender em varios ao mesmo tempo.</p>
+
+            <div class="bg-purple-500/10 rounded-xl border border-purple-500/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-purple-400">Novo aqui?</strong> O WhatsApp nao oferece um "token de bot" simples como o Telegram. A <strong>Evolution API</strong> e um programa intermediario (open source) que se conecta ao WhatsApp e expoe uma interface que o seu Jarvis entende. E uma ponte — voce ganha o alcance do WhatsApp, mas adiciona uma peca a mais para cuidar.</p>
+            </div>
+
+            <!-- Tabela comparativa de canais -->
+            <div class="overflow-x-auto rounded-xl border border-dark-600 mb-6">
+              <table class="w-full text-sm text-left">
+                <thead class="bg-dark-700 text-neutral-300">
+                  <tr>
+                    <th class="px-4 py-3 font-semibold">Canal</th>
+                    <th class="px-4 py-3 font-semibold">Facilidade</th>
+                    <th class="px-4 py-3 font-semibold">Seguranca padrao</th>
+                    <th class="px-4 py-3 font-semibold">Quando usar</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-dark-600 text-neutral-400">
+                  <tr class="bg-dark-800">
+                    <td class="px-4 py-3 text-purple-400 font-semibold">✈️ Telegram</td>
+                    <td class="px-4 py-3">Altissima (so token)</td>
+                    <td class="px-4 py-3 text-emerald-400">Excelente (zero portas)</td>
+                    <td class="px-4 py-3">Sempre o ponto de partida.</td>
+                  </tr>
+                  <tr class="bg-dark-800">
+                    <td class="px-4 py-3 text-purple-400 font-semibold">💬 WhatsApp</td>
+                    <td class="px-4 py-3">Media (precisa Evolution API)</td>
+                    <td class="px-4 py-3 text-amber-400">Depende da ponte</td>
+                    <td class="px-4 py-3">Quando seu publico vive no WhatsApp.</td>
+                  </tr>
+                  <tr class="bg-dark-800">
+                    <td class="px-4 py-3 text-purple-400 font-semibold">📧 E-mail</td>
+                    <td class="px-4 py-3">Media</td>
+                    <td class="px-4 py-3 text-emerald-400">Boa (assincrono)</td>
+                    <td class="px-4 py-3">Tarefas que nao tem pressa.</td>
+                  </tr>
+                  <tr class="bg-dark-800">
+                    <td class="px-4 py-3 text-purple-400 font-semibold">🌐 Web</td>
+                    <td class="px-4 py-3">Baixa (exige servidor)</td>
+                    <td class="px-4 py-3 text-red-400">Exige cuidado (porta aberta)</td>
+                    <td class="px-4 py-3">Quando precisa de uma interface visual.</td>
+                  </tr>
+                  <tr class="bg-dark-800">
+                    <td class="px-4 py-3 text-purple-400 font-semibold">⌨️ Terminal</td>
+                    <td class="px-4 py-3">Alta (so para quem dev)</td>
+                    <td class="px-4 py-3 text-emerald-400">Excelente (local)</td>
+                    <td class="px-4 py-3">Desenvolvimento e teste.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> A vantagem do multicanal</h3>
+              <p class="text-neutral-300 text-sm">Como o canal e separado do cerebro, somar portas e barato: o mesmo Jarvis, com a mesma memoria e a mesma personalidade, pode te atender no Telegram em casa e no WhatsApp no trabalho. Voce nao duplica o assistente — apenas abre mais uma porta para a mesma sala. Esse desenho "um cerebro, varias bocas" e o coracao da Anatomia.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Evolution API</span><p class="text-sm text-neutral-400 mt-1">A ponte open source que conecta o WhatsApp ao seu Jarvis.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Canais intercambiaveis</span><p class="text-sm text-neutral-400 mt-1">Trocar a porta nao muda quem o assistente e.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Multicanal</span><p class="text-sm text-neutral-400 mt-1">Varias portas para o mesmo cerebro, ao mesmo tempo.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Custo de cada ponte</span><p class="text-sm text-neutral-400 mt-1">Mais portas = mais alcance, mas mais pecas para manter.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 4 -->
+          <section id="topico-4" data-inema-topic="modulo-3-1#topico-4" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">4</span>
+              <h2 class="text-2xl font-bold">🚪 Whitelist = a 1a trava</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m31-t4-p1">Aqui mora o conceito de seguranca mais importante deste modulo. Um bot de Telegram, por padrao, e <strong>publico</strong>: qualquer pessoa que descubra o nome dele pode comecar a conversar. Se esse bot e o seu Jarvis — com acesso a sua agenda, seus e-mails, seus arquivos — isso e perigoso. A solucao e simples e poderosa: a <strong class="text-purple-400">whitelist</strong> (lista de permitidos).</p>
+
+            <div class="bg-purple-500/10 rounded-xl border border-purple-500/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-purple-400">Novo aqui?</strong> Cada usuario do Telegram tem um <strong>ID numerico</strong> unico (por exemplo, <code class="px-1 rounded bg-dark-700 text-purple-300">123456789</code>). A <strong>whitelist</strong> e uma lista curta com os IDs que o Jarvis aceita atender. Se a mensagem vem de um ID que NAO esta na lista, o Jarvis simplesmente ignora — em silencio, sem nem responder "acesso negado". O contrario de whitelist seria blacklist (bloquear alguns); aqui a logica e mais segura: <strong>bloqueia todo mundo, libera so quem voce escolheu</strong>.</p>
+            </div>
+
+            <!-- SVG fluxo whitelist -->
+            <div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+              <svg viewBox="0 0 980 230" class="w-full h-auto" role="img" aria-label="Fluxo da whitelist: uma mensagem chega, o Jarvis confere se o ID esta na lista de permitidos; se sim, atende; se nao, ignora em silencio">
+                <defs>
+                  <filter id="m31-glow2" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  <pattern id="m31-grid2" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#a855f7" opacity="0.12"/></pattern>
+                  <marker id="m31-ah2" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+                  <marker id="m31-x2" markerWidth="12" markerHeight="12" refX="6" refY="6" orient="auto"><path d="M2,2 L10,10 M10,2 L2,10" stroke="#f87171" stroke-width="2"/></marker>
+                </defs>
+                <rect x="0" y="0" width="980" height="230" fill="url(#m31-grid2)"/>
+                <text x="490" y="26" text-anchor="middle" fill="#c084fc" font-family="Inter,sans-serif" font-size="13" font-weight="600">A WHITELIST DECIDE QUEM PASSA</text>
+                <g font-family="Inter,sans-serif" font-size="13">
+                  <!-- mensagem chega -->
+                  <rect x="40" y="92" width="150" height="56" rx="13" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/><text x="115" y="116" text-anchor="middle" fill="#e5e7eb">mensagem</text><text x="115" y="134" text-anchor="middle" fill="#9ca3af" font-size="11">de um ID qualquer</text>
+                  <line x1="190" y1="120" x2="290" y2="120" stroke="#38bdf8" stroke-width="2" marker-end="url(#m31-ah2)"/>
+                  <!-- decisao -->
+                  <g filter="url(#m31-glow2)"><path d="M300,120 L380,82 L460,120 L380,158 Z" fill="#1a1230" stroke="#c084fc" stroke-width="2.5"/></g>
+                  <text x="380" y="116" text-anchor="middle" fill="#c084fc" font-size="12" font-weight="600">ID esta na</text><text x="380" y="132" text-anchor="middle" fill="#c084fc" font-size="12" font-weight="600">whitelist?</text>
+                  <!-- sim -->
+                  <line x1="460" y1="105" x2="640" y2="70" stroke="#38bdf8" stroke-width="2" marker-end="url(#m31-ah2)"/><text x="540" y="78" text-anchor="middle" fill="#34d399" font-size="12">SIM</text>
+                  <rect x="650" y="44" width="280" height="52" rx="13" fill="#0e2018" stroke="#34d399" stroke-width="2"/><text x="790" y="70" text-anchor="middle" fill="#a7f3d0">✓ Jarvis pensa e responde</text>
+                  <!-- nao -->
+                  <line x1="460" y1="135" x2="640" y2="172" stroke="#f87171" stroke-width="2" stroke-dasharray="6 6" marker-end="url(#m31-x2)"/><text x="540" y="180" text-anchor="middle" fill="#f87171" font-size="12">NAO</text>
+                  <rect x="650" y="146" width="280" height="52" rx="13" fill="#2a0f16" stroke="#f87171" stroke-width="2"/><text x="790" y="172" text-anchor="middle" fill="#fca5a5">✗ ignora em silencio</text>
+                </g>
+              </svg>
+              <p class="text-xs text-neutral-400 mt-1 px-1">Toda mensagem passa primeiro pela <span class="text-purple-400">checagem da whitelist</span>: ID conhecido <span class="text-emerald-400">segue para o cerebro</span>; ID estranho e <span class="text-red-400">descartado sem resposta</span>. Por isso ela e a "1a trava" — acontece <strong>antes</strong> de o modelo sequer ser acionado, e ignorar em silencio nao da pistas para um invasor.</p>
+            </div>
+
+            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> Sem whitelist, o estrago e real</h3>
+              <p class="text-neutral-300 text-sm">Lembre dos <strong>93,4% de instancias sem nenhuma autenticacao</strong> do OpenClaw: na pratica, eram "Jarvis" abertos para qualquer um. Sem a primeira trava, um estranho pode pedir ao seu assistente para ler seus e-mails, gastar seus creditos de IA ou rodar comandos na sua maquina. A whitelist e a linha que separa "meu assistente pessoal" de "um robo que obedece qualquer um".</p>
+            </div>
+
+            <!-- COPY-RUN -->
+            <div class="bg-dark-900 rounded-xl border border-purple-500/30 overflow-hidden mb-6">
+              <div class="flex items-center justify-between px-4 py-2 bg-dark-800 border-b border-dark-600">
+                <span class="text-xs font-semibold text-purple-400 uppercase tracking-wide">⌨️ Copy-run · criar o bot e travar a whitelist</span>
+                <span class="text-xs text-neutral-500">font-mono</span>
+              </div>
+              <div class="p-4 font-mono text-sm text-neutral-300 space-y-3 overflow-x-auto">
+                <p class="text-neutral-500"># OBJETIVO: criar seu bot no Telegram, descobrir seu ID e</p>
+                <p class="text-neutral-500"># deixar so VOCE na lista de permitidos (a 1a trava).</p>
+                <p class="text-neutral-500"># ------------------------------------------------------------</p>
+                <p class="text-neutral-500"># PASSO 1 — no app Telegram, fale com o @BotFather e digite:</p>
+                <p class="text-emerald-400">/newbot</p>
+                <p class="text-neutral-500">#   ele pergunta um nome e um @usuario; no fim te entrega o token:</p>
+                <p class="text-neutral-300">8123456789:AAH<span class="text-purple-300">&lt;resto-do-seu-token-secreto&gt;</span></p>
+                <p class="text-neutral-500"># PASSO 2 — descubra o SEU id: fale com o @userinfobot, ele responde:</p>
+                <p class="text-neutral-300">Id: <span class="text-purple-300">&lt;seu-id-numerico&gt;</span>   (ex.: 123456789)</p>
+                <p class="text-neutral-500"># PASSO 3 — coloque os dois no arquivo .env do seu Jarvis:</p>
+                <p class="text-neutral-300">TELEGRAM_BOT_TOKEN=<span class="text-purple-300">&lt;seu-token-do-botfather&gt;</span></p>
+                <p class="text-neutral-300">TELEGRAM_ALLOWED_IDS=<span class="text-purple-300">&lt;seu-id-numerico&gt;</span></p>
+                <p class="text-neutral-500"># (para liberar mais alguem, separe por virgula: 123456789,987654321)</p>
+              </div>
+              <div class="px-4 py-3 bg-emerald-900/20 border-t border-emerald-500/30">
+                <p class="text-xs text-neutral-300"><strong class="text-emerald-400">Como verificar:</strong> mande "oi" para o seu bot pela SUA conta — ele responde. Peca para um amigo mandar "oi" pelo mesmo bot — ele <strong>nao responde nada</strong>. Se o seu "oi" funciona e o do estranho e ignorado em silencio, a whitelist esta no lugar. Guarde o token como senha: quem o tem controla o bot.</p>
+              </div>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Whitelist</span><p class="text-sm text-neutral-400 mt-1">Lista curta de IDs que o Jarvis aceita; o resto e ignorado.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">ID de usuario</span><p class="text-sm text-neutral-400 mt-1">O numero unico que identifica voce no Telegram.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Ignorar em silencio</span><p class="text-sm text-neutral-400 mt-1">Nao responder ao estranho — nem da pistas a quem ataca.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Secrets no .env</span><p class="text-sm text-neutral-400 mt-1">Token e IDs ficam num arquivo de segredos, fora do codigo.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 5 -->
+          <section id="topico-5" data-inema-topic="modulo-3-1#topico-5" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">5</span>
+              <h2 class="text-2xl font-bold">🎙️ Texto, voz e midia</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m31-t5-p1">Um canal nao carrega so texto. O Telegram, por exemplo, transporta <strong class="text-purple-400">texto, audio e imagem</strong> pela mesma porta. Quando voce grava uma mensagem de voz, o app entrega um arquivo de audio (formato <code class="px-1 rounded bg-dark-700 text-purple-300">.ogg</code>); quando voce manda uma foto, ele entrega a imagem. O canal e o mesmo — muda apenas o tipo de "carga" que passa por ele.</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m31-t5-p2">Aqui entra uma frase que vale a pena guardar: <strong>"voz e interface, nao cerebro"</strong>. O modelo continua pensando em texto. A voz e so um jeito de entrar e sair — uma camada opcional que pode ser ligada ou desligada <strong class="text-purple-400">em tempo de execucao</strong> (na hora, conforme a situacao). Falar com o Jarvis ou digitar para ele leva a mesma "sala": o cerebro nao muda.</p>
+
+            <div class="bg-purple-500/10 rounded-xl border border-purple-500/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-purple-400">Novo aqui?</strong> Para o modelo "ouvir" a sua voz, o audio passa por um <strong>STT</strong> ("speech-to-text", fala vira texto). Para ele "falar", o texto da resposta passa por um <strong>TTS</strong> ("text-to-speech", texto vira fala). No meio, o cerebro so ve texto. "Em tempo de execucao" quer dizer que a decisao de usar voz e tomada na hora — voce nao precisa decidir isso ao construir o sistema.</p>
+            </div>
+
+            <!-- Timeline pipeline de voz -->
+            <div class="space-y-4 mb-6">
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">1</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Voce grava um audio</h4><p class="text-sm text-neutral-400">O Telegram entrega um arquivo <code class="px-1 rounded bg-dark-700 text-purple-300">.ogg</code> pela mesma porta de sempre.</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">2</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">STT transcreve (fala → texto)</h4><p class="text-sm text-neutral-400">Uma ferramenta de transcricao (ex.: Whisper) converte o audio em texto em portugues.</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">3</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">O cerebro pensa em texto</h4><p class="text-sm text-neutral-400">O modelo recebe texto e devolve texto — exatamente como se voce tivesse digitado.</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">4</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">TTS responde em voz (opcional)</h4><p class="text-sm text-neutral-400">Se a voz estiver ligada, o texto da resposta vira audio e volta pela porta. Senao, ele responde por texto.</p></div>
+              </div>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <h3 class="text-base font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Dica pratica</h3>
+              <p class="text-sm text-neutral-300">Comece so com texto. Voz e mais "uau", mas adiciona pecas (transcricao, geracao de audio, custo). O caminho saudavel e: texto primeiro, depois ligar a voz quando ja funciona. E lembre que voz costuma usar servicos diferentes do cerebro — atencao para nao confundir as chaves de cada um (a chave do transcritor nem sempre e a mesma do modelo).</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Multimodal</span><p class="text-sm text-neutral-400 mt-1">A mesma porta carrega texto, audio e imagem.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">STT / TTS</span><p class="text-sm text-neutral-400 mt-1">Fala vira texto (STT); texto vira fala (TTS).</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Voz e interface</span><p class="text-sm text-neutral-400 mt-1">O cerebro pensa em texto; a voz so entra e sai.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Decisao em runtime</span><p class="text-sm text-neutral-400 mt-1">Ligar a voz e uma escolha tomada na hora, opcional.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 6 -->
+          <section id="topico-6" data-inema-topic="modulo-3-1#topico-6" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">6</span>
+              <h2 class="text-2xl font-bold">📱 Um canal, muitos dispositivos</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m31-t6-p1">Tem uma frase que aparece em quase todos os projetos: <strong class="text-purple-400">"o Telegram ja e mobile"</strong>. Ela esconde uma das maiores vantagens da camada de canais. Como o Telegram (e o WhatsApp) ja roda no celular, no tablet, no notebook e na web, escolher esse canal te da acesso ao Jarvis <strong>de qualquer aparelho</strong> — sem voce ter que construir, publicar e manter um aplicativo proprio na loja.</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m31-t6-p2">O detalhe que confunde leigos: o cerebro do Jarvis nao "mora" no seu celular. Ele roda em algum lugar fixo — no seu PC de casa ligado, ou num servidor barato na nuvem — e o celular e so mais uma <strong>tela</strong> que se conecta a ele pelo canal. Voce comeca uma conversa no PC, continua no celular no onibus e termina no tablet a noite: e sempre a mesma sala, a mesma memoria, o mesmo assistente.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+                <h4 class="font-bold text-emerald-400 mb-4">✓ "Telegram ja e mobile" significa</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Acesso de celular, PC, tablet e web — todos ja existentes.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Zero app de loja para publicar ou aprovar.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Mesma conversa e memoria em qualquer aparelho.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>O cerebro fica num lugar fixo; o aparelho e so a tela.</span></li>
+                </ul>
+              </div>
+              <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+                <h4 class="font-bold text-red-400 mb-4">✗ Se fosse um app nativo</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Teria que desenvolver para Android E iOS.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Passar por aprovacao das lojas (e taxas).</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Pedir ao usuario para baixar e atualizar.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Manter tudo isso por conta propria, para sempre.</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">🧭</span> Onde isso te leva</h3>
+              <p class="text-neutral-300 text-sm mb-3">Essa ideia e a ponte para a Trilha 5 ("Jarvis no celular"): nao existe "app do Jarvis" — existe um cerebro rodando em algum lugar e um canal (Telegram/WhatsApp) que voce ja tem no bolso. O celular vira o controle remoto de um assistente que pode rodar 24 horas por dia, mesmo com o seu laptop fechado.</p>
+              <p class="text-neutral-400 text-xs">Guarde: <strong>canal = onde voce fala; cerebro = onde ele pensa.</strong> Separar os dois e o que faz o Jarvis te seguir por todos os aparelhos sem virar seis apps diferentes.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">"Ja e mobile"</span><p class="text-sm text-neutral-400 mt-1">O canal ja roda em todo aparelho — sem app proprio.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Cerebro fixo, tela movel</span><p class="text-sm text-neutral-400 mt-1">O modelo roda num lugar; o aparelho so se conecta.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Continuidade</span><p class="text-sm text-neutral-400 mt-1">Mesma conversa e memoria em qualquer dispositivo.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Sem app de loja</span><p class="text-sm text-neutral-400 mt-1">Nada para publicar, aprovar ou pedir para baixar.</p></div>
+            </div>
+
+            <!-- CHECAGEM LEVE -->
+            <div data-inema-check="modulo-3-1#q1" class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6">
+              <p class="font-medium mb-4">Auto-checagem (opcional): por que tantos projetos escolhem o Telegram como canal principal?</p>
+              <div class="inema-check-options space-y-2">
+                <button type="button" data-inema-check-option="0" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Porque e o app de mensagens mais popular do mundo.</button>
+                <button type="button" data-inema-check-option="1" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Porque so precisa de um token e usa long-polling — sem servidor web exposto, zero portas abertas, e ja roda em todo aparelho.</button>
+                <button type="button" data-inema-check-option="2" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Porque o cerebro do Jarvis roda dentro do proprio Telegram.</button>
+              </div>
+              <div data-inema-check-feedback class="mt-4 text-sm" role="status" aria-live="polite"></div>
+            </div>
+
+            <div class="flex justify-start mt-6">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- RESUMO -->
+          <section class="mb-8">
+            <div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+              <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumo do modulo</h2>
+              <div class="space-y-4 mb-8">
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Canal = a porta</strong><span class="text-neutral-400"> — onde voce fala com o Jarvis; separado do cerebro, que so pensa.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Telegram e o preferido</strong><span class="text-neutral-400"> — so um token, long-polling, zero portas abertas; gratis e ja mobile.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">WhatsApp e o resto</strong><span class="text-neutral-400"> — WhatsApp via Evolution API, e-mail, web, terminal: portas somaveis para o mesmo cerebro.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Whitelist = a 1a trava</strong><span class="text-neutral-400"> — so o seu ID e atendido; o resto e ignorado em silencio, antes do modelo agir.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Texto, voz, midia e multidispositivo</strong><span class="text-neutral-400"> — a mesma porta carrega tudo; "voz e interface", e o canal te segue em qualquer aparelho.</span></div></div>
+              </div>
+              <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+                <h3 class="font-semibold text-purple-400 mb-2">Proximo modulo:</h3>
+                <p class="text-neutral-300">Modulo 3-2: Identidade — memoria, persona e quem ele e</p>
+              </div>
+              <div class="flex flex-col sm:flex-row gap-4">
+                <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para a Trilha</a>
+                <a href="modulo-3-2.html" class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors">Proximo modulo →</a>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-dark-600 py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
+    </div>
+  </footer>
+
+  <!-- Scripts nucleo v1 -->
+  <script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+
+  <!-- Camada de aprendizagem -->
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-3-1#q1', {
+          answer: 1,
+          explain: {
+            0: 'Popularidade ajuda, mas nao e o motivo tecnico — o WhatsApp e ainda mais usado no Brasil e nao e a escolha padrao.',
+            1: 'Isso! Token simples + long-polling = zero portas expostas, mais seguro, e ja roda em qualquer aparelho.',
+            2: 'Nao — o cerebro roda fora do Telegram; o Telegram e so o canal (a porta) que leva ate ele.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

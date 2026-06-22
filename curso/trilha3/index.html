@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="inema-course" content="jarvis">
+  <title>Trilha 3 — Anatomia: as 6 camadas de um Jarvis | Jarvis · INEMA.CLUB</title>
+  <meta name="description" content="As 6 camadas que transformam um chat num assistente que ve, lembra e age: Canais, Identidade, Ferramentas, Skills, Agentes e Cerebros.">
+
+  <!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+
+  <!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+  <script type="application/json" data-inema-manifest>
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/learn.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a href="#conteudo" class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg">Pular para o conteudo</a>
+
+  <!-- NAVIGATION (completo, identico em todas as paginas) -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-3">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🤖</span>
+            <span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a id="nav-t1" href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a id="nav-t2" href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+          </a>
+          <a id="nav-t3" href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span>
+          </a>
+          <a id="nav-t4" href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+          </a>
+          <a id="nav-t5" href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+          </a>
+          <a id="nav-t6" href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span>
+          </a>
+
+          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Minha jornada">
+            <span aria-hidden="true">◷</span><span class="hidden md:inline">Jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge data-count="0"></span>
+          </button>
+
+          <div class="relative">
+            <button type="button" data-inema-appearance-toggle="[data-inema-appearance]" aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Aparencia">
+              <span aria-hidden="true">◑</span><span class="hidden md:inline">Aparencia</span>
+            </button>
+            <div data-inema-appearance class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left">
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-theme="inema-dark" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Escuro</button>
+                  <button data-inema-set-theme="claro" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Claro</button>
+                  <button data-inema-set-theme="sepia" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sepia</button>
+                  <button data-inema-set-theme="foco" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Foco</button>
+                  <button data-inema-set-theme="contraste" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Alto contraste</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Fonte</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-font="inter" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Inter</button>
+                  <button data-inema-set-font="system" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sistema</button>
+                  <button data-inema-set-font="leitura" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Leitura</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tamanho</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-fontscale="100" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A</button>
+                  <button data-inema-set-fontscale="112" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A+</button>
+                  <button data-inema-set-fontscale="125" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A++</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Entrelinha</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-leading="1.45" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Compacto</button>
+                  <button data-inema-set-leading="1.7" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Confortavel</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+                <div class="inema-accent-grid flex flex-wrap gap-2">
+                  <button data-inema-set-accent="emerald" class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" title="Emerald"></button>
+                  <button data-inema-set-accent="blue" class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" title="Blue"></button>
+                  <button data-inema-set-accent="purple" class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" title="Purple"></button>
+                  <button data-inema-set-accent="amber" class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" title="Amber"></button>
+                  <button data-inema-set-accent="teal" class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" title="Teal"></button>
+                  <button data-inema-set-accent="rose" class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" title="Rose"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" title="Alternar claro/escuro">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo">
+    <header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+          <a href="../../index.html" class="hover:text-purple-400">Inicio</a><span>/</span><span class="text-purple-400">Trilha 3</span>
+        </nav>
+        <span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">TRILHA 3</span>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">🧬 Anatomia</h1>
+        <p class="text-lg text-neutral-400 max-w-3xl mb-6">As 6 camadas que transformam um chat comum num assistente que ve, lembra e age. Cada modulo abre uma "parte do corpo" do seu Jarvis — Canais, Identidade, Ferramentas, Skills, Agentes e Cerebros — para voce entender o todo peca por peca.</p>
+
+        <div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+          <svg viewBox="0 0 1000 250" class="w-full h-auto" role="img" aria-label="As 6 camadas da anatomia de um Jarvis: voce entra pelos Canais, que ativam Identidade, Ferramentas, Skills, Agentes e Cerebros, e o resultado e uma acao no mundo">
+            <defs>
+              <linearGradient id="t3h-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c084fc"/><stop offset="1" stop-color="#a855f7"/></linearGradient>
+              <filter id="t3h-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <pattern id="t3h-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#a855f7" opacity="0.12"/></pattern>
+              <marker id="t3h-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#c084fc"/></marker>
+              <marker id="t3h-ahc" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+            </defs>
+            <rect x="0" y="0" width="1000" height="250" fill="url(#t3h-grid)"/>
+            <g font-family="Inter,sans-serif">
+              <rect x="34" y="96" width="120" height="58" rx="14" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/>
+              <text x="94" y="121" text-anchor="middle" fill="#9ad6ff" font-size="14" font-weight="600">Voce</text>
+              <text x="94" y="140" text-anchor="middle" fill="#bfe6ff" font-size="11">manda uma msg</text>
+              <path d="M154,125 L196,125" fill="none" stroke="#38bdf8" stroke-width="1.8" opacity="0.7" marker-end="url(#t3h-ahc)"/>
+              <g filter="url(#t3h-glow)"><rect x="196" y="90" width="150" height="70" rx="16" fill="url(#t3h-grad)" opacity="0.16" stroke="url(#t3h-grad)" stroke-width="2.5"/></g>
+              <text x="271" y="120" text-anchor="middle" fill="#c084fc" font-size="15" font-weight="700">Jarvis</text>
+              <text x="271" y="140" text-anchor="middle" fill="#e9d5ff" font-size="11">as 6 camadas</text>
+              <g fill="none" stroke="#c084fc" stroke-width="2" opacity="0.7">
+                <path d="M346,103 C420,103 440,40 540,40" marker-end="url(#t3h-ah)"/>
+                <path d="M346,113 C420,113 440,80 540,80" marker-end="url(#t3h-ah)"/>
+                <path d="M346,121 C420,121 440,120 540,120" marker-end="url(#t3h-ah)"/>
+                <path d="M346,129 C420,129 440,160 540,160" marker-end="url(#t3h-ah)"/>
+                <path d="M346,137 C420,137 440,200 540,200" marker-end="url(#t3h-ah)"/>
+                <path d="M346,147 C420,147 440,240 540,240" marker-end="url(#t3h-ah)"/>
+              </g>
+              <g font-size="13" font-weight="600">
+                <g class="wf-a"><rect x="540" y="24" width="178" height="32" rx="9" fill="#1a1230" stroke="#c084fc" stroke-width="2"/><text x="629" y="45" text-anchor="middle" fill="#e9d5ff">📡 Canais</text></g>
+                <g class="wf-a"><rect x="540" y="64" width="178" height="32" rx="9" fill="#1a1230" stroke="#c084fc" stroke-width="2"/><text x="629" y="85" text-anchor="middle" fill="#e9d5ff">🪪 Identidade</text></g>
+                <g class="wf-a"><rect x="540" y="104" width="178" height="32" rx="9" fill="#1a1230" stroke="#c084fc" stroke-width="2"/><text x="629" y="125" text-anchor="middle" fill="#e9d5ff">🔧 Ferramentas</text></g>
+                <g class="wf-a"><rect x="540" y="144" width="178" height="32" rx="9" fill="#1a1230" stroke="#c084fc" stroke-width="2"/><text x="629" y="165" text-anchor="middle" fill="#e9d5ff">🧩 Skills</text></g>
+                <g class="wf-a"><rect x="540" y="184" width="178" height="32" rx="9" fill="#1a1230" stroke="#c084fc" stroke-width="2"/><text x="629" y="205" text-anchor="middle" fill="#e9d5ff">🤝 Agentes</text></g>
+                <g class="wf-a"><rect x="540" y="224" width="178" height="32" rx="9" fill="#1a1230" stroke="#c084fc" stroke-width="2"/><text x="629" y="245" text-anchor="middle" fill="#e9d5ff">🧠 Cerebros</text></g>
+              </g>
+              <g fill="none" stroke="#a855f7" stroke-width="1.8" opacity="0.55">
+                <path d="M718,40  C770,40 800,125 828,125"/>
+                <path d="M718,240 C770,240 800,125 828,125"/>
+              </g>
+              <g filter="url(#t3h-glow)"><rect x="828" y="96" width="138" height="58" rx="13" fill="#1f1604" stroke="#FACC15" stroke-width="2.5"/></g>
+              <text x="897" y="121" text-anchor="middle" fill="#FACC15" font-size="14" font-weight="700">Acao no mundo</text>
+              <text x="897" y="140" text-anchor="middle" fill="#fde68a" font-size="11">ve · lembra · age</text>
+            </g>
+          </svg>
+          <p class="text-xs text-neutral-400 mt-1 px-1">Leia da esquerda pra direita: <span class="text-sky-400">voce</span> fala com o <span class="text-purple-400">Jarvis</span>, que aciona as <span class="text-purple-400">6 camadas</span> em ordem — e o resultado e uma <span class="text-yellow-400">acao no mundo</span>. Cada modulo desta trilha abre uma camada.</p>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl">
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">6</div><div class="text-xs text-neutral-400">Modulos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">36</div><div class="text-xs text-neutral-400">Topicos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">~5h</div><div class="text-xs text-neutral-400">Duracao</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Intermediario</div><div class="text-xs text-neutral-400">Nivel</div></div>
+        </div>
+
+        <div class="mt-6 max-w-md" data-inema-meter="trilha:3" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da trilha 3">
+          <div class="flex items-center justify-between mb-1"><span class="text-xs text-neutral-400">Progresso da trilha</span><span class="text-xs font-bold text-purple-400" data-inema-meter-pct>0%</span></div>
+          <div class="inema-bar h-2 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-purple-500" data-inema-meter-fill style="width:0%"></div></div>
+          <span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 36</span> topicos</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+      <!-- MAPA DA TRILHA -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold mb-6">Mapa da trilha</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <a href="#modulo-3-1" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-purple-500/30 p-5 transition-all">
+            <div class="flex items-center justify-between mb-2"><span class="text-purple-400 font-bold text-sm">3.1</span><span class="text-xs text-neutral-500">~50 min</span></div>
+            <h3 class="font-semibold mb-1 group-hover:text-purple-400 transition-colors">📡 Canais</h3>
+            <p class="text-xs text-neutral-400">Por onde voce fala</p>
+          </a>
+          <a href="#modulo-3-2" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-purple-500/30 p-5 transition-all">
+            <div class="flex items-center justify-between mb-2"><span class="text-purple-400 font-bold text-sm">3.2</span><span class="text-xs text-neutral-500">~50 min</span></div>
+            <h3 class="font-semibold mb-1 group-hover:text-purple-400 transition-colors">🪪 Identidade</h3>
+            <p class="text-xs text-neutral-400">Memoria e quem ele e</p>
+          </a>
+          <a href="#modulo-3-3" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-purple-500/30 p-5 transition-all">
+            <div class="flex items-center justify-between mb-2"><span class="text-purple-400 font-bold text-sm">3.3</span><span class="text-xs text-neutral-500">~50 min</span></div>
+            <h3 class="font-semibold mb-1 group-hover:text-purple-400 transition-colors">🔧 Ferramentas</h3>
+            <p class="text-xs text-neutral-400">As maos do Jarvis</p>
+          </a>
+          <a href="#modulo-3-4" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-purple-500/30 p-5 transition-all">
+            <div class="flex items-center justify-between mb-2"><span class="text-purple-400 font-bold text-sm">3.4</span><span class="text-xs text-neutral-500">~50 min</span></div>
+            <h3 class="font-semibold mb-1 group-hover:text-purple-400 transition-colors">🧩 Skills</h3>
+            <p class="text-xs text-neutral-400">Habilidades empacotadas</p>
+          </a>
+          <a href="#modulo-3-5" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-purple-500/30 p-5 transition-all">
+            <div class="flex items-center justify-between mb-2"><span class="text-purple-400 font-bold text-sm">3.5</span><span class="text-xs text-neutral-500">~50 min</span></div>
+            <h3 class="font-semibold mb-1 group-hover:text-purple-400 transition-colors">🤝 Agentes</h3>
+            <p class="text-xs text-neutral-400">O loop que trabalha sozinho</p>
+          </a>
+          <a href="#modulo-3-6" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-purple-500/30 p-5 transition-all">
+            <div class="flex items-center justify-between mb-2"><span class="text-purple-400 font-bold text-sm">3.6</span><span class="text-xs text-neutral-500">~50 min</span></div>
+            <h3 class="font-semibold mb-1 group-hover:text-purple-400 transition-colors">🧠 Cerebros</h3>
+            <p class="text-xs text-neutral-400">Motor e memoria</p>
+          </a>
+        </div>
+      </section>
+
+      <h2 class="text-2xl font-bold mb-6">Conteudo detalhado</h2>
+
+      <!-- MODULO 3.1 -->
+      <div id="modulo-3-1" data-inema-module="3-1" data-inema-track="3" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <div class="flex items-center justify-between mb-2"><span class="text-purple-400 font-bold">3.1</span><span class="text-xs text-neutral-500">~50 min</span></div>
+          <h3 class="text-2xl font-bold mb-2">📡 Canais — por onde voce fala com ele</h3>
+          <p class="text-neutral-400 text-sm mb-3">As portas de entrada e saida do seu Jarvis. Por que Telegram virou o favorito, como o WhatsApp e a voz entram, e por que a whitelist e a primeira trava de seguranca.</p>
+          <div data-inema-meter="modulo:3-1" class="max-w-xs" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 3.1"><div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-purple-500" data-inema-meter-fill style="width:0%"></div></div><span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span></div>
+        </div>
+        <div class="divide-y divide-dark-600">
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t31-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+              <span class="text-lg">🚪</span><div><span class="font-medium">O que e um canal</span><span class="text-neutral-500 text-sm ml-2">- a porta de conversa</span></div>
+            </button>
+            <div id="t31-1" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Um <strong>canal</strong> e a "porta" por onde voce conversa com o Jarvis: pode ser o Telegram, o WhatsApp, a voz, uma pagina web ou o proprio terminal. O cerebro e o mesmo; muda so a porta.</p></div>
+              <div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Escolher o canal certo decide se voce vai falar com ele do celular, do PC ou de qualquer lugar — e tambem o quanto isso expoe o sistema.</p></div>
+              <div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Canal, entrada/saida, multicanal, o cerebro unico atras das portas.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t31-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+              <span class="text-lg">✈️</span><div><span class="font-medium">Por que Telegram e o preferido</span><span class="text-neutral-500 text-sm ml-2">- so um token, sem portas</span></div>
+            </button>
+            <div id="t31-2" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O Telegram pede so um <strong>token</strong> (uma senha gerada pelo @BotFather). Ele usa <strong>long-polling</strong>: e o seu Jarvis que vai buscar mensagens no Telegram, em vez de abrir um servidor web esperando conexao.</p></div>
+              <div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Long-polling = nenhuma porta aberta para a internet = uma porta a menos para invasores. Por isso e o canal mais seguro para comecar — alem de gratis e ja mobile.</p></div>
+              <div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">@BotFather, token, long-polling, zero servidor exposto.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t31-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+              <span class="text-lg">💬</span><div><span class="font-medium">WhatsApp e o resto</span><span class="text-neutral-500 text-sm ml-2">- multicanal de verdade</span></div>
+            </button>
+            <div id="t31-3" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Alem do Telegram, da pra plugar WhatsApp (texto, imagem e voz, via <strong>Evolution API</strong>), e-mail e web. Multicanal e ter o mesmo cerebro respondendo em varios lugares.</p></div>
+              <div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Cada pessoa vive num app diferente; saber que o cerebro e independente do canal te deixa escolher onde seu Jarvis aparece.</p></div>
+              <div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">WhatsApp, Evolution API, e-mail, web, um cerebro / muitas bocas.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t31-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+              <span class="text-lg">🛡️</span><div><span class="font-medium">Whitelist = a 1a trava</span><span class="text-neutral-500 text-sm ml-2">- so o seu ID e atendido</span></div>
+            </button>
+            <div id="t31-4" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">A <strong>whitelist</strong> e uma lista de quem pode falar com o bot. So o SEU ID de usuario e atendido; qualquer outro e ignorado em silencio — nem resposta de erro recebe.</p></div>
+              <div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Um bot publico que responde a todo mundo gasta seu dinheiro e pode ser manipulado. A whitelist e a defesa mais simples e a primeira que voce liga.</p></div>
+              <div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Whitelist, user ID, single-owner, ignorar em silencio.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t31-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+              <span class="text-lg">🎙️</span><div><span class="font-medium">Texto, voz e midia</span><span class="text-neutral-500 text-sm ml-2">- o canal carrega tudo</span></div>
+            </button>
+            <div id="t31-5" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O mesmo canal transporta texto, audio (o Telegram manda voz em arquivo <code class="text-purple-300">.ogg</code>) e imagem. A voz e uma entrada/saida <strong>opcional</strong>, decidida na hora.</p></div>
+              <div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Entender que voz e so mais um tipo de midia no canal te prepara para a Trilha 5, onde o pipeline de voz e montado de verdade.</p></div>
+              <div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Texto, audio .ogg, imagem, voz opcional decidida em runtime.</p></div>
+            </div></div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t31-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+              <span class="text-lg">📱</span><div><span class="font-medium">Um canal, muitos dispositivos</span><span class="text-neutral-500 text-sm ml-2">- o Telegram ja e mobile</span></div>
+            </button>
+            <div id="t31-6" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Como o canal e um app de mensagens, seu Jarvis esta acessivel de qualquer aparelho onde voce tem aquele app — celular, tablet, PC — sem precisar de app proprio na loja.</p></div>
+              <div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E o atalho que evita construir e publicar um aplicativo: "o Telegram ja e mobile". Isso volta forte na Trilha 5.</p></div>
+              <div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Sem app nativo, multi-dispositivo, sincronizado pelo proprio app.</p></div>
+            </div></div>
+          </div>
+        </div>
+        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+          <button onclick="openModal('modal-3-1')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+          <a href="modulo-3-1.html" class="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors">Ver Completo</a>
+        </div>
+      </div>
+
+      <div id="modal-3-1" class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target===this) closeModal()"><div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600"><div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0"><div class="flex items-center space-x-3"><span class="text-purple-400 font-bold">3.1</span><span class="font-semibold">Canais</span></div><button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button></div><iframe src="modulo-3-1.html" class="flex-1 w-full rounded-b-xl"></iframe></div></div>
+
+      <!-- MODULO 3.2 -->
+      <div id="modulo-3-2" data-inema-module="3-2" data-inema-track="3" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <div class="flex items-center justify-between mb-2"><span class="text-purple-400 font-bold">3.2</span><span class="text-xs text-neutral-500">~50 min</span></div>
+          <h3 class="text-2xl font-bold mb-2">🪪 Identidade — memoria, persona e quem ele e</h3>
+          <p class="text-neutral-400 text-sm mb-3">O que da carater e memoria ao Jarvis: a alma (SOUL.md), o contrato (AGENTS.md), seu perfil, a memoria que sobrevive ao fechar a conversa — e por que "quem ele atende" tambem faz parte da identidade.</p>
+          <div data-inema-meter="modulo:3-2" class="max-w-xs" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 3.2"><div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-purple-500" data-inema-meter-fill style="width:0%"></div></div><span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span></div>
+        </div>
+        <div class="divide-y divide-dark-600">
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t32-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span><span class="text-lg">👻</span><div><span class="font-medium">SOUL.md, a alma</span><span class="text-neutral-500 text-sm ml-2">- personalidade e valores</span></div></button><div id="t32-1" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O <strong>SOUL.md</strong> e um arquivo de texto com a personalidade, os valores, o tom e as prioridades do dono. Ele e injetado SEMPRE no <strong>system prompt</strong> (as instrucoes invisiveis que o modelo le antes de tudo).</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">"Sem o brain rewire, a arquitetura e so uma pasta": e o SOUL.md que faz o assistente soar como SEU, e nao um chatbot generico.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">SOUL.md, system prompt, ficha de personagem, tom e valores.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t32-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span><span class="text-lg">📜</span><div><span class="font-medium">AGENTS.md, o contrato</span><span class="text-neutral-500 text-sm ml-2">- SEMPRE e NUNCA</span></div></button><div id="t32-2" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O <strong>AGENTS.md</strong> diz o que ele FAZ e o que NUNCA faz, em listas explicitas de "SEMPRE" e "NUNCA". E o contrato de comportamento.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Regra escrita vale mais do que torcer para o modelo adivinhar. E aqui que voce define limites — o que volta forte na trilha de criancas.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">AGENTS.md, listas SEMPRE/NUNCA, regras explicitas, guardrails.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t32-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span><span class="text-lg">🧑</span><div><span class="font-medium">USER / perfil</span><span class="text-neutral-500 text-sm ml-2">- quem e voce</span></div></button><div id="t32-3" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O arquivo <strong>USER</strong> guarda quem e voce: nome, contexto, preferencias, pessoas e projetos que importam. E a ficha do dono.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Sem isso, o Jarvis te trata como estranho a cada conversa. Com o perfil, ele ja sabe seu nome, seu fuso e o que voce costuma pedir.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">USER, perfil do dono, contexto pessoal, preferencias.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t32-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span><span class="text-lg">💾</span><div><span class="font-medium">Memoria que dura</span><span class="text-neutral-500 text-sm ml-2">- alem da conversa</span></div></button><div id="t32-4" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">A conversa esquece tudo ao fechar. A <strong>memoria persistente</strong> sao arquivos <code class="text-purple-300">.md</code> + um indice <strong>SQLite FTS5/BM25</strong> (busca por palavra) e/ou um <strong>banco vetorial</strong> (busca por significado).</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E a diferenca entre um chat que recomeca do zero toda vez e um assistente que lembra do que vocês combinaram semana passada.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Memoria persistente, .md, SQLite FTS5/BM25, banco vetorial.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t32-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span><span class="text-lg">🔐</span><div><span class="font-medium">Identidade = autenticacao</span><span class="text-neutral-500 text-sm ml-2">- quem ele atende</span></div></button><div id="t32-5" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Quem o Jarvis atende faz parte de quem ele e: a whitelist de ID (do modulo 3.1) mais os <strong>secrets</strong> (chaves de API) guardados so no arquivo <code class="text-purple-300">.env</code>.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Identidade nao e so personalidade — e tambem fronteira. Misturar persona e autenticacao deixa claro que seguranca e parte do carater do agente.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Whitelist, secrets, arquivo .env, fronteira de identidade.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t32-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span><span class="text-lg">🎭</span><div><span class="font-medium">Personas intercambiaveis</span><span class="text-neutral-500 text-sm ml-2">- trocar de modo</span></div></button><div id="t32-6" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O mesmo Jarvis pode trocar de modo (trabalho, estudo, "modo historinha") so trocando qual SOUL/perfil esta ativo. Uma <strong>persona</strong> e um conjunto de comportamento intercambiavel.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Em vez de manter varios bots, voce mantem um e troca a "roupa". Isso e a base do tutor infantil da Trilha 6.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Persona, modos, SOUL ativo, um agente / varias roupas.</p></div></div></div></div>
+        </div>
+        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3"><button onclick="openModal('modal-3-2')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button><a href="modulo-3-2.html" class="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors">Ver Completo</a></div>
+      </div>
+
+      <div id="modal-3-2" class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target===this) closeModal()"><div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600"><div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0"><div class="flex items-center space-x-3"><span class="text-purple-400 font-bold">3.2</span><span class="font-semibold">Identidade</span></div><button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button></div><iframe src="modulo-3-2.html" class="flex-1 w-full rounded-b-xl"></iframe></div></div>
+
+      <!-- MODULO 3.3 -->
+      <div id="modulo-3-3" data-inema-module="3-3" data-inema-track="3" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <div class="flex items-center justify-between mb-2"><span class="text-purple-400 font-bold">3.3</span><span class="text-xs text-neutral-500">~50 min</span></div>
+          <h3 class="text-2xl font-bold mb-2">🔧 Ferramentas — as maos do Jarvis (tools + MCP)</h3>
+          <p class="text-neutral-400 text-sm mb-3">Como o Jarvis sai do "so fala" e passa a agir: o que sao ferramentas, como o modelo as chama, e por que o MCP virou o "USB" que conecta qualquer ferramenta a qualquer agente com seguranca.</p>
+          <div data-inema-meter="modulo:3-3" class="max-w-xs" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 3.3"><div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-purple-500" data-inema-meter-fill style="width:0%"></div></div><span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span></div>
+        </div>
+        <div class="divide-y divide-dark-600">
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t33-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span><span class="text-lg">🖐️</span><div><span class="font-medium">Por que ferramentas</span><span class="text-neutral-500 text-sm ml-2">- maos e olhos</span></div></button><div id="t33-1" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Sozinho, o LLM so produz texto. As <strong>ferramentas</strong> (tools) dao a ele maos e olhos: buscar na web, ler/escrever arquivos, mandar e-mail, ver a agenda, rodar um comando.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E o que separa "conversar" de "fazer". Sem ferramentas, ele "responde como um estranho"; com elas, vira assistente de verdade.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Ferramenta/tool, acao no mundo, dados reais, maos e olhos.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t33-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span><span class="text-lg">📞</span><div><span class="font-medium">Tool / function-calling</span><span class="text-neutral-500 text-sm ml-2">- o mecanismo bruto</span></div></button><div id="t33-2" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm"><strong>Function-calling</strong> e o mecanismo onde o modelo "pede" uma funcao (ex.: <code class="text-purple-300">enviar_email(...)</code>); o sistema executa de verdade e devolve o resultado para o loop continuar.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E o encanamento por baixo de tudo. Entender que o modelo so PEDE (nao executa) explica por que da pra ter confirmacao e sandbox.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Function-calling, o modelo pede / o sistema executa, retorno ao loop.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t33-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span><span class="text-lg">🔌</span><div><span class="font-medium">MCP, o USB das ferramentas</span><span class="text-neutral-500 text-sm ml-2">- um padrao p/ todas</span></div></button><div id="t33-3" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O <strong>MCP</strong> (Model Context Protocol, da Anthropic, nov/2024) e um padrao onde cada integracao vive num <strong>servidor MCP</strong> separado e auditavel. E o "USB" das ferramentas de IA.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Com MCP voce pluga Gmail, Notion ou GitHub sem reescrever o agente — e da pra ler exatamente o que cada servidor faz.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">MCP, servidor MCP, padrao universal, integracoes plugaveis.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t33-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span><span class="text-lg">⚖️</span><div><span class="font-medium">MCP vs skills da comunidade</span><span class="text-neutral-500 text-sm ml-2">- por que e mais seguro</span></div></button><div id="t33-4" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Baixar "skill files" de terceiros e arriscado: no OpenClaw foram achadas <strong>341 skills maliciosas</strong>. O MCP isola cada integracao num servidor auditavel, com permissoes claras.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">A licao de seguranca do curso: prefira o padrao auditavel (MCP) a codigo de estranho que voce nunca leu.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">341 skills maliciosas, codigo de terceiros, auditabilidade, MCP-only.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t33-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span><span class="text-lg">🧪</span><div><span class="font-medium">Confirmacao e sandbox</span><span class="text-neutral-500 text-sm ml-2">- acoes perigosas</span></div></button><div id="t33-5" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Acoes perigosas (rodar shell, apagar arquivo) pedem <strong>confirmacao</strong> e rodam num <strong>sandbox</strong> (ambiente isolado). E toda entrada e tratada como possivel <strong>prompt-injection</strong> (texto que tenta sequestrar o agente).</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Dar maos ao agente sem freios e perigoso. Confirmacao + sandbox e como voce solta poder sem perder o controle.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Confirmacao, sandbox, prompt-injection, zero-trust.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t33-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span><span class="text-lg">🤝</span><div><span class="font-medium">Conectar = sair do "estranho"</span><span class="text-neutral-500 text-sm ml-2">- generico vira pessoal</span></div></button><div id="t33-6" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Sem dados reais (sua agenda, seu e-mail), o Jarvis so responde generico. Conectar ferramentas o transforma de "conversador" em ASSISTENTE que age sobre a sua vida.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E o "porque" de toda a camada: a conexao com o mundo real e o que da valor pratico ao agente.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Dados reais, generico vs pessoal, Connections, valor pratico.</p></div></div></div></div>
+        </div>
+        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3"><button onclick="openModal('modal-3-3')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button><a href="modulo-3-3.html" class="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors">Ver Completo</a></div>
+      </div>
+
+      <div id="modal-3-3" class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target===this) closeModal()"><div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600"><div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0"><div class="flex items-center space-x-3"><span class="text-purple-400 font-bold">3.3</span><span class="font-semibold">Ferramentas (tools + MCP)</span></div><button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button></div><iframe src="modulo-3-3.html" class="flex-1 w-full rounded-b-xl"></iframe></div></div>
+
+      <!-- MODULO 3.4 -->
+      <div id="modulo-3-4" data-inema-module="3-4" data-inema-track="3" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <div class="flex items-center justify-between mb-2"><span class="text-purple-400 font-bold">3.4</span><span class="text-xs text-neutral-500">~50 min</span></div>
+          <h3 class="text-2xl font-bold mb-2">🧩 Skills — habilidades empacotadas</h3>
+          <p class="text-neutral-400 text-sm mb-3">Receitas reutilizaveis: o que e uma skill, por que empacotar um passo-a-passo, como ela quase nao custa contexto ate ser usada, e a verdade honesta sobre portabilidade entre modelos.</p>
+          <div data-inema-meter="modulo:3-4" class="max-w-xs" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 3.4"><div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-purple-500" data-inema-meter-fill style="width:0%"></div></div><span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span></div>
+        </div>
+        <div class="divide-y divide-dark-600">
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t34-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span><span class="text-lg">📖</span><div><span class="font-medium">O que e uma skill</span><span class="text-neutral-500 text-sm ml-2">- uma receita</span></div></button><div id="t34-1" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Uma <strong>skill</strong> e uma receita: um arquivo markdown (<code class="text-purple-300">SKILL.md</code>) que empacota um passo-a-passo repetido. Ex.: "escreve um post de LinkedIn" = pesquisar → grafico → texto → revisar → publicar.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E como voce ensina um procedimento uma vez e reutiliza sempre — a base da biblioteca de capacidades do seu Jarvis.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Skill, SKILL.md, receita, passo-a-passo empacotado.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t34-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span><span class="text-lg">📦</span><div><span class="font-medium">Por que empacotar</span><span class="text-neutral-500 text-sm ml-2">- uma frase, nao 5 passos</span></div></button><div id="t34-2" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Em vez de explicar os 5 passos toda vez, voce diz uma frase ("faz meu post da semana") e a skill executa o procedimento inteiro.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Empacotar transforma instrucao repetida em comando curto — menos esforco seu, mais consistencia no resultado.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Abstracao, comando curto, consistencia, reuso.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t34-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span><span class="text-lg">🪜</span><div><span class="font-medium">Carregamento progressivo</span><span class="text-neutral-500 text-sm ml-2">- custa pouco ate usar</span></div></button><div id="t34-3" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O <strong>carregamento progressivo</strong> (progressive disclosure) faz a skill ocupar so o <strong>frontmatter</strong> (~100 tokens com nome e descricao) ate ser acionada. So entao o passo-a-passo completo entra no contexto.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Voce pode ter dezenas de skills sem entupir a janela de contexto — o agente "sabe que elas existem" sem carregar tudo.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Progressive disclosure, frontmatter, ~100 tokens, economia de contexto.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t34-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span><span class="text-lg">🆚</span><div><span class="font-medium">Skills x ferramentas</span><span class="text-neutral-500 text-sm ml-2">- procedimento vs acao</span></div></button><div id="t34-4" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Uma <strong>ferramenta</strong> e uma acao atomica ("enviar e-mail"). Uma <strong>skill</strong> e um procedimento que ORQUESTRA varias ferramentas e usa julgamento entre elas.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Confundir os dois leva a desenhar errado. Ferramenta = verbo unico; skill = a receita que encadeia os verbos.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Acao atomica vs procedimento, orquestracao, julgamento.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t34-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span><span class="text-lg">🔁</span><div><span class="font-medium">Portabilidade (polyskill)</span><span class="text-neutral-500 text-sm ml-2">- uma fonte, varios runtimes</span></div></button><div id="t34-5" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">A spec de <strong>Agent Skills</strong> + o <strong>polyskill</strong> deixam UMA fonte de skill rodar tanto no Claude Code quanto no Codex. "Multiplos modelos" aqui significa <strong>portabilidade</strong>, nao um conselho de modelos votando.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Evita o mito comum: a vantagem real e nao ficar preso a um runtime, e nao "varios cerebros decidindo juntos".</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Agent Skills, polyskill, cross-runtime, portabilidade honesta.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t34-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span><span class="text-lg">🔧</span><div><span class="font-medium">Skills se auto-corrigem</span><span class="text-neutral-500 text-sm ml-2">- cada run melhora</span></div></button><div id="t34-6" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Cada execucao pode melhorar a receita: o agente nota o que falhou e ajusta o SKILL.md. A biblioteca de skills vira seu acervo de capacidades que cresce com o uso.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Skills nao sao estaticas — sao ativos vivos. Isso muda como voce pensa em "ensinar" o seu Jarvis ao longo do tempo.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Auto-correcao, acervo de capacidades, melhoria continua.</p></div></div></div></div>
+        </div>
+        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3"><button onclick="openModal('modal-3-4')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button><a href="modulo-3-4.html" class="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors">Ver Completo</a></div>
+      </div>
+
+      <div id="modal-3-4" class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target===this) closeModal()"><div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600"><div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0"><div class="flex items-center space-x-3"><span class="text-purple-400 font-bold">3.4</span><span class="font-semibold">Skills</span></div><button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button></div><iframe src="modulo-3-4.html" class="flex-1 w-full rounded-b-xl"></iframe></div></div>
+
+      <!-- MODULO 3.5 -->
+      <div id="modulo-3-5" data-inema-module="3-5" data-inema-track="3" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <div class="flex items-center justify-between mb-2"><span class="text-purple-400 font-bold">3.5</span><span class="text-xs text-neutral-500">~50 min</span></div>
+          <h3 class="text-2xl font-bold mb-2">🤝 Agentes — o loop que trabalha sozinho</h3>
+          <p class="text-neutral-400 text-sm mb-3">A camada de autonomia: o loop agentico como peca, sub-agentes que poupam contexto, multi-agente, a cadencia (heartbeat/cron) que age sem voce — e os freios que mantem tudo seguro.</p>
+          <div data-inema-meter="modulo:3-5" class="max-w-xs" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 3.5"><div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-purple-500" data-inema-meter-fill style="width:0%"></div></div><span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span></div>
+        </div>
+        <div class="divide-y divide-dark-600">
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t35-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span><span class="text-lg">🔄</span><div><span class="font-medium">Agente = loop + autonomia</span><span class="text-neutral-500 text-sm ml-2">- a camada revisada</span></div></button><div id="t35-1" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Um <strong>agente</strong> e um LLM rodando em <strong>loop</strong>: recebe pedido → pensa → chama ferramenta → le o resultado → chama mais → responde. Aqui ele vira uma camada da anatomia, com autonomia.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E o motor que ja apareceu na Trilha 1; ver de novo como camada conecta as pecas (ferramentas, skills) em algo que age sozinho.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Loop agentico, autonomia, pedido→pensa→tool→resposta.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t35-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span><span class="text-lg">🪆</span><div><span class="font-medium">Sub-agentes</span><span class="text-neutral-500 text-sm ml-2">- delegar tarefa pesada</span></div></button><div id="t35-2" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O agente principal <strong>delega</strong> uma tarefa pesada a um <strong>sub-agente</strong>, que queima o PROPRIO contexto e devolve so a resposta final. A sessao principal fica leve.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E o truque para tarefas grandes (ler 50 arquivos, pesquisar muito) sem entupir a janela de contexto do agente principal.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Sub-agente, delegacao, contexto isolado, so a resposta volta.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t35-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span><span class="text-lg">👥</span><div><span class="font-medium">Multi-agente</span><span class="text-neutral-500 text-sm ml-2">- quando vale, quando complica</span></div></button><div id="t35-3" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm"><strong>Multi-agente</strong> e ter varios especialistas (pesquisa, escrita, revisao) coordenados. Mais poder, mas tambem mais partes para coordenar e mais coisa que pode dar errado.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Saber quando vale a pena (e quando so complica) evita over-engineering — um erro comum de quem descobre o padrao.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Multi-agente, especialistas, coordenacao, custo de complexidade.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t35-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span><span class="text-lg">⏰</span><div><span class="font-medium">Cadencia (heartbeat/cron)</span><span class="text-neutral-500 text-sm ml-2">- age no horario</span></div></button><div id="t35-4" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm"><strong>Cadencia</strong> sao gatilhos de tempo — <strong>heartbeat</strong>, <strong>cron</strong>, routines — que fazem o Jarvis agir sozinho no horario: o resumo das 7h, monitorar a caixa de entrada, "com o laptop fechado".</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E o que transforma o assistente de "responde quando chamo" em "trabalha enquanto eu durmo". Volta como a 4a camada do CLAWS na Trilha 4.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Heartbeat, cron, routines, acao agendada.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t35-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span><span class="text-lg">🚧</span><div><span class="font-medium">Limites e seguranca do loop</span><span class="text-neutral-500 text-sm ml-2">- freios obrigatorios</span></div></button><div id="t35-5" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Um loop autonomo precisa de freios: <strong>teto de iteracoes</strong> (para nao rodar para sempre), <strong>gates de aprovacao</strong> para acoes serias e um <strong>audit log</strong> (registro forense de cada acao).</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Autonomia sem limite e como deixar o carro andar sem freio. Esses controles sao o que tornam o "trabalha sozinho" confiavel.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Teto de iteracoes, gates de aprovacao, audit log forense.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t35-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span><span class="text-lg">📣</span><div><span class="font-medium">Proativo vs reativo</span><span class="text-neutral-500 text-sm ml-2">- de assistente a parceiro</span></div></button><div id="t35-6" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Um agente <strong>reativo</strong> responde quando voce chama. Um <strong>proativo</strong> te avisa antes de voce pedir ("seu voo atrasou, ja reorganizei a agenda"). E o salto de assistente para parceiro.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E o objetivo final da camada de agentes — e so faz sentido com cadencia + memoria + limites bem postos.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Reativo vs proativo, antecipacao, parceria.</p></div></div></div></div>
+        </div>
+        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3"><button onclick="openModal('modal-3-5')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button><a href="modulo-3-5.html" class="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors">Ver Completo</a></div>
+      </div>
+
+      <div id="modal-3-5" class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target===this) closeModal()"><div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600"><div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0"><div class="flex items-center space-x-3"><span class="text-purple-400 font-bold">3.5</span><span class="font-semibold">Agentes</span></div><button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button></div><iframe src="modulo-3-5.html" class="flex-1 w-full rounded-b-xl"></iframe></div></div>
+
+      <!-- MODULO 3.6 -->
+      <div id="modulo-3-6" data-inema-module="3-6" data-inema-track="3" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <div class="flex items-center justify-between mb-2"><span class="text-purple-400 font-bold">3.6</span><span class="text-xs text-neutral-500">~50 min</span></div>
+          <h3 class="text-2xl font-bold mb-2">🧠 Cerebros — o motor que pensa e a memoria organizada</h3>
+          <p class="text-neutral-400 text-sm mb-3">Honestamente: "cerebros" nao e um conselho de modelos votando. E (a) o motor LLM trocavel e (b) a memoria organizada em zonas. Aqui voce ve como trocar de cerebro sem mexer no codigo e como o "segundo cerebro" vira memoria.</p>
+          <div data-inema-meter="modulo:3-6" class="max-w-xs" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 3.6"><div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-purple-500" data-inema-meter-fill style="width:0%"></div></div><span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span></div>
+        </div>
+        <div class="divide-y divide-dark-600">
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t36-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span><span class="text-lg">⚙️</span><div><span class="font-medium">O cerebro = o motor LLM</span><span class="text-neutral-500 text-sm ml-2">- plugavel e trocavel</span></div></button><div id="t36-1" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">O "cerebro" e o <strong>motor LLM</strong> — o modelo que pensa. Ele e <strong>plugavel</strong>: da pra fazer <strong>hot-swap</strong> (troca a quente, sem reiniciar tudo) pelo <code class="text-purple-300">.env</code> entre anthropic, openrouter ou ollama. "Um cerebro, varias bocas."</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Tratar o modelo como peca substituivel te liberta de qualquer fornecedor unico — a tese central do curso.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Motor LLM, hot-swap, .env, plugavel, um cerebro/varias bocas.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t36-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span><span class="text-lg">🔀</span><div><span class="font-medium">Trocar de cerebro sem mexer no codigo</span><span class="text-neutral-500 text-sm ml-2">- decisao economica</span></div></button><div id="t36-2" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">A mesma interface aceita modelos diferentes: um modelo local barato para tarefa simples, um da nuvem potente para tarefa dificil. A escolha vira uma decisao economica por resposta.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E como voce equilibra custo e qualidade sem reescrever nada — so apontando o <code class="text-purple-300">.env</code> para outro modelo.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Mesma interface, barato vs potente, custo por resposta.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t36-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span><span class="text-lg">🚫</span><div><span class="font-medium">O mito do "conselho de modelos"</span><span class="text-neutral-500 text-sm ml-2">- a verdade honesta</span></div></button><div id="t36-3" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">Nao existe nos projetos um juiz ou roteador magico de N modelos votando juntos. "Multiplos modelos", de forma honesta, significa <strong>substituicao</strong> e <strong>portabilidade</strong> (cross-runtime), nao votacao simultanea.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E uma confusao comum no marketing de IA. Desmistificar isso te poupa de buscar uma feature que nao existe.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Mito do conselho, substituicao, portabilidade, sem votacao.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t36-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span><span class="text-lg">🗃️</span><div><span class="font-medium">O "segundo cerebro" vira memoria</span><span class="text-neutral-500 text-sm ml-2">- a outra acepcao</span></div></button><div id="t36-4" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">A outra acepcao de "cerebros" e a <strong>memoria</strong> do Jarvis, organizada como um "segundo cerebro". Um amontoado de notas incha e vira bagunca; separar em zonas da ordem.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Memoria desorganizada e tao ruim quanto memoria nenhuma. Estruturar e o que faz o agente achar o que importa.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Segundo cerebro, memoria organizada, zonas, evitar o amontoado.</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t36-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span><span class="text-lg">🧩</span><div><span class="font-medium">Os 3 cerebros (memoria)</span><span class="text-neutral-500 text-sm ml-2">- Projeto, Self, Conhecimento</span></div></button><div id="t36-5" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">A memoria se divide em 3: <strong>Projeto</strong> (episodico: o que rolou, decisoes), <strong>Self</strong> (identidade: valores, duvidas — muda devagar) e <strong>Conhecimento</strong> (referencia: fatos que so acumulam). Uma inbox unica + uma skill /triagem roteia, e <code class="text-purple-300">[[wikilinks]]</code> cruzam os tres.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">E o esquema concreto que voce vai aplicar para nao deixar a memoria do seu Jarvis virar um deposito.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Projeto/Self/Conhecimento, inbox + /triagem, [[wikilinks]].</p></div></div></div></div>
+          <div class="topic-item"><button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="t36-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left"><span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span><span class="text-lg">📂</span><div><span class="font-medium">Memoria = filesystem + indice</span><span class="text-neutral-500 text-sm ml-2">- so texto, sobrevive ao hype</span></div></button><div id="t36-6" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-purple-400 font-semibold">O que e:</span><p class="text-neutral-300 text-sm">No fundo, memoria sao arquivos <code class="text-purple-300">.md</code> legiveis (a verdade) + um indice <strong>SQLite FTS5/BM25</strong> (a busca rapida). O <code class="text-purple-300">CLAUDE.md</code>/<code class="text-purple-300">AGENTS.md</code> e o ROTEADOR lido no inicio de cada sessao.</p></div><div><span class="text-purple-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">"Sobrevive ao hype porque e so texto": entender isso te livra de depender de bancos exoticos e te deixa dono da sua memoria.</p></div><div><span class="text-purple-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">Filesystem .md, indice SQLite FTS5/BM25, CLAUDE.md/AGENTS.md roteador.</p></div></div></div></div>
+        </div>
+        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3"><button onclick="openModal('modal-3-6')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button><a href="modulo-3-6.html" class="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors">Ver Completo</a></div>
+      </div>
+
+      <div id="modal-3-6" class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target===this) closeModal()"><div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600"><div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0"><div class="flex items-center space-x-3"><span class="text-purple-400 font-bold">3.6</span><span class="font-semibold">Cerebros</span></div><button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button></div><iframe src="modulo-3-6.html" class="flex-1 w-full rounded-b-xl"></iframe></div></div>
+
+      <!-- Navegacao entre trilhas -->
+      <div class="flex flex-col sm:flex-row gap-4 mt-10">
+        <a href="../trilha2/index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Trilha 2: O Panorama</a>
+        <a href="../trilha4/index.html" class="flex-1 text-center px-6 py-3 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-500 transition-colors">Trilha 4: Construir um Jarvis eficaz →</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="border-t border-dark-600 py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
+    </div>
+  </footer>
+
+  <!-- Scripts nucleo v1 -->
+  <script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+
+  <!-- Camada de aprendizagem -->
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="inema-course" content="jarvis">
+  <title>Jarvis — Seu Sistema Operacional de IA | Curso completo para leigos | INEMA.CLUB</title>
+  <meta name="description" content="Curso aberto, em portugues e para leigos, sobre Jarvis e sistemas operacionais de IA: fundamentos, os sistemas que existem (OpenClaw, GravityClaw, Hermes, Intelecto), a anatomia (canais, identidade, ferramentas, skills, agentes, cerebros) e como construir um Jarvis eficaz, no celular e para criancas.">
+
+  <!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+
+  <!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+  <script type="application/json" data-inema-manifest>
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/learn.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a href="#conteudo" class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg">Pular para o conteudo</a>
+
+  <!-- NAVIGATION -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-3">
+          <a href="index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🤖</span>
+            <span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="curso/trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span></a>
+          <a href="curso/trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span></a>
+          <a href="curso/trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span></a>
+          <a href="curso/trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors"><span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span></a>
+          <a href="curso/trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors"><span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span></a>
+          <a href="curso/trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"><span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span></a>
+
+          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Minha jornada">
+            <span aria-hidden="true">◷</span><span class="hidden md:inline">Jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge data-count="0"></span>
+          </button>
+          <div class="relative">
+            <button type="button" data-inema-appearance-toggle="[data-inema-appearance]" aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Aparencia">
+              <span aria-hidden="true">◑</span><span class="hidden md:inline">Aparencia</span>
+            </button>
+            <div data-inema-appearance class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left">
+              <div><p class="text-xs text-neutral-400 mb-1.5">Tema</p><div class="inema-segment flex flex-wrap gap-1.5">
+                <button data-inema-set-theme="inema-dark" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Escuro</button>
+                <button data-inema-set-theme="claro" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Claro</button>
+                <button data-inema-set-theme="sepia" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sepia</button>
+                <button data-inema-set-theme="foco" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Foco</button>
+                <button data-inema-set-theme="contraste" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Alto contraste</button>
+              </div></div>
+              <div><p class="text-xs text-neutral-400 mb-1.5">Fonte</p><div class="inema-segment flex flex-wrap gap-1.5">
+                <button data-inema-set-font="inter" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Inter</button>
+                <button data-inema-set-font="system" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sistema</button>
+                <button data-inema-set-font="leitura" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Leitura</button>
+              </div></div>
+              <div><p class="text-xs text-neutral-400 mb-1.5">Tamanho</p><div class="inema-segment flex flex-wrap gap-1.5">
+                <button data-inema-set-fontscale="100" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A</button>
+                <button data-inema-set-fontscale="112" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A+</button>
+                <button data-inema-set-fontscale="125" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A++</button>
+              </div></div>
+              <div><p class="text-xs text-neutral-400 mb-1.5">Entrelinha</p><div class="inema-segment flex flex-wrap gap-1.5">
+                <button data-inema-set-leading="1.45" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Compacto</button>
+                <button data-inema-set-leading="1.7" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Confortavel</button>
+              </div></div>
+              <div><p class="text-xs text-neutral-400 mb-1.5">Acento</p><div class="inema-accent-grid flex flex-wrap gap-2">
+                <button data-inema-set-accent="emerald" class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" title="Emerald"></button>
+                <button data-inema-set-accent="blue" class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" title="Blue"></button>
+                <button data-inema-set-accent="purple" class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" title="Purple"></button>
+                <button data-inema-set-accent="amber" class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" title="Amber"></button>
+                <button data-inema-set-accent="teal" class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" title="Teal"></button>
+                <button data-inema-set-accent="rose" class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" title="Rose"></button>
+              </div></div>
+            </div>
+          </div>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" title="Alternar claro/escuro">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo">
+
+    <!-- HERO -->
+    <header class="bg-gradient-to-br from-emerald-900/20 via-dark-900 to-dark-900 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        <div class="grid lg:grid-cols-2 gap-10 items-center">
+          <div>
+            <span class="inline-block px-3 py-1 bg-primary/10 text-primary border border-primary/30 text-xs font-semibold rounded-full mb-5">CURSO ABERTO · PARA LEIGOS · INEMA.CLUB</span>
+            <h1 class="text-4xl sm:text-5xl font-bold mb-5 leading-tight">Jarvis<br><span class="text-emerald-400">Seu Sistema Operacional de IA</span></h1>
+            <p class="text-lg text-neutral-300 mb-6 max-w-xl">Aquele assistente do filme — que conversa, lembra e <strong class="text-neutral-100">faz coisas por você</strong> — hoje dá pra construir. Este curso te leva do zero: o que é, os sistemas que já existem, a anatomia por dentro, e como montar o seu — no computador, no celular e até num brinquedo educativo.</p>
+            <div class="flex flex-wrap justify-start gap-3 mb-6">
+              <a href="curso/trilha1/index.html" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold transition-colors">Começar pelos fundamentos →</a>
+              <a href="curso/trilha3/index.html" class="px-6 py-3 bg-dark-700 hover:bg-dark-600 text-neutral-200 rounded-lg font-semibold transition-colors">Ver a anatomia</a>
+              <button type="button" data-inema-resume class="px-6 py-3 bg-dark-700 hover:bg-dark-600 text-neutral-200 rounded-lg font-semibold transition-colors">↩ Continuar de onde parei</button>
+            </div>
+            <!-- Progresso do curso -->
+            <div data-inema-meter="curso" class="inema-meter max-w-md" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do curso">
+              <div class="flex items-center justify-between text-sm mb-1">
+                <span class="text-neutral-400">Seu progresso no curso</span>
+                <span class="text-emerald-400 font-semibold" data-inema-meter-pct>0%</span>
+              </div>
+              <div class="inema-bar h-2 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-emerald-500 rounded-full" data-inema-meter-fill style="width:0%"></div></div>
+              <p class="text-xs text-neutral-500 mt-1"><span data-inema-meter-frac>0 de 126</span> tópicos lidos · marque cada seção conforme avança</p>
+            </div>
+          </div>
+
+          <!-- HERO SVG -->
+          <div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 overflow-hidden">
+            <svg viewBox="0 0 520 360" class="w-full h-auto" role="img" aria-label="Voce no centro conversa com um nucleo Jarvis que coordena seis capacidades: canais, identidade, ferramentas, skills, agentes e cerebros">
+              <defs>
+                <radialGradient id="hl-grad" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#10b981"/><stop offset="1" stop-color="#065f46"/></radialGradient>
+                <filter id="hl-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <pattern id="hl-grid" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="1.2" cy="1.2" r="1.2" fill="#10b981" opacity="0.12"/></pattern>
+                <marker id="hl-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+              </defs>
+              <rect x="0" y="0" width="520" height="360" fill="url(#hl-grid)"/>
+              <!-- nucleo -->
+              <g filter="url(#hl-glow)"><circle cx="260" cy="180" r="50" fill="url(#hl-grad)" stroke="#34d399" stroke-width="2.5"/></g>
+              <text x="260" y="176" text-anchor="middle" fill="#ffffff" font-family="Inter,sans-serif" font-weight="700" font-size="18">Jarvis</text>
+              <text x="260" y="196" text-anchor="middle" fill="#a7f3d0" font-family="Inter,sans-serif" font-size="11">SO de IA</text>
+              <!-- 6 capacidades -->
+              <g font-family="Inter,sans-serif" font-size="12.5" font-weight="600">
+                <g class="wf-a"><line x1="260" y1="180" x2="120" y2="60" stroke="#38bdf8" stroke-width="1.8" opacity="0.5" marker-end="url(#hl-ah)"/><rect x="36" y="40" width="120" height="34" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="96" y="62" text-anchor="middle" fill="#bfe6ff">📡 Canais</text></g>
+                <g class="wf-a"><line x1="260" y1="180" x2="400" y2="60" stroke="#38bdf8" stroke-width="1.8" opacity="0.5" marker-end="url(#hl-ah)"/><rect x="364" y="40" width="124" height="34" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="426" y="62" text-anchor="middle" fill="#bfe6ff">🪪 Identidade</text></g>
+                <g class="wf-a"><line x1="260" y1="180" x2="92" y2="180" stroke="#38bdf8" stroke-width="1.8" opacity="0.5" marker-end="url(#hl-ah)"/><rect x="6" y="163" width="120" height="34" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="66" y="185" text-anchor="middle" fill="#bfe6ff">🔧 Ferramentas</text></g>
+                <g class="wf-a"><line x1="260" y1="180" x2="428" y2="180" stroke="#38bdf8" stroke-width="1.8" opacity="0.5" marker-end="url(#hl-ah)"/><rect x="404" y="163" width="110" height="34" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="459" y="185" text-anchor="middle" fill="#bfe6ff">🧩 Skills</text></g>
+                <g class="wf-a"><line x1="260" y1="180" x2="120" y2="300" stroke="#38bdf8" stroke-width="1.8" opacity="0.5" marker-end="url(#hl-ah)"/><rect x="40" y="286" width="116" height="34" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="98" y="308" text-anchor="middle" fill="#bfe6ff">🤝 Agentes</text></g>
+                <g class="wf-a"><line x1="260" y1="180" x2="400" y2="300" stroke="#38bdf8" stroke-width="1.8" opacity="0.5" marker-end="url(#hl-ah)"/><rect x="364" y="286" width="120" height="34" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="424" y="308" text-anchor="middle" fill="#bfe6ff">🧠 Cérebros</text></g>
+              </g>
+            </svg>
+            <p class="text-xs text-neutral-400 mt-1 px-1">No centro, o núcleo do Jarvis; em volta, as <span class="text-emerald-400">6 camadas</span> que a Trilha 3 abre uma a uma. É esse o mapa do curso inteiro.</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+      <!-- O QUE E -->
+      <section>
+        <h2 class="text-2xl sm:text-3xl font-bold mb-4">O que é, afinal, um "Jarvis"?</h2>
+        <div class="grid md:grid-cols-3 gap-5">
+          <div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+            <div class="text-3xl mb-3">💬</div>
+            <h3 class="font-semibold mb-2 text-emerald-400">Mais que um chatbot</h3>
+            <p class="text-sm text-neutral-400">Um chatbot responde. Um Jarvis <strong class="text-neutral-200">age</strong>: lê sua agenda, manda mensagem, pesquisa, organiza — e pode fazer isso sozinho.</p>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+            <div class="text-3xl mb-3">🧩</div>
+            <h3 class="font-semibold mb-2 text-emerald-400">Um sistema, não um app</h3>
+            <p class="text-sm text-neutral-400">Como um sistema operacional organiza programas e memória, um <strong class="text-neutral-200">SO de IA</strong> organiza o modelo, a memória, as ferramentas e os canais.</p>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+            <div class="text-3xl mb-3">🔓</div>
+            <h3 class="font-semibold mb-2 text-emerald-400">Seu, de verdade</h3>
+            <p class="text-sm text-neutral-400">Dá pra rodar no seu computador, com seus dados em casa, sem mensalidade — você é dono da inteligência, não inquilino.</p>
+          </div>
+        </div>
+        <div class="bg-primary/10 rounded-2xl border border-primary/30 p-6 mt-6">
+          <p class="text-neutral-300"><strong class="text-primary">Sem jargão.</strong> Você não precisa saber programar nem nada de IA. A Trilha 1 começa explicando cada palavra — "modelo", "agente", "ferramenta" — com exemplos do dia a dia. O resto do curso vai subindo degrau por degrau.</p>
+        </div>
+      </section>
+
+      <!-- AS 6 TRILHAS -->
+      <section>
+        <h2 class="text-2xl sm:text-3xl font-bold mb-2">As 6 trilhas</h2>
+        <p class="text-neutral-400 mb-6 max-w-3xl">Do conceito à prática. Faça na ordem (T1 → T6) ou pule para o que te interessa — cada trilha funciona sozinha.</p>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+          <a href="curso/trilha1/index.html" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-emerald-500/30 p-6 transition-all">
+            <div class="flex items-center justify-between mb-3"><span class="text-3xl">🌱</span><span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full">TRILHA 1</span></div>
+            <h3 class="text-lg font-bold mb-1 group-hover:text-emerald-400 transition-colors">Fundamentos</h3>
+            <p class="text-sm text-neutral-400 mb-3">Do zero: o que é um Jarvis, o que é um LLM e quando a IA passa a agir. Sem nenhum pré-requisito.</p>
+            <p class="text-xs text-neutral-500">3 módulos · 18 tópicos · ~2h30 · Iniciante</p>
+          </a>
+
+          <a href="curso/trilha2/index.html" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-blue-500/30 p-6 transition-all">
+            <div class="flex items-center justify-between mb-3"><span class="text-3xl">🗺️</span><span class="text-xs font-semibold text-blue-400 bg-blue-500/10 px-2 py-1 rounded-full">TRILHA 2</span></div>
+            <h3 class="text-lg font-bold mb-1 group-hover:text-blue-400 transition-colors">O Panorama</h3>
+            <p class="text-sm text-neutral-400 mb-3">Os sistemas que existem — OpenClaw, GravityClaw, Hermes, Intelecto, AIOS — e qual é o caminho.</p>
+            <p class="text-xs text-neutral-500">3 módulos · 18 tópicos · ~2h30 · Iniciante</p>
+          </a>
+
+          <a href="curso/trilha3/index.html" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-purple-500/30 p-6 transition-all">
+            <div class="flex items-center justify-between mb-3"><span class="text-3xl">🧬</span><span class="text-xs font-semibold text-purple-400 bg-purple-500/10 px-2 py-1 rounded-full">TRILHA 3</span></div>
+            <h3 class="text-lg font-bold mb-1 group-hover:text-purple-400 transition-colors">Anatomia</h3>
+            <p class="text-sm text-neutral-400 mb-3">As 6 camadas por dentro: canais, identidade, ferramentas, skills, agentes e cérebros — uma por módulo.</p>
+            <p class="text-xs text-neutral-500">6 módulos · 36 tópicos · ~5h · Intermediário</p>
+          </a>
+
+          <a href="curso/trilha4/index.html" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-6 transition-all">
+            <div class="flex items-center justify-between mb-3"><span class="text-3xl">🛠️</span><span class="text-xs font-semibold text-amber-400 bg-amber-500/10 px-2 py-1 rounded-full">TRILHA 4</span></div>
+            <h3 class="text-lg font-bold mb-1 group-hover:text-amber-400 transition-colors">Construir um Jarvis eficaz</h3>
+            <p class="text-sm text-neutral-400 mb-3">Do primeiro tijolo à solução robusta: a receita mínima, a arquitetura das 4 camadas e como operar.</p>
+            <p class="text-xs text-neutral-500">3 módulos · 18 tópicos · ~3h · Intermediário</p>
+          </a>
+
+          <a href="curso/trilha5/index.html" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-teal-500/30 p-6 transition-all">
+            <div class="flex items-center justify-between mb-3"><span class="text-3xl">📱</span><span class="text-xs font-semibold text-teal-400 bg-teal-500/10 px-2 py-1 rounded-full">TRILHA 5</span></div>
+            <h3 class="text-lg font-bold mb-1 group-hover:text-teal-400 transition-colors">Jarvis no celular</h3>
+            <p class="text-sm text-neutral-400 mb-3">Seu assistente no bolso, sem app de loja: canais como Telegram e WhatsApp, voz e modelo local.</p>
+            <p class="text-xs text-neutral-500">3 módulos · 18 tópicos · ~2h30 · Intermediário</p>
+          </a>
+
+          <a href="curso/trilha6/index.html" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-rose-500/30 p-6 transition-all">
+            <div class="flex items-center justify-between mb-3"><span class="text-3xl">🧸</span><span class="text-xs font-semibold text-rose-400 bg-rose-500/10 px-2 py-1 rounded-full">TRILHA 6</span></div>
+            <h3 class="text-lg font-bold mb-1 group-hover:text-rose-400 transition-colors">Jarvis para crianças</h3>
+            <p class="text-sm text-neutral-400 mb-3">Um tutor que ensina perguntando (método socrático), com persona, voz — e segurança inegociável.</p>
+            <p class="text-xs text-neutral-500">3 módulos · 18 tópicos · ~2h30 · Iniciante</p>
+          </a>
+
+        </div>
+      </section>
+
+      <!-- PARA QUEM E -->
+      <section>
+        <h2 class="text-2xl sm:text-3xl font-bold mb-4">Para quem é</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+            <h3 class="font-bold text-emerald-400 mb-4">✓ Este curso é pra você se…</h3>
+            <ul class="space-y-2 text-sm text-neutral-300">
+              <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Ouve falar de "agentes de IA" e quer entender de verdade, sem enrolação.</span></li>
+              <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Quer um assistente que seja SEU, com seus dados, em vez de só usar um chatbot.</span></li>
+              <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Pensa em montar algo: para você, no celular, ou um brinquedo educativo.</span></li>
+              <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Não programa (ainda) — e prefere começar pelo entendimento.</span></li>
+            </ul>
+          </div>
+          <div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+            <h3 class="font-bold text-primary mb-4">📋 Pré-requisitos</h3>
+            <ul class="space-y-2 text-sm text-neutral-300">
+              <li class="flex items-start gap-2"><span class="text-primary mt-0.5">•</span><span>Curiosidade. Nenhum conhecimento prévio de IA — a Trilha 1 define cada termo.</span></li>
+              <li class="flex items-start gap-2"><span class="text-primary mt-0.5">•</span><span>Um computador ou celular para acompanhar. As partes práticas explicam cada passo.</span></li>
+              <li class="flex items-start gap-2"><span class="text-primary mt-0.5">•</span><span>Disposição para marcar o que leu — o curso lembra onde você parou.</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMO FOI FEITO -->
+      <section>
+        <div class="bg-dark-800 rounded-2xl border border-dark-600 p-6 sm:p-8">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h2 class="text-xl sm:text-2xl font-bold mb-2">📐 Como este curso foi construído</h2>
+              <p class="text-neutral-400 text-sm max-w-2xl">Pesquisamos a fundo — na web e em dezenas de projetos reais — para mapear o que é Jarvis, comparar os sistemas e destilar a anatomia. Tudo está documentado, com fontes e decisões, de forma transparente.</p>
+            </div>
+            <a href="doc/metodologia.html" class="shrink-0 px-5 py-3 bg-dark-700 hover:bg-dark-600 text-neutral-200 rounded-lg font-semibold transition-colors text-center">Ver a metodologia →</a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="border-t border-dark-600 py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+  <script src="assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+  </script>
+</body>
+</html>

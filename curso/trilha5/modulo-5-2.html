@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="inema-course" content="jarvis">
+  <title>Modulo 5.2 — Voz e on-device: falar, ouvir e rodar local | Jarvis · INEMA.CLUB</title>
+  <meta name="description" content="O pipeline de voz do Jarvis (ouvir com STT, falar com TTS), a decisao por resposta e como rodar o cerebro local no celular — explicado do zero, com exemplo copy-run.">
+
+  <!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+
+  <!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+  <script type="application/json" data-inema-manifest>
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/learn.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .bg-teal-900\/20 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .bg-teal-900\/30 { background-color: rgba(13,148,136,0.10); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== code box ===== */
+    .code-box pre { white-space: pre; overflow-x: auto; }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a href="#conteudo" class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg">Pular para o conteudo</a>
+
+  <!-- NAVIGATION (completo, identico em todas as paginas) -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-3">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🤖</span>
+            <span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a id="nav-t1" href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a id="nav-t2" href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+          </a>
+          <a id="nav-t3" href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span>
+          </a>
+          <a id="nav-t4" href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+          </a>
+          <a id="nav-t5" href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-teal-400 bg-teal-500/10">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+          </a>
+          <a id="nav-t6" href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span>
+          </a>
+
+          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Minha jornada">
+            <span aria-hidden="true">◷</span><span class="hidden md:inline">Jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge data-count="0"></span>
+          </button>
+
+          <div class="relative">
+            <button type="button" data-inema-appearance-toggle="[data-inema-appearance]" aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Aparencia">
+              <span aria-hidden="true">◑</span><span class="hidden md:inline">Aparencia</span>
+            </button>
+            <div data-inema-appearance class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left">
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-theme="inema-dark" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Escuro</button>
+                  <button data-inema-set-theme="claro" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Claro</button>
+                  <button data-inema-set-theme="sepia" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sepia</button>
+                  <button data-inema-set-theme="foco" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Foco</button>
+                  <button data-inema-set-theme="contraste" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Alto contraste</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Fonte</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-font="inter" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Inter</button>
+                  <button data-inema-set-font="system" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sistema</button>
+                  <button data-inema-set-font="leitura" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Leitura</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tamanho</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-fontscale="100" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A</button>
+                  <button data-inema-set-fontscale="112" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A+</button>
+                  <button data-inema-set-fontscale="125" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A++</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Entrelinha</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-leading="1.45" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Compacto</button>
+                  <button data-inema-set-leading="1.7" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Confortavel</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+                <div class="inema-accent-grid flex flex-wrap gap-2">
+                  <button data-inema-set-accent="emerald" class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" title="Emerald"></button>
+                  <button data-inema-set-accent="blue" class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" title="Blue"></button>
+                  <button data-inema-set-accent="purple" class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" title="Purple"></button>
+                  <button data-inema-set-accent="amber" class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" title="Amber"></button>
+                  <button data-inema-set-accent="teal" class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" title="Teal"></button>
+                  <button data-inema-set-accent="rose" class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" title="Rose"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" title="Alternar claro/escuro">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo">
+    <header class="bg-gradient-to-br from-teal-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+          <a href="../../index.html" class="hover:text-teal-400">Inicio</a><span>/</span>
+          <a href="index.html" class="hover:text-teal-400">Trilha 5</a><span>/</span>
+          <span class="text-teal-400">Modulo 5.2</span>
+        </nav>
+        <span class="inline-block px-3 py-1 bg-teal-500/20 text-teal-400 text-xs font-semibold rounded-full mb-4">MODULO 5-2</span>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">🎙️ Voz e on-device: falar, ouvir e rodar local</h1>
+        <p class="text-lg text-neutral-400 max-w-3xl">Mandar um audio para o Jarvis e ouvir ele responder com voz parece magica — mas e so uma corrente de pecas simples: o audio vira texto, o texto vira resposta, a resposta vira audio. Neste modulo voce monta esse pipeline na cabeca, entende por que a voz e so a "porta" (e nao o cerebro), e descobre como rodar o motor de IA dentro de casa, no seu proprio computador.</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-teal-400">6</div><div class="text-xs text-neutral-400">Topicos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-teal-400">~35</div><div class="text-xs text-neutral-400">Minutos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-teal-400">Intermediario</div><div class="text-xs text-neutral-400">Nivel</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-teal-400">Pratico</div><div class="text-xs text-neutral-400">Tipo</div></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="lg:flex lg:gap-10">
+
+        <!-- TOC sticky -->
+        <aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+          <nav data-inema-toc aria-label="Indice da pagina" class="lg:sticky lg:top-20">
+            <p class="text-sm text-neutral-400 mb-2">Secao <span class="inema-toc-pos" data-inema-section-counter>1</span> de 6</p>
+            <ol class="space-y-1 text-sm">
+              <li><a href="#topico-1" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-teal-400">1. Voz e interface, nao cerebro</a></li>
+              <li><a href="#topico-2" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-teal-400">2. Ouvir (STT)</a></li>
+              <li><a href="#topico-3" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-teal-400">3. Falar (TTS)</a></li>
+              <li><a href="#topico-4" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-teal-400">4. Decisao por resposta</a></li>
+              <li><a href="#topico-5" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-teal-400">5. On-device de verdade</a></li>
+              <li><a href="#topico-6" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-teal-400">6. Tempo real (avancado)</a></li>
+            </ol>
+            <div class="mt-4" data-inema-meter="modulo:5-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 5.2">
+              <div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-teal-500" data-inema-meter-fill style="width:0%"></div></div>
+              <span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span>
+            </div>
+          </nav>
+        </aside>
+
+        <div class="lg:flex-1 min-w-0 inema-prose">
+
+          <!-- TOPICO 1 -->
+          <section id="topico-1" data-inema-topic="modulo-5-2#topico-1" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl flex-shrink-0">1</span>
+              <h2 class="text-2xl font-bold">🎚️ Voz e interface, nao cerebro</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m52-t1-p1">Antes de qualquer codigo, uma frase que organiza o modulo inteiro: <strong class="text-teal-400">"voz e interface; o orquestrador e o cerebro; falar e uma saida opcional decidida na hora"</strong>. A voz nao pensa. Ela so leva sua fala para dentro e traz a resposta para fora. Quem pensa — quem decide o que responder, qual ferramenta usar, o que lembrar — e o mesmo <strong>orquestrador</strong> de texto que voce ja conhece das outras trilhas.</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m52-t1-p2">Isso muda completamente como voce pensa o projeto. Voz nao e "uma IA diferente": e uma <strong>casquinha</strong> em volta do Jarvis que voce ja tem. Voce constroi o cerebro primeiro (texto), e so depois pluga ouvido e boca. Se a voz quebrar, o assistente de texto continua de pe.</p>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> Um <strong>orquestrador</strong> e o "maestro" do Jarvis: o pedaco de codigo que recebe sua mensagem, conversa com o modelo de IA, chama ferramentas (agenda, busca, e-mail) e monta a resposta. A <strong>interface</strong> e so o canal por onde isso entra e sai — pode ser texto no Telegram, voz, ou os dois. O cerebro e sempre o mesmo; muda so a porta.</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-teal-900/30 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-teal-400 mb-3 flex items-center"><span class="mr-2">🧩</span> Tres camadas, papeis separados</h3>
+              <ul class="space-y-2 text-neutral-300 text-sm">
+                <li class="flex items-start gap-2"><span class="text-teal-400 mt-1">•</span><span><strong>Entrada de voz (ouvido):</strong> transforma o audio que voce mandou em texto. Opcional.</span></li>
+                <li class="flex items-start gap-2"><span class="text-teal-400 mt-1">•</span><span><strong>Orquestrador (cerebro):</strong> le o texto, pensa, age, decide a resposta. <em>Sempre</em> presente.</span></li>
+                <li class="flex items-start gap-2"><span class="text-teal-400 mt-1">•</span><span><strong>Saida de voz (boca):</strong> transforma a resposta em audio. Opcional, decidida a cada mensagem.</span></li>
+              </ul>
+            </div>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Por que "opcional" importa</h3>
+              <p class="text-neutral-300 text-sm">Voce nem sempre quer ouvir o Jarvis falar. Uma lista de compras e melhor em texto (da pra ler de relance); um "lembrete enquanto dirijo" e melhor em voz. Como a boca e opcional e decidida na hora, o mesmo assistente serve as duas situacoes sem voce trocar de app.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Interface</span><p class="text-sm text-neutral-400 mt-1">A porta por onde a conversa entra e sai (texto ou voz).</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Orquestrador</span><p class="text-sm text-neutral-400 mt-1">O cerebro que pensa, age e decide a resposta.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Saida opcional</span><p class="text-sm text-neutral-400 mt-1">Falar e escolhido a cada mensagem, nao sempre ligado.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Casquinha de voz</span><p class="text-sm text-neutral-400 mt-1">A voz envolve o assistente de texto; nao o substitui.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-500/20 border border-teal-500/30 text-teal-400 hover:bg-teal-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 2 -->
+          <section id="topico-2" data-inema-topic="modulo-5-2#topico-2" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl flex-shrink-0">2</span>
+              <h2 class="text-2xl font-bold">👂 Ouvir: do audio ao texto (STT)</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m52-t2-p1">Quando voce segura o microfone no Telegram e manda um audio, o app entrega um arquivo num formato chamado <strong>.ogg</strong> (com compressao <strong>Opus</strong>) — otimo para mandar pela rede, mas que os transcritores nem sempre engolem direto. O caminho do "ouvir" tem tres passos: <strong class="text-teal-400">receber o audio → converter o formato → transcrever para texto</strong>. So depois desse texto pronto e que o cerebro entra.</p>
+
+            <div class="rounded-2xl border border-teal-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+              <svg viewBox="0 0 980 230" class="w-full h-auto" role="img" aria-label="Pipeline de voz do Jarvis: audio .ogg passa pelo ffmpeg que converte para .wav, o Whisper transcreve para texto, o LLM pensa e responde, o TTS gera o audio de volta">
+                <defs>
+                  <filter id="m52-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  <pattern id="m52-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#14b8a6" opacity="0.12"/></pattern>
+                  <marker id="m52-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#2dd4bf"/></marker>
+                </defs>
+                <rect x="0" y="0" width="980" height="230" fill="url(#m52-grid)"/>
+                <text x="490" y="26" text-anchor="middle" fill="#5eead4" font-family="Inter,sans-serif" font-size="13" font-weight="600">O pipeline de voz, fim a fim</text>
+                <g font-family="Inter,sans-serif" font-size="12.5">
+                  <!-- audio in -->
+                  <rect x="20" y="80" width="120" height="64" rx="13" fill="#0c1f1c" stroke="#2dd4bf" stroke-width="2"/>
+                  <text x="80" y="108" text-anchor="middle" fill="#5eead4" font-weight="700">🎤 audio</text>
+                  <text x="80" y="126" text-anchor="middle" fill="#99f6e4">.ogg / Opus</text>
+                  <path d="M140,112 L172,112" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#m52-ah)"/>
+                  <!-- ffmpeg -->
+                  <rect x="174" y="80" width="120" height="64" rx="13" fill="#0c1f1c" stroke="#38bdf8" stroke-width="2"/>
+                  <text x="234" y="108" text-anchor="middle" fill="#7dd3fc" font-weight="700">ffmpeg</text>
+                  <text x="234" y="126" text-anchor="middle" fill="#bae6fd">→ .wav 16kHz</text>
+                  <path d="M294,112 L326,112" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#m52-ah)"/>
+                  <!-- whisper -->
+                  <g filter="url(#m52-glow)"><rect x="328" y="78" width="124" height="68" rx="14" fill="#0c1f1c" stroke="#2dd4bf" stroke-width="2.5"/></g>
+                  <text x="390" y="106" text-anchor="middle" fill="#2dd4bf" font-weight="700">Whisper</text>
+                  <text x="390" y="124" text-anchor="middle" fill="#99f6e4">STT (pt)</text>
+                  <path d="M452,112 L484,112" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#m52-ah)"/>
+                  <!-- LLM -->
+                  <rect x="486" y="80" width="130" height="64" rx="13" fill="#0c1f1c" stroke="#38bdf8" stroke-width="2"/>
+                  <text x="551" y="104" text-anchor="middle" fill="#7dd3fc" font-weight="700">orquestrador</text>
+                  <text x="551" y="122" text-anchor="middle" fill="#bae6fd">LLM + tools</text>
+                  <text x="551" y="138" text-anchor="middle" fill="#bae6fd">"o cerebro"</text>
+                  <path d="M616,112 L648,112" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#m52-ah)"/>
+                  <!-- TTS -->
+                  <rect x="650" y="80" width="120" height="64" rx="13" fill="#0c1f1c" stroke="#2dd4bf" stroke-width="2"/>
+                  <text x="710" y="108" text-anchor="middle" fill="#5eead4" font-weight="700">TTS</text>
+                  <text x="710" y="126" text-anchor="middle" fill="#99f6e4">texto → voz</text>
+                  <path d="M770,112 L802,112" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#m52-ah)"/>
+                  <!-- audio out -->
+                  <rect x="804" y="80" width="120" height="64" rx="13" fill="#0c1f1c" stroke="#2dd4bf" stroke-width="2"/>
+                  <text x="864" y="108" text-anchor="middle" fill="#5eead4" font-weight="700">🔊 resposta</text>
+                  <text x="864" y="126" text-anchor="middle" fill="#99f6e4">audio</text>
+                </g>
+                <g font-family="Inter,sans-serif" font-size="11.5">
+                  <text x="234" y="178" text-anchor="middle" fill="#9ca3af">— OUVIR (STT) —</text>
+                  <text x="710" y="178" text-anchor="middle" fill="#9ca3af">— FALAR (TTS) —</text>
+                  <line x1="468" y1="166" x2="468" y2="196" stroke="#374151" stroke-width="1.5" stroke-dasharray="5 5"/>
+                </g>
+              </svg>
+              <p class="text-xs text-neutral-400 mt-1 px-1">O caminho completo: <span class="text-teal-400">audio entra</span> pela esquerda, o <span class="text-sky-400">cerebro pensa</span> no meio, e a <span class="text-teal-400">voz sai</span> pela direita. Repare que o LLM no centro e o mesmo que responderia em texto — voz so adiciona as pontas.</p>
+            </div>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m52-t2-p2">O motor de transcricao mais usado se chama <strong>Whisper</strong> (da OpenAI). Voce manda o audio convertido e ele devolve o texto, escolhendo o idioma (no nosso caso, <strong>pt</strong> de portugues). Uma pegadinha que derruba muita gente: a chave de API do Whisper e a <strong class="text-teal-400">chave da OpenAI (OPENAI_API_KEY)</strong>, que e DIFERENTE da chave da Anthropic (ANTHROPIC_API_KEY) usada para o cerebro. Sao duas empresas, duas chaves, dois cadastros.</p>
+
+            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> O erro classico das chaves trocadas</h3>
+              <p class="text-neutral-300 text-sm">Se voce colocar a chave da Anthropic onde o Whisper espera a da OpenAI (ou vice-versa), a transcricao falha com um erro de "autenticacao invalida" e parece que tudo quebrou — quando e so a chave errada na caixa errada. Guarde mentalmente: <strong>ouvir/falar pela OpenAI = OPENAI_API_KEY; pensar pela Anthropic = ANTHROPIC_API_KEY.</strong> (E o Whisper tambem roda local e gratis, sem chave nenhuma — veja o topico 5.)</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">STT</span><p class="text-sm text-neutral-400 mt-1">"Speech-to-Text": transformar fala em texto.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">.ogg / Opus</span><p class="text-sm text-neutral-400 mt-1">O formato de audio que o Telegram entrega.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">ffmpeg</span><p class="text-sm text-neutral-400 mt-1">A ferramenta que converte o audio de um formato para outro.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Whisper</span><p class="text-sm text-neutral-400 mt-1">O modelo que transcreve o audio em texto.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-500/20 border border-teal-500/30 text-teal-400 hover:bg-teal-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 3 -->
+          <section id="topico-3" data-inema-topic="modulo-5-2#topico-3" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl flex-shrink-0">3</span>
+              <h2 class="text-2xl font-bold">🗣️ Falar: do texto ao audio (TTS)</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m52-t3-p1">O caminho de volta e o espelho do "ouvir". O cerebro produz a resposta em texto; um modelo de voz le esse texto em voz alta e gera um arquivo de audio que o Telegram toca de volta para voce. Isso se chama <strong class="text-teal-400">TTS</strong> — "Text-to-Speech", texto para fala. Voce ainda escolhe <strong>qual voz</strong> usar: grave, aguda, calorosa, neutra.</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m52-t3-p2">Aqui voce tem duas grandes familias de opcoes, e a escolha repete o tema do curso inteiro (nuvem x local). Uma voz de <strong>nuvem</strong> (por exemplo o modelo <em>tts-1</em> da OpenAI, com vozes nomeadas como "nova") soa muito natural e nao exige hardware — mas custa por uso e manda o texto para fora. Uma voz <strong>local</strong> roda no seu computador, e gratis e privada, mas costuma soar um pouco mais robotica e pesa na maquina.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="bg-teal-900/20 rounded-xl border border-teal-500/30 p-6">
+                <h4 class="font-bold text-teal-400 mb-4">✓ Voz na nuvem (ex.: tts-1 / "nova")</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-teal-400">✓</span><span>Soa muito natural, quase humana.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-teal-400">✓</span><span>Nao exige nada do seu hardware.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-teal-400">✓</span><span>Varias vozes prontas para escolher.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Custa por uso e o texto sai da sua maquina.</span></li>
+                </ul>
+              </div>
+              <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+                <h4 class="font-bold text-blue-400 mb-4">✓ Voz local (roda no seu PC)</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Gratis depois de instalada, para sempre.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Privada: o texto nunca sai de casa.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Funciona offline, sem internet.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Voz um pouco mais robotica e pesa na maquina.</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <h3 class="text-base font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Dica pratica</h3>
+              <p class="text-sm text-neutral-300">Comece com a voz de nuvem so para sentir o resultado funcionando ponta a ponta — e mais facil de plugar. Quando o pipeline inteiro estiver de pe, troque a boca pela versao local se privacidade ou custo pesarem. Lembre: trocar a voz nao mexe no cerebro; e so a peca da ponta.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">TTS</span><p class="text-sm text-neutral-400 mt-1">"Text-to-Speech": transformar texto em fala.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Voz (preset)</span><p class="text-sm text-neutral-400 mt-1">O timbre escolhido — ex.: "nova" no tts-1.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">TTS de nuvem</span><p class="text-sm text-neutral-400 mt-1">Natural e sem hardware, mas paga e nao privada.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">TTS local</span><p class="text-sm text-neutral-400 mt-1">Gratis, privada e offline; soa mais robotica.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-500/20 border border-teal-500/30 text-teal-400 hover:bg-teal-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 4 -->
+          <section id="topico-4" data-inema-topic="modulo-5-2#topico-4" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl flex-shrink-0">4</span>
+              <h2 class="text-2xl font-bold">🚦 Decisao por resposta: o Policy Engine</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m52-t4-p1">Se a boca e opcional e o cerebro pode ser barato ou caro, alguem precisa <strong>decidir</strong> a cada mensagem: respondo em texto ou em voz? Uso o modelo barato ou o premium? Encaminho para um humano? Esse "porteiro de decisoes" tem um nome no ecossistema: <strong class="text-teal-400">Policy Engine</strong> (motor de politica). Ele olha cada pedido e escolhe o caminho mais barato que ainda resolve bem.</p>
+
+            <div class="rounded-2xl border border-teal-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+              <svg viewBox="0 0 980 240" class="w-full h-auto" role="img" aria-label="Policy Engine recebe um pedido e decide tres coisas: canal de resposta texto ou voz, modelo barato ou premium, e se escala para humano">
+                <defs>
+                  <filter id="m52b-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  <pattern id="m52b-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#14b8a6" opacity="0.12"/></pattern>
+                  <marker id="m52b-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#2dd4bf"/></marker>
+                </defs>
+                <rect x="0" y="0" width="980" height="240" fill="url(#m52b-grid)"/>
+                <text x="245" y="26" text-anchor="middle" fill="#5eead4" font-family="Inter,sans-serif" font-size="13" font-weight="600">O motor que decide cada resposta</text>
+                <g font-family="Inter,sans-serif" font-size="12.5">
+                  <rect x="30" y="95" width="130" height="60" rx="13" fill="#0c1f1c" stroke="#38bdf8" stroke-width="2"/>
+                  <text x="95" y="121" text-anchor="middle" fill="#7dd3fc" font-weight="700">pedido</text>
+                  <text x="95" y="139" text-anchor="middle" fill="#bae6fd">(texto ou voz)</text>
+                  <path d="M160,125 L196,125" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#m52b-ah)"/>
+                  <g filter="url(#m52b-glow)"><rect x="198" y="88" width="160" height="74" rx="15" fill="#0c1f1c" stroke="#2dd4bf" stroke-width="2.5"/></g>
+                  <text x="278" y="118" text-anchor="middle" fill="#2dd4bf" font-weight="700">Policy Engine</text>
+                  <text x="278" y="138" text-anchor="middle" fill="#99f6e4">"e simples? e urgente?"</text>
+                  <!-- three branches -->
+                  <path d="M358,108 L432,66" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#m52b-ah)"/>
+                  <path d="M358,125 L432,125" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#m52b-ah)"/>
+                  <path d="M358,142 L432,184" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#m52b-ah)"/>
+                  <rect x="436" y="44" width="240" height="46" rx="11" fill="#0c1f1c" stroke="#2dd4bf" stroke-width="1.6"/>
+                  <text x="556" y="64" text-anchor="middle" fill="#5eead4" font-weight="600">canal: texto vs voz</text>
+                  <text x="556" y="80" text-anchor="middle" fill="#99f6e4" font-size="11">lista = texto · "no carro" = voz</text>
+                  <rect x="436" y="102" width="240" height="46" rx="11" fill="#0c1f1c" stroke="#38bdf8" stroke-width="1.6"/>
+                  <text x="556" y="122" text-anchor="middle" fill="#7dd3fc" font-weight="600">modelo: barato vs premium</text>
+                  <text x="556" y="138" text-anchor="middle" fill="#bae6fd" font-size="11">trivial = barato · dificil = premium</text>
+                  <rect x="436" y="160" width="240" height="46" rx="11" fill="#0c1f1c" stroke="#fb7185" stroke-width="1.6"/>
+                  <text x="556" y="180" text-anchor="middle" fill="#fda4af" font-weight="600">escala para humano</text>
+                  <text x="556" y="196" text-anchor="middle" fill="#fecdd3" font-size="11">caso sensivel = pessoa de verdade</text>
+                  <!-- result -->
+                  <path d="M676,125 L712,125" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#m52b-ah)"/>
+                  <rect x="714" y="95" width="150" height="60" rx="13" fill="#0c1f1c" stroke="#2dd4bf" stroke-width="2"/>
+                  <text x="789" y="121" text-anchor="middle" fill="#5eead4" font-weight="700">resposta certa</text>
+                  <text x="789" y="139" text-anchor="middle" fill="#99f6e4">no custo certo</text>
+                </g>
+              </svg>
+              <p class="text-xs text-neutral-400 mt-1 px-1">O <span class="text-teal-400">Policy Engine</span> olha cada pedido e decide tres coisas: por onde responder (<span class="text-teal-400">texto ou voz</span>), com qual <span class="text-sky-400">modelo (barato ou premium)</span> e se precisa de um <span class="text-rose-400">humano</span>. Resultado: a resposta certa, no custo certo.</p>
+            </div>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m52-t4-p2">A logica e puro bom senso economico. "Que horas sao?" nao precisa do modelo mais caro do mundo nem de uma voz produzida — texto curto, modelo barato, fim. Ja "me ajude a reescrever este e-mail dificil para o meu chefe" merece o cerebro premium. Decidir por resposta, e nao uma vez para sempre, e o que mantem a conta baixa sem perder qualidade onde importa.</p>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Policy Engine</span><p class="text-sm text-neutral-400 mt-1">O "porteiro" que decide o caminho de cada mensagem.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Decisao por resposta</span><p class="text-sm text-neutral-400 mt-1">Escolher caso a caso, nao uma config fixa.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Barato vs premium</span><p class="text-sm text-neutral-400 mt-1">Modelo simples no trivial, potente no dificil.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Escalar p/ humano</span><p class="text-sm text-neutral-400 mt-1">Casos sensiveis vao para uma pessoa de verdade.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-500/20 border border-teal-500/30 text-teal-400 hover:bg-teal-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 5 -->
+          <section id="topico-5" data-inema-topic="modulo-5-2#topico-5" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl flex-shrink-0">5</span>
+              <h2 class="text-2xl font-bold">🏠 On-device de verdade: o cerebro local com Ollama</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m52-t5-p1">Ate aqui o cerebro morava na nuvem. Mas da para colocar o motor de IA dentro de casa, no seu proprio computador. A ferramenta-padrao para isso se chama <strong class="text-teal-400">Ollama</strong>: voce instala, baixa um modelo aberto, e ele responde — gratis, privado e offline. O termo para isso e <strong>on-device</strong>: a inteligencia roda no aparelho, nao num servidor distante.</p>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Que modelo cabe no seu hardware (regra da RAM)</h3>
+              <p class="text-neutral-300 text-sm mb-3">Modelos sao medidos em <strong>"B"</strong> (bilhoes de parametros — o "tamanho do cerebro"). Maior = mais esperto, mas pesa mais. A regra pratica usa a sua <strong>RAM</strong> (a memoria de trabalho do computador):</p>
+              <ul class="space-y-2 text-neutral-300 text-sm">
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>~3B</strong> (ex.: llama3.2): roda confortavel com <strong>8 GB</strong> de RAM.</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>~8B</strong>: pede <strong>16 GB</strong> de RAM para nao engasgar.</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Sem placa de video (so <strong>CPU</strong>): funciona, mas e lento — <strong>30 a 60 segundos</strong> por resposta. Uma <strong>GPU</strong> (placa de video) ou a nuvem aceleram muito.</span></li>
+              </ul>
+            </div>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m52-t5-p2">A beleza do desenho do curso e que trocar o cerebro de nuvem para local nao reescreve o Jarvis. Voce mexe num arquivo de configuracao chamado <strong>.env</strong> (onde ficam as "chaves e ajustes" do projeto) e aponta o provedor para o Ollama. O resto do sistema — canais, memoria, voz — nem percebe. Isso e o <strong class="text-teal-400">hot-swap</strong>: trocar o motor sem desmontar o carro.</p>
+
+            <!-- COPY-RUN -->
+            <div class="code-box bg-dark-900 rounded-xl border border-teal-500/30 overflow-hidden mb-6">
+              <div class="flex items-center justify-between px-4 py-2 bg-teal-900/30 border-b border-teal-500/30">
+                <span class="text-xs font-semibold text-teal-400 font-mono">COPY-RUN · ouvir um audio + rodar o cerebro local</span>
+                <span class="text-xs text-neutral-500 font-mono">terminal + .env</span>
+              </div>
+              <div class="p-4 space-y-4 text-sm">
+                <div>
+                  <p class="text-neutral-400 mb-2"><strong class="text-teal-400">Objetivo:</strong> converter um audio do Telegram para texto com o Whisper e, em paralelo, ligar o cerebro local (Ollama) trocando uma linha do <code class="text-teal-300">.env</code>. Nada sai da sua maquina.</p>
+                </div>
+                <div>
+                  <p class="text-neutral-500 mb-1 font-mono text-xs">// 1) instale o motor local e baixe um modelo que cabe na sua RAM</p>
+                  <pre class="font-mono text-teal-200 bg-dark-800 rounded-lg p-3 leading-relaxed"><code>curl -fsSL https://ollama.com/install.sh | sh
+ollama pull &lt;modelo-que-cabe-na-sua-RAM&gt;     # ex.: llama3.2 (8GB) ou llama3.1:8b (16GB)
+ollama serve                                  # deixa o motor local ouvindo (porta 11434)</code></pre>
+                </div>
+                <div>
+                  <p class="text-neutral-500 mb-1 font-mono text-xs">// 2) o audio chegou como .ogg/Opus -> converta para .wav 16kHz com o ffmpeg</p>
+                  <pre class="font-mono text-teal-200 bg-dark-800 rounded-lg p-3 leading-relaxed"><code>ffmpeg -i &lt;seu-audio&gt;.ogg -ar 16000 -ac 1 voz.wav
+
+# transcreva para texto (Whisper local, gratis, idioma pt) — sem chave nenhuma:
+whisper voz.wav --language pt --model small --output_format txt</code></pre>
+                </div>
+                <div>
+                  <p class="text-neutral-500 mb-1 font-mono text-xs">// 3) aponte o cerebro do Jarvis para o Ollama no arquivo .env (hot-swap)</p>
+                  <pre class="font-mono text-teal-200 bg-dark-800 rounded-lg p-3 leading-relaxed"><code>LLM_PROVIDER=ollama
+LLM_MODEL=&lt;o-mesmo-modelo-que-voce-baixou&gt;
+OLLAMA_HOST=http://localhost:11434
+
+# (se um dia quiser voltar pra nuvem, troque so estas linhas — o resto fica igual)</code></pre>
+                </div>
+                <div class="border-t border-dark-700 pt-3">
+                  <p class="text-neutral-400"><strong class="text-teal-400">Como verificar:</strong></p>
+                  <ul class="text-neutral-400 mt-1 space-y-1">
+                    <li>• Apareceu um arquivo <code class="text-teal-300">voz.txt</code> com a transcricao certa do que voce falou? O ouvir (STT) funciona.</li>
+                    <li>• Rode <code class="text-teal-300">ollama run &lt;seu-modelo&gt; "diga oi"</code> — se ele responder no terminal, o cerebro local esta de pe.</li>
+                    <li>• Reinicie o Jarvis: na primeira resposta, NENHUM trafego deve sair para a internet (cheque sem rede, em modo aviao) — sinal de que o cerebro virou local de verdade.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">On-device</span><p class="text-sm text-neutral-400 mt-1">A IA roda no seu aparelho, nao num servidor.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Ollama</span><p class="text-sm text-neutral-400 mt-1">A ferramenta que roda modelos abertos localmente.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Regra da RAM</span><p class="text-sm text-neutral-400 mt-1">3B@8GB, 8B@16GB; CPU e lento, GPU acelera.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Hot-swap (.env)</span><p class="text-sm text-neutral-400 mt-1">Trocar nuvem por local mexendo so na config.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-500/20 border border-teal-500/30 text-teal-400 hover:bg-teal-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 6 -->
+          <section id="topico-6" data-inema-topic="modulo-5-2#topico-6" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl flex-shrink-0">6</span>
+              <h2 class="text-2xl font-bold">📞 Tempo real (avancado): da mensagem de voz a ligacao</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m52-t6-p1">Tudo que vimos ate aqui e voz <strong>assincrona</strong>: voce manda um audio, espera, recebe outro audio. E como trocar mensagens de voz no WhatsApp. O sonho seguinte e a voz <strong>em tempo real</strong> — uma <strong class="text-teal-400">ligacao telefonica</strong> de verdade com o Jarvis, onde voce fala e ele responde quase na hora, podendo ate ser interrompido. Isso e o topo da montanha, e vale calibrar a expectativa: ainda e dificil.</p>
+
+            <div class="space-y-4 mb-6">
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-teal-500/20 flex items-center justify-center"><span class="text-teal-400 font-bold">v1</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">So texto</h4><p class="text-sm text-neutral-400">O ponto de partida: o Jarvis le e escreve. Robusto, barato, sempre presente.</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-teal-500/20 flex items-center justify-center"><span class="text-teal-400 font-bold">v2</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Voz assincrona</h4><p class="text-sm text-neutral-400">Mensagens de voz (o pipeline Whisper + TTS deste modulo). Voce manda audio, recebe audio.</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-teal-500/20 flex items-center justify-center"><span class="text-teal-400 font-bold">v3</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Ligacao em tempo real</h4><p class="text-sm text-neutral-400">Conversa fluida por telefone, via servicos como <strong>Twilio</strong> ou <strong>LiveKit</strong>, com meta de latencia abaixo de <strong>1,5 segundo</strong>.</p></div>
+              </div>
+            </div>
+
+            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> Por que tempo real e dificil: latencia</h3>
+              <p class="text-neutral-300 text-sm"><strong>Latencia</strong> e o atraso entre voce terminar de falar e o Jarvis comecar a responder. Numa ligacao, mais de ~1,5 segundo de silencio ja parece quebrado, esquisito. So que esse tempo precisa caber TODO o pipeline: ouvir + pensar + falar. Por isso tempo real e roadmap, nao o seu primeiro projeto. Comece pela voz assincrona, que perdoa atrasos — e ja entrega 90% do encanto.</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-teal-900/30 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-teal-400 mb-3 flex items-center"><span class="mr-2">🧭</span> O caminho honesto</h3>
+              <p class="text-neutral-300 text-sm">Suba a escada um degrau de cada vez: texto solido primeiro, depois voz assincrona, e so encare o tempo real quando o resto estiver redondo. No <strong>Modulo 5-3</strong> voce vai montar seu Jarvis de bolso de ponta a ponta — bot, cerebro, memoria, skill e voz — usando exatamente as pecas deste modulo.</p>
+            </div>
+
+            <!-- CHECAGEM LEVE -->
+            <div data-inema-check="modulo-5-2#q1" class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6">
+              <p class="font-medium mb-4">Auto-checagem (opcional): no pipeline de voz, quem REALMENTE pensa e decide a resposta?</p>
+              <div class="inema-check-options space-y-2">
+                <button type="button" data-inema-check-option="0" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">O Whisper (STT) — e ele que entende o que voce quis dizer.</button>
+                <button type="button" data-inema-check-option="1" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">O orquestrador (o LLM no centro) — voz so leva a fala para dentro e a resposta para fora.</button>
+                <button type="button" data-inema-check-option="2" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">O TTS — porque e a parte que de fato fala com voce.</button>
+              </div>
+              <div data-inema-check-feedback class="mt-4 text-sm" role="status" aria-live="polite"></div>
+            </div>
+
+            <div class="flex justify-start mt-6">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-500/20 border border-teal-500/30 text-teal-400 hover:bg-teal-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- RESUMO -->
+          <section class="mb-8">
+            <div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-8">
+              <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumo do modulo</h2>
+              <div class="space-y-4 mb-8">
+                <div class="flex items-start space-x-3"><span class="text-teal-400 mt-1">✓</span><div><strong class="text-neutral-100">Voz e interface, nao cerebro</strong><span class="text-neutral-400"> — o orquestrador de texto pensa; voz so adiciona ouvido e boca, e a boca e opcional.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-teal-400 mt-1">✓</span><div><strong class="text-neutral-100">Ouvir (STT) e falar (TTS)</strong><span class="text-neutral-400"> — audio .ogg → ffmpeg → Whisper → texto; e texto → TTS → audio. Cuidado: chave da OpenAI ≠ Anthropic.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-teal-400 mt-1">✓</span><div><strong class="text-neutral-100">Decisao por resposta</strong><span class="text-neutral-400"> — o Policy Engine escolhe texto/voz, modelo barato/premium e quando escalar para humano.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-teal-400 mt-1">✓</span><div><strong class="text-neutral-100">On-device e tempo real</strong><span class="text-neutral-400"> — Ollama roda o cerebro local (regra da RAM, hot-swap no .env); ligacao em tempo real e roadmap, calibre a latencia.</span></div></div>
+              </div>
+              <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+                <h3 class="font-semibold text-teal-400 mb-2">Proximo modulo:</h3>
+                <p class="text-neutral-300">5-3 — Montando seu Jarvis de bolso (projeto guiado fim a fim)</p>
+              </div>
+              <div class="flex flex-col sm:flex-row gap-4">
+                <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para a Trilha</a>
+                <a href="modulo-5-3.html" class="flex-1 text-center px-6 py-3 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-500 transition-colors">Proximo modulo →</a>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-dark-600 py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
+    </div>
+  </footer>
+
+  <!-- Scripts nucleo v1 -->
+  <script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+
+  <!-- Camada de aprendizagem -->
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-5-2#q1', {
+          answer: 1,
+          explain: {
+            0: 'Quase — o Whisper so transforma seu audio em texto. Ele nao decide a resposta.',
+            1: 'Isso! O orquestrador (LLM) e o cerebro; a voz so leva a fala para dentro e traz a resposta para fora.',
+            2: 'Nao — o TTS so transforma em audio a resposta que o cerebro ja decidiu.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

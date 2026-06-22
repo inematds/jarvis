@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="inema-course" content="jarvis">
+  <title>Como este curso foi construido — Metodologia | Jarvis · INEMA.CLUB</title>
+  <meta name="description" content="Transparencia total: como o curso Jarvis foi pesquisado (web + dezenas de projetos reais), o que descobrimos, como desenhamos as 6 trilhas e como construimos as 27 paginas no formato-curso-v2.">
+
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter'); html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString()); s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch'); s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%'); s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+  <script type="application/json" data-inema-manifest>
+  { "course": "jarvis", "tracks": [
+    { "n":"1","title":"Fundamentos","modules":[{"id":"1-1","title":"O que e um Jarvis","topics":6},{"id":"1-2","title":"O que e um LLM","topics":6},{"id":"1-3","title":"De chatbot a agente","topics":6}]},
+    { "n":"2","title":"O Panorama","modules":[{"id":"2-1","title":"Como comparar","topics":6},{"id":"2-2","title":"A familia em casa","topics":6},{"id":"2-3","title":"O mundo la fora","topics":6}]},
+    { "n":"3","title":"Anatomia","modules":[{"id":"3-1","title":"Canais","topics":6},{"id":"3-2","title":"Identidade","topics":6},{"id":"3-3","title":"Ferramentas","topics":6},{"id":"3-4","title":"Skills","topics":6},{"id":"3-5","title":"Agentes","topics":6},{"id":"3-6","title":"Cerebros","topics":6}]},
+    { "n":"4","title":"Construir","modules":[{"id":"4-1","title":"Do zero","topics":6},{"id":"4-2","title":"Arquitetura","topics":6},{"id":"4-3","title":"Operar","topics":6}]},
+    { "n":"5","title":"Celular","modules":[{"id":"5-1","title":"Canais no celular","topics":6},{"id":"5-2","title":"Voz e on-device","topics":6},{"id":"5-3","title":"Jarvis de bolso","topics":6}]},
+    { "n":"6","title":"Criancas","modules":[{"id":"6-1","title":"Socratico","topics":6},{"id":"6-2","title":"Persona e boneco","topics":6},{"id":"6-3","title":"Seguranca","topics":6}]}
+  ]}
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#FACC15', dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' } } } } }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/learn.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    [id] { scroll-margin-top: 4.5rem; }
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a href="#conteudo" class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg">Pular para o conteudo</a>
+
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-3">
+          <a href="../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300"><span class="text-2xl">🤖</span><span class="font-bold text-lg hidden sm:inline">Jarvis</span></a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a href="../curso/trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span></a>
+          <a href="../curso/trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span></a>
+          <a href="../curso/trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span></a>
+          <a href="../curso/trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors"><span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span></a>
+          <a href="../curso/trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors"><span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span></a>
+          <a href="../curso/trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"><span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span></a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" title="Alternar claro/escuro">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo">
+    <nav class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex items-center space-x-2 text-sm text-neutral-400">
+        <a href="../index.html" class="hover:text-emerald-400">Inicio</a><span>/</span><span class="text-emerald-400">Metodologia</span>
+      </div>
+    </nav>
+
+    <header class="bg-gradient-to-br from-emerald-900/20 via-dark-900 to-dark-900 border-b border-dark-600">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <span class="inline-block px-3 py-1 bg-primary/10 text-primary border border-primary/30 text-xs font-semibold rounded-full mb-4">DOCUMENTACAO · TRANSPARENCIA</span>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">📐 Como este curso foi construido</h1>
+        <p class="text-lg text-neutral-300 max-w-3xl">Nada aqui caiu do céu. Este curso saiu de uma pesquisa estruturada — na web e em dezenas de projetos reais — destilada numa arquitetura e construída com um pipeline de IA verificado. Esta página mostra o caminho inteiro, com as fontes e as decisões.</p>
+      </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+
+      <section>
+        <h2 class="text-2xl font-bold mb-4">1. O pedido</h2>
+        <p class="text-neutral-300 mb-4 leading-relaxed">O ponto de partida foi um pedido direto: pesquisar a fundo o que se entende por "Jarvis" e por "sistemas operacionais de IA" — citando nomes como <strong class="text-emerald-400">OpenClaw</strong>, <strong class="text-emerald-400">Hermes</strong> e <strong class="text-emerald-400">Intelecto</strong> — e transformar isso num curso <strong>para leigos</strong>, com: fundamentos claros, as diferenças entre os sistemas existentes, o caminho a seguir, a incorporação dos serviços (canais, identidade, ferramentas, skills, agentes e cérebros) e três trilhas práticas — construir um Jarvis eficaz, um Jarvis no celular e um Jarvis educativo para crianças, socrático.</p>
+        <div class="bg-primary/10 rounded-xl border border-primary/30 p-5">
+          <p class="text-sm text-neutral-300"><strong class="text-primary">Restrição-chave:</strong> público leigo. Cada termo técnico é definido na primeira vez que aparece. O curso ensina pelo olho (diagramas) e pela mão (exemplos colável-e-rodar), não só pelo texto.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-bold mb-4">2. O método de pesquisa</h2>
+        <p class="text-neutral-300 mb-6 leading-relaxed">A pesquisa rodou em paralelo em duas frentes — <strong>os projetos do autor</strong> (a fonte primária: dezenas de repositórios reais com a visão e o código) e <strong>a web</strong> (para fundamentos, sistemas públicos e segurança). Onze "dossiês" foram coletados por agentes especializados e consolidados.</p>
+        <div class="space-y-4">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold">1</div>
+            <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+              <h3 class="font-semibold mb-1">Mineração dos projetos reais</h3>
+              <p class="text-sm text-neutral-400">6 agentes leram os repositórios <code class="text-emerald-400 font-mono text-xs">gravityclaw</code>, <code class="text-emerald-400 font-mono text-xs">openclaw-ollama-local</code>, <code class="text-emerald-400 font-mono text-xs">intelecto</code>, <code class="text-emerald-400 font-mono text-xs">claude-hermes-os</code>, <code class="text-emerald-400 font-mono text-xs">2cerebro/3cerebros</code>, <code class="text-emerald-400 font-mono text-xs">agentejax/agentevoz</code>, <code class="text-emerald-400 font-mono text-xs">intelecto-curso</code> e <code class="text-emerald-400 font-mono text-xs">animabook</code> — extraindo a visão, a anatomia, os sistemas e os exemplos práticos.</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold">2</div>
+            <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+              <h3 class="font-semibold mb-1">Pesquisa na web</h3>
+              <p class="text-sm text-neutral-400">5 agentes pesquisaram fundamentos (a metáfora "LLM-OS" de Karpathy, o paper AIOS), sistemas reais (MemGPT/Letta, Open Interpreter, Operator, Project Jarvis), a anatomia (MCP, function-calling), o caminho mobile (Whisper, Ollama, Termux) e a parte mais sensível: IA para crianças, método socrático e segurança.</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold">3</div>
+            <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+              <h3 class="font-semibold mb-1">Consolidação</h3>
+              <p class="text-sm text-neutral-400">Os 11 dossiês foram cruzados num "bible" único: a arquitetura das 6 trilhas, o brief de cada um dos 21 módulos (126 tópicos) e a substância de pesquisa que cada módulo usa.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-bold mb-4">3. O que descobrimos</h2>
+        <p class="text-neutral-300 mb-4 leading-relaxed">Três achados moldaram o curso.</p>
+
+        <h3 class="text-lg font-semibold text-emerald-400 mb-3">a) Os sistemas são respostas para a mesma pergunta</h3>
+        <p class="text-neutral-300 mb-4 leading-relaxed text-sm">"Como rodar a MINHA IA — agente, memória e personalidade — sem depender de um chatbot fechado?" Cada sistema responde com trade-offs próprios entre privacidade, custo e poder:</p>
+        <div class="overflow-x-auto mb-6">
+          <table class="w-full text-sm border border-dark-600 rounded-lg overflow-hidden">
+            <thead class="bg-dark-700 text-neutral-300"><tr><th class="text-left p-3">Sistema</th><th class="text-left p-3">O que é</th><th class="text-left p-3">Marca registrada</th></tr></thead>
+            <tbody class="divide-y divide-dark-600 text-neutral-400">
+              <tr><td class="p-3 font-semibold text-blue-400">OpenClaw</td><td class="p-3">O "original" (jan/2026, 250K+ estrelas)</td><td class="p-3">Poderoso, mas expôs 42.665 instâncias e tinha 341 skills maliciosas</td></tr>
+              <tr><td class="p-3 font-semibold text-blue-400">GravityClaw</td><td class="p-3">Reimplementação lean e segura (TypeScript)</td><td class="p-3">Só Telegram (zero portas), só MCP, construído tijolo a tijolo</td></tr>
+              <tr><td class="p-3 font-semibold text-blue-400">Intelecto</td><td class="p-3">Anti-framework (~3.000 linhas Python)</td><td class="p-3">"Menos é mais": sem Docker, memória em SQLite, personalidade em arquivos</td></tr>
+              <tr><td class="p-3 font-semibold text-blue-400">Hermes</td><td class="p-3">Agente self-hosted "um cérebro, várias bocas"</td><td class="p-3">Memória, personas, skills, MCP, cron → vira um "SO de IA"</td></tr>
+              <tr><td class="p-3 font-semibold text-blue-400">AIOS</td><td class="p-3">Paper acadêmico (COLM 2025)</td><td class="p-3">Kernel de SO para agentes; 2,1× mais rápido</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="text-lg font-semibold text-purple-400 mb-3">b) A anatomia tem 6 camadas</h3>
+        <p class="text-neutral-300 mb-6 leading-relaxed text-sm">Os projetos convergem numa mesma anatomia: <strong>canais</strong> (por onde se fala), <strong>identidade</strong> (memória e persona), <strong>ferramentas</strong> (as mãos, via MCP), <strong>skills</strong> (receitas reutilizáveis), <strong>agentes</strong> (o loop autônomo) e <strong>cérebros</strong> (o motor + a memória). É a espinha da Trilha 3 — um módulo por camada.</p>
+
+        <div class="bg-amber-900/20 rounded-xl border border-amber-500/30 p-5 mb-4">
+          <h3 class="text-base font-semibold text-amber-400 mb-2">c) Uma correção honesta: o que "cérebros" realmente significa</h3>
+          <p class="text-sm text-neutral-300">A intuição comum é que "cérebros" seria um conselho de vários modelos votando juntos. A pesquisa nos projetos do autor mostrou que <strong>não é isso</strong>: "cérebros" são (1) o motor LLM <strong>trocável</strong> (um modelo de cada vez, plugável) e (2) a memória organizada em três zonas — Projeto, Self e Conhecimento. O curso ensina isso como é, não como soa bonito. Fidelidade à fonte acima da narrativa.</p>
+        </div>
+
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-5">
+          <h3 class="text-base font-semibold text-red-400 mb-2">d) A parte mais séria: crianças</h3>
+          <p class="text-sm text-neutral-300">A pesquisa de segurança trouxe casos reais que viram lição na Trilha 6: o ursinho de IA <strong>FoloToy</strong> (nov/2025) flagrado falando de conteúdo perigoso; o robô <strong>Moxie</strong>, amado por crianças, que "morreu" quando a empresa faliu; e os processos contra a Character.AI. Por isso a trilha de crianças termina no capítulo de guardrails e no papel dos pais.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-bold mb-4">4. Como desenhamos o curso</h2>
+        <p class="text-neutral-300 mb-4 leading-relaxed">O pedido mapeou quase 1:1 em <strong>6 trilhas</strong>, uma por cor do padrão INEMA:</p>
+        <ul class="space-y-2 text-sm text-neutral-300 mb-4">
+          <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">●</span><span><strong class="text-emerald-400">T1 Fundamentos</strong> — o que é, para leigos.</span></li>
+          <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">●</span><span><strong class="text-blue-400">T2 O Panorama</strong> — os sistemas existentes e o caminho.</span></li>
+          <li class="flex items-start gap-2"><span class="text-purple-400 mt-0.5">●</span><span><strong class="text-purple-400">T3 Anatomia</strong> — as 6 camadas (a "incorporação dos serviços"), uma por módulo.</span></li>
+          <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">●</span><span><strong class="text-amber-400">T4 Construir um Jarvis eficaz</strong> — a solução completa.</span></li>
+          <li class="flex items-start gap-2"><span class="text-teal-400 mt-0.5">●</span><span><strong class="text-teal-400">T5 Jarvis no celular</strong> — a trilha mobile.</span></li>
+          <li class="flex items-start gap-2"><span class="text-rose-400 mt-0.5">●</span><span><strong class="text-rose-400">T6 Jarvis para crianças</strong> — educativo, socrático e seguro.</span></li>
+        </ul>
+        <p class="text-neutral-300 leading-relaxed text-sm"><strong>21 módulos · 126 tópicos · ~18h.</strong> Cada módulo tem exatamente 6 tópicos, o que mantém a contagem de progresso exata em todas as páginas.</p>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-bold mb-4">5. Como construímos</h2>
+        <p class="text-neutral-300 mb-4 leading-relaxed">Tudo no <strong>formato-curso-v2 do INEMA.CLUB</strong>: dark premium, diagramas SVG futuristas, e uma camada de aprendizagem (marcar como lido, progresso por módulo/trilha/curso, "minha jornada", temas e preferências de leitura) — tudo self-contained, sem servidor.</p>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="bg-dark-800 rounded-xl border border-dark-600 p-5"><h3 class="font-semibold text-emerald-400 mb-1">Build kit canônico</h3><p class="text-sm text-neutral-400">Um &lt;head&gt;, nav e rodapé verbatim (clonados de um curso já publicado e validado) garantem que as 27 páginas sejam idênticas na estrutura.</p></div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 p-5"><h3 class="font-semibold text-emerald-400 mb-1">Construção em paralelo</h3><p class="text-sm text-neutral-400">As 27 páginas foram construídas por agentes em paralelo, cada um com o brief do "bible" e o exemplar a clonar.</p></div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 p-5"><h3 class="font-semibold text-emerald-400 mb-1">Verificação por página</h3><p class="text-sm text-neutral-400">Cada página passou por um verificador que checa as regras do formato (botões, SVG, marcação de progresso, links) e corrige o que estiver fora.</p></div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 p-5"><h3 class="font-semibold text-emerald-400 mb-1">Didática primeiro</h3><p class="text-sm text-neutral-400">Cada conceito-chave ganha um apoio visual com legenda que ensina; cada módulo prático traz um exemplo colável e que roda de verdade.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-bold mb-4">6. Fontes</h2>
+        <div class="grid sm:grid-cols-2 gap-6">
+          <div>
+            <h3 class="font-semibold text-emerald-400 mb-2">Projetos (fonte primária)</h3>
+            <ul class="space-y-1 text-sm text-neutral-400">
+              <li>gravityclaw · openclaw-ollama-local</li>
+              <li>intelecto · intelecto-curso · antidote</li>
+              <li>claude-hermes-os · hermes21c · agentehermes</li>
+              <li>2cerebro · 3cerebros · cerebro-inema</li>
+              <li>agentejax (Telegram) · agentevoz (WhatsApp/voz)</li>
+              <li>animabook (Professor socrático)</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-semibold text-blue-400 mb-2">Web (fontes públicas)</h3>
+            <ul class="space-y-1 text-sm text-neutral-400">
+              <li>Karpathy — "LLM OS" (2023)</li>
+              <li>AIOS — LLM Agent Operating System (COLM 2025)</li>
+              <li>MemGPT/Letta · Open Interpreter · MCP (Anthropic)</li>
+              <li>OpenAI Operator · Google Project Jarvis</li>
+              <li>Khanmigo · MIT RAISE (tutoria socrática)</li>
+              <li>Casos de segurança: FoloToy, Moxie, Character.AI</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-2xl border border-emerald-500/30 p-6 sm:p-8">
+          <h2 class="text-xl font-bold mb-3">Pronto para começar?</h2>
+          <p class="text-neutral-300 text-sm mb-5">A Trilha 1 não assume nada. Define cada termo do zero e te leva, em três módulos, do "o que é um Jarvis" até "como a IA passa a agir".</p>
+          <a href="../curso/trilha1/index.html" class="inline-block px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold transition-colors">Ir para os Fundamentos →</a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="border-t border-dark-600 py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
+    </div>
+  </footer>
+
+  <script>
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+  </script>
+  <script src="../assets/learn.js"></script>
+  <script>if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }</script>
+</body>
+</html>

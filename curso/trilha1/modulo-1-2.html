@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="inema-course" content="jarvis">
+  <title>Modulo 1.2 — O cerebro da coisa: o que e um LLM | Jarvis · INEMA.CLUB</title>
+  <meta name="description" content="Desmistifique o LLM sem jargao: o que e, como ele preve a proxima palavra, contexto como memoria de trabalho, tokens, modelo local vs nuvem e como contornar os limites.">
+
+  <!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+
+  <!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+  <script type="application/json" data-inema-manifest>
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/learn.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .bg-emerald-900\/30 { background-color: rgba(5,150,105,0.10); }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Vermelho de alerta ===== */
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a href="#conteudo" class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg">Pular para o conteudo</a>
+
+  <!-- NAVIGATION (completo, identico em todas as paginas) -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-3">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🤖</span>
+            <span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a id="nav-t1" href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a id="nav-t2" href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+          </a>
+          <a id="nav-t3" href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span>
+          </a>
+          <a id="nav-t4" href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+          </a>
+          <a id="nav-t5" href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+          </a>
+          <a id="nav-t6" href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span>
+          </a>
+
+          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Minha jornada">
+            <span aria-hidden="true">◷</span><span class="hidden md:inline">Jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge data-count="0"></span>
+          </button>
+
+          <div class="relative">
+            <button type="button" data-inema-appearance-toggle="[data-inema-appearance]" aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Aparencia">
+              <span aria-hidden="true">◑</span><span class="hidden md:inline">Aparencia</span>
+            </button>
+            <div data-inema-appearance class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left">
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-theme="inema-dark" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Escuro</button>
+                  <button data-inema-set-theme="claro" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Claro</button>
+                  <button data-inema-set-theme="sepia" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sepia</button>
+                  <button data-inema-set-theme="foco" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Foco</button>
+                  <button data-inema-set-theme="contraste" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Alto contraste</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Fonte</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-font="inter" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Inter</button>
+                  <button data-inema-set-font="system" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sistema</button>
+                  <button data-inema-set-font="leitura" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Leitura</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tamanho</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-fontscale="100" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A</button>
+                  <button data-inema-set-fontscale="112" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A+</button>
+                  <button data-inema-set-fontscale="125" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A++</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Entrelinha</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-leading="1.45" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Compacto</button>
+                  <button data-inema-set-leading="1.7" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Confortavel</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+                <div class="inema-accent-grid flex flex-wrap gap-2">
+                  <button data-inema-set-accent="emerald" class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" title="Emerald"></button>
+                  <button data-inema-set-accent="blue" class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" title="Blue"></button>
+                  <button data-inema-set-accent="purple" class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" title="Purple"></button>
+                  <button data-inema-set-accent="amber" class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" title="Amber"></button>
+                  <button data-inema-set-accent="teal" class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" title="Teal"></button>
+                  <button data-inema-set-accent="rose" class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" title="Rose"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" title="Alternar claro/escuro">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo">
+    <header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+          <a href="../../index.html" class="hover:text-emerald-400">Inicio</a><span>/</span>
+          <a href="index.html" class="hover:text-emerald-400">Trilha 1</a><span>/</span>
+          <span class="text-emerald-400">Modulo 1.2</span>
+        </nav>
+        <span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">MODULO 1-2</span>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">🧠 O cerebro da coisa: o que e um LLM (sem jargao)</h1>
+        <p class="text-lg text-neutral-400 max-w-3xl">Por tras de todo Jarvis bate um cerebro: o LLM. Mas o que e isso, afinal? Neste modulo voce desmistifica o "modelo" sem nenhuma matematica — entende como ele preve a proxima palavra, por que tem memoria curta, o que sao tokens, e a diferenca entre rodar na nuvem ou na sua maquina. No fim, voce vai saber exatamente o que ele consegue (e o que nao consegue) fazer.</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">6</div><div class="text-xs text-neutral-400">Topicos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">~35</div><div class="text-xs text-neutral-400">Minutos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Basico</div><div class="text-xs text-neutral-400">Nivel</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Teoria</div><div class="text-xs text-neutral-400">Tipo</div></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="lg:flex lg:gap-10">
+
+        <!-- TOC sticky -->
+        <aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+          <nav data-inema-toc aria-label="Indice da pagina" class="lg:sticky lg:top-20">
+            <p class="text-sm text-neutral-400 mb-2">Secao <span class="inema-toc-pos" data-inema-section-counter>1</span> de 6</p>
+            <ol class="space-y-1 text-sm">
+              <li><a href="#topico-1" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400">1. O que e um LLM</a></li>
+              <li><a href="#topico-2" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400">2. Como ele "pensa"</a></li>
+              <li><a href="#topico-3" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400">3. Contexto = memoria</a></li>
+              <li><a href="#topico-4" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400">4. Tokens</a></li>
+              <li><a href="#topico-5" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400">5. Local vs nuvem</a></li>
+              <li><a href="#topico-6" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400">6. Limites e contornos</a></li>
+            </ol>
+            <div class="mt-4" data-inema-meter="modulo:1-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 1.2">
+              <div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-emerald-500" data-inema-meter-fill style="width:0%"></div></div>
+              <span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span>
+            </div>
+          </nav>
+        </aside>
+
+        <div class="lg:flex-1 min-w-0 inema-prose">
+
+          <!-- TOPICO 1 -->
+          <section id="topico-1" data-inema-topic="modulo-1-2#topico-1" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">1</span>
+              <h2 class="text-2xl font-bold">📖 O que e um LLM</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t1-p1">Quando voce conversa com o ChatGPT, com o Claude ou com o Gemini, esta falando com um <strong class="text-emerald-400">LLM</strong>. A sigla vem do ingles <em>Large Language Model</em> — em portugues, "Modelo de Linguagem Grande". Quebrando palavra por palavra: e um <strong>programa</strong> (modelo) que lida com <strong>texto</strong> (linguagem) e foi treinado em uma quantidade gigantesca de material (grande). Esse programa e o <strong>cerebro</strong> do seu Jarvis — a parte que pensa, escreve e responde.</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t1-p2">A ideia central e quase boba de tao simples: o LLM foi treinado para <strong class="text-emerald-400">prever a proxima palavra</strong>. Voce digita "O ceu esta..." e ele calcula qual palavra tende a vir em seguida — "azul", "limpo", "nublado". So que ele faz isso milhoes de vezes por segundo, palavra apos palavra, e o resultado parece raciocinio, conversa, ate criatividade. Foi lendo praticamente toda a internet, livros e codigo que ele aprendeu esses padroes.</p>
+
+            <div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-emerald-400 mb-3 flex items-center"><span class="mr-2">🧠</span> O LLM em uma frase</h3>
+              <p class="text-neutral-300 mb-4">Um LLM e um <strong>autocompletar gigante e muito bem treinado</strong>. O mesmo recurso que sugere a proxima palavra no teclado do celular, levado a um nivel em que ele escreve textos inteiros, resume documentos e responde perguntas — porque aprendeu os padroes da linguagem humana lendo uma montanha de texto.</p>
+              <ul class="space-y-2 text-neutral-300">
+                <li class="flex items-start gap-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Large</strong> (grande): treinado em uma quantidade enorme de texto, com bilhoes de "ajustes internos".</span></li>
+                <li class="flex items-start gap-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Language</strong> (linguagem): a materia-prima dele e texto — entra texto, sai texto.</span></li>
+                <li class="flex items-start gap-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Model</strong> (modelo): um programa que aprendeu padroes, nao um banco de respostas decoradas.</span></li>
+              </ul>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>LLM</strong> = "Modelo de Linguagem Grande", o tipo de programa de IA que roda atras de produtos como ChatGPT e Claude. <strong>Modelo</strong>, no jargao de IA, e simplesmente o "cerebro" treinado — o arquivo de software que recebe texto e devolve texto. Sempre que voce ler "modelo" neste curso, pense "o cerebro de IA".</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">LLM</span><p class="text-sm text-neutral-400 mt-1">Modelo de Linguagem Grande — o cerebro de IA que pensa em texto.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Prever a proxima palavra</span><p class="text-sm text-neutral-400 mt-1">O mecanismo basico: ele escolhe, palavra a palavra, o que vem em seguida.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Treinamento</span><p class="text-sm text-neutral-400 mt-1">Aprendeu os padroes da lingua lendo uma quantidade gigante de texto.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Modelo = cerebro</span><p class="text-sm text-neutral-400 mt-1">No Jarvis, o LLM e a peca que raciocina; as outras dao maos e memoria.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 2 -->
+          <section id="topico-2" data-inema-topic="modulo-1-2#topico-2" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">2</span>
+              <h2 class="text-2xl font-bold">🔮 Como ele "pensa"</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t2-p1">Aqui vem a parte que mais confunde quem esta comecando: o LLM <strong>nao consulta um banco de dados</strong> e <strong>nao faz uma busca no Google</strong> antes de responder. Ele nao tem uma "tabela de fatos" onde procura a resposta certa. O que ele faz e <strong class="text-emerald-400">previsao estatistica</strong>: a partir do que voce escreveu, ele estima qual e a continuacao mais provavel, baseado nos padroes que aprendeu no treino.</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t2-p2">Isso explica as duas caras do LLM. De um lado, ele e <strong>criativo e flexivel</strong>: como nao esta copiando respostas decoradas, consegue escrever um poema novo, adaptar um texto ao seu tom, combinar ideias de jeitos ineditos. De outro lado, ele as vezes <strong class="text-emerald-400">erra com toda a confianca do mundo</strong> — inventa um fato, cita um livro que nao existe, da uma data errada — e diz isso no mesmo tom seguro de quando acerta. Esse erro confiante tem nome: <strong>alucinacao</strong>.</p>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Previsao, nao memoria fotografica</h3>
+              <ul class="space-y-2 text-neutral-300 text-sm">
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Nao e busca:</strong> ele nao "procura" a resposta; ele a <em>gera</em> palavra a palavra.</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Nao e banco de dados:</strong> nao ha uma planilha de fatos guardada — ha padroes aprendidos.</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>E probabilidade:</strong> "qual palavra costuma vir aqui?" repetido milhares de vezes.</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Por isso varia:</strong> a mesma pergunta pode gerar respostas um pouco diferentes a cada vez.</span></li>
+              </ul>
+            </div>
+
+            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> Cuidado: alucinacao</h3>
+              <p class="text-neutral-300 text-sm">Como o objetivo dele e sempre dar "a continuacao mais plausivel", as vezes a continuacao plausivel simplesmente nao e verdadeira. Ele pode inventar um numero de telefone, um artigo cientifico ou uma citacao — e apresentar tudo com tom de certeza. Por isso, para qualquer fato que importe (data, valor, nome, lei), <strong class="text-red-400">confira numa fonte</strong>. Nas proximas trilhas, ferramentas e memoria vao reduzir muito esse risco.</p>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>Alucinacao</strong> e quando o LLM responde algo que parece certo, soa convincente, mas e falso. Nao e mentira no sentido humano — e um efeito colateral de ele sempre tentar prever "o que costuma vir aqui", mesmo quando nao sabe a resposta de verdade.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Previsao estatistica</span><p class="text-sm text-neutral-400 mt-1">Ele estima a continuacao mais provavel, nao consulta fatos guardados.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Alucinacao</span><p class="text-sm text-neutral-400 mt-1">Erro confiante: algo que soa certo mas e inventado.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Criatividade</span><p class="text-sm text-neutral-400 mt-1">Por nao decorar respostas, ele gera texto novo e adaptavel.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Conferir o que importa</span><p class="text-sm text-neutral-400 mt-1">Para fatos sensiveis, valide numa fonte confiavel.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 3 -->
+          <section id="topico-3" data-inema-topic="modulo-1-2#topico-3" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">3</span>
+              <h2 class="text-2xl font-bold">🧩 Contexto = a memoria de trabalho</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t3-p1">Se o LLM nao tem um banco de dados, como ele "lembra" do que voce disse no inicio da conversa? A resposta e o <strong class="text-emerald-400">contexto</strong>. Tudo que o modelo "esta vendo agora" — sua mensagem, as respostas anteriores da conversa, as instrucoes que voce deu, um arquivo que voce colou — vive numa especie de mesa de trabalho chamada <strong>janela de contexto</strong>. E so dali que ele tira informacao na hora de responder.</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t3-p2">A melhor analogia e a <strong class="text-emerald-400">RAM do computador</strong>: e a memoria de curto prazo, rapida, mas <strong>limitada</strong>. Tudo que esta na janela, o modelo enxerga com nitidez. O que sai dela (porque a conversa ficou longa demais, ou porque voce fechou e abriu de novo) simplesmente <strong>desaparece</strong> — como apagar a lousa. Por isso o ChatGPT "esquece" voce entre uma conversa e outra: cada nova conversa comeca com a mesa vazia.</p>
+
+            <div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+              <svg viewBox="0 0 980 230" class="w-full h-auto" role="img" aria-label="O LLM como cerebro de um sistema operacional: a janela de contexto e a RAM, as ferramentas sao os perifericos, e tudo conversa com o LLM no centro">
+                <defs>
+                  <filter id="m12-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  <pattern id="m12-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#10b981" opacity="0.12"/></pattern>
+                  <marker id="m12-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#34d399"/></marker>
+                  <marker id="m12-ah2" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+                </defs>
+                <rect x="0" y="0" width="980" height="230" fill="url(#m12-grid)"/>
+                <text x="490" y="26" text-anchor="middle" fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600">O LLM como "kernel": o cerebro no centro de um pequeno sistema operacional</text>
+
+                <!-- LLM central -->
+                <g filter="url(#m12-glow)" font-family="Inter,sans-serif">
+                  <rect x="400" y="88" width="180" height="74" rx="16" fill="#0e2018" stroke="#34d399" stroke-width="2.5"/>
+                  <text x="490" y="120" text-anchor="middle" fill="#34d399" font-size="16" font-weight="700">LLM</text>
+                  <text x="490" y="142" text-anchor="middle" fill="#a7f3d0" font-size="12">o cerebro que pensa</text>
+                </g>
+
+                <!-- Contexto = RAM (cima) -->
+                <g font-family="Inter,sans-serif">
+                  <rect x="395" y="18" width="190" height="44" rx="12" fill="#0e1622" stroke="#38bdf8" stroke-width="2"/>
+                  <text x="490" y="38" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="600">janela de contexto</text>
+                  <text x="490" y="54" text-anchor="middle" fill="#7dd3fc" font-size="11">= memoria de trabalho (RAM)</text>
+                  <path d="M490,62 L490,86" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m12-ah2)"/>
+                </g>
+
+                <!-- Ferramentas (esquerda) -->
+                <g font-family="Inter,sans-serif">
+                  <rect x="60" y="98" width="200" height="54" rx="12" fill="#1f2937" stroke="#9ca3af" stroke-width="2" class="wf-a"/>
+                  <text x="160" y="120" text-anchor="middle" fill="#e5e7eb" font-size="13" font-weight="600">ferramentas</text>
+                  <text x="160" y="138" text-anchor="middle" fill="#9ca3af" font-size="11">= perifericos (web, arquivos)</text>
+                  <path d="M260,125 L396,125" fill="none" stroke="#34d399" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#m12-ah)"/>
+                </g>
+
+                <!-- Voce (direita) -->
+                <g font-family="Inter,sans-serif">
+                  <rect x="720" y="98" width="200" height="54" rx="12" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/>
+                  <text x="820" y="120" text-anchor="middle" fill="#e5e7eb" font-size="13" font-weight="600">voce</text>
+                  <text x="820" y="138" text-anchor="middle" fill="#9ca3af" font-size="11">manda texto, recebe texto</text>
+                  <path d="M720,125 L584,125" fill="none" stroke="#34d399" stroke-width="2" marker-end="url(#m12-ah)"/>
+                </g>
+
+                <text x="490" y="208" text-anchor="middle" fill="#6b7280" font-family="Inter,sans-serif" font-size="11">Tudo que entra na janela, o LLM enxerga. O que sai dela, ele esquece.</text>
+              </svg>
+              <p class="text-xs text-neutral-400 mt-1 px-1">No centro, o <span class="text-emerald-400">LLM</span> e o cerebro. Em cima, a <span class="text-sky-400">janela de contexto</span> e a memoria de trabalho (como a RAM): rapida, mas limitada. Essa metafora — LLM no centro, contexto como RAM, ferramentas como perifericos — guia o curso inteiro e volta com forca no modulo 1-3.</p>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>Janela de contexto</strong> e o "campo de visao" do modelo: tudo que ele consegue levar em conta agora. <strong>RAM</strong> e a memoria de curto prazo do computador, que esvazia ao desligar. A janela de contexto e exatamente isso para o LLM — e por isso a <strong>memoria que dura</strong> (que veremos na Trilha 3) precisa ser construida por fora, em arquivos.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Contexto</span><p class="text-sm text-neutral-400 mt-1">Tudo que o modelo esta "vendo agora": conversa + instrucoes + arquivos.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Janela de contexto</span><p class="text-sm text-neutral-400 mt-1">O espaco limitado onde esse contexto cabe.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Como a RAM</span><p class="text-sm text-neutral-400 mt-1">Memoria de trabalho: rapida, limitada, esvazia ao fechar.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Esquece ao sair</span><p class="text-sm text-neutral-400 mt-1">Cada conversa nova comeca com a mesa de trabalho vazia.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 4 -->
+          <section id="topico-4" data-inema-topic="modulo-1-2#topico-4" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">4</span>
+              <h2 class="text-2xl font-bold">🔤 Tokens: a moeda do modelo</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t4-p1">O LLM nao le "palavras" do jeito que voce le. Ele quebra o texto em pedacinhos chamados <strong class="text-emerald-400">tokens</strong>. Um token pode ser uma palavra inteira ("gato"), um pedaco de palavra ("inacredit" + "avel"), ou ate so um sinal de pontuacao. Uma regra de bolso util: em portugues, cada token equivale a mais ou menos <strong>4 caracteres</strong>, e 100 palavras dao por volta de 130 a 150 tokens. Toda a leitura e escrita do modelo acontece em tokens.</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t4-p2">Por que isso importa para voce? Por dois motivos bem praticos. Primeiro: a <strong>janela de contexto se mede em tokens</strong> — quando alguem diz "esse modelo tem contexto de 128 mil tokens", esta dizendo o tamanho da mesa de trabalho. Segundo: na nuvem, voce <strong class="text-emerald-400">paga por token</strong> — tanto pelos que entram (sua pergunta + o contexto) quanto pelos que saem (a resposta). Token e, literalmente, a moeda do LLM.</p>
+
+            <div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+              <svg viewBox="0 0 980 170" class="w-full h-auto" role="img" aria-label="A frase 'Meu Jarvis e incrivel!' quebrada em tokens, mostrando que um token pode ser uma palavra, um pedaco de palavra ou um sinal">
+                <defs>
+                  <filter id="m12-glow2" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  <pattern id="m12-grid2" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#10b981" opacity="0.12"/></pattern>
+                </defs>
+                <rect x="0" y="0" width="980" height="170" fill="url(#m12-grid2)"/>
+                <text x="490" y="28" text-anchor="middle" fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600">Como o modelo "ve" a frase: Meu Jarvis e incrivel!</text>
+                <g font-family="Inter,sans-serif" font-size="14" font-weight="600">
+                  <g><rect x="40" y="62" width="86" height="48" rx="11" fill="#0e2018" stroke="#34d399" stroke-width="2"/><text x="83" y="91" text-anchor="middle" fill="#a7f3d0">Meu</text></g>
+                  <g><rect x="138" y="62" width="110" height="48" rx="11" fill="#0e2018" stroke="#34d399" stroke-width="2"/><text x="193" y="91" text-anchor="middle" fill="#a7f3d0">Jarvis</text></g>
+                  <g><rect x="260" y="62" width="60" height="48" rx="11" fill="#0e2018" stroke="#34d399" stroke-width="2"/><text x="290" y="91" text-anchor="middle" fill="#a7f3d0">e</text></g>
+                  <g filter="url(#m12-glow2)"><rect x="332" y="62" width="86" height="48" rx="11" fill="#0e1622" stroke="#38bdf8" stroke-width="2.5"/><text x="375" y="91" text-anchor="middle" fill="#7dd3fc">incri</text></g>
+                  <g filter="url(#m12-glow2)"><rect x="430" y="62" width="86" height="48" rx="11" fill="#0e1622" stroke="#38bdf8" stroke-width="2.5"/><text x="473" y="91" text-anchor="middle" fill="#7dd3fc">vel</text></g>
+                  <g><rect x="528" y="62" width="46" height="48" rx="11" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/><text x="551" y="91" text-anchor="middle" fill="#e5e7eb">!</text></g>
+                </g>
+                <text x="375" y="138" text-anchor="middle" fill="#38bdf8" font-family="Inter,sans-serif" font-size="11">"incrivel" virou 2 tokens</text>
+                <text x="700" y="86" fill="#9ca3af" font-family="Inter,sans-serif" font-size="13">6 tokens no total —</text>
+                <text x="700" y="106" fill="#9ca3af" font-family="Inter,sans-serif" font-size="13">e isso que entra na conta.</text>
+              </svg>
+              <p class="text-xs text-neutral-400 mt-1 px-1">A frase vira 6 <span class="text-emerald-400">tokens</span>. Repare que "incrivel" se parte em dois (<span class="text-sky-400">incri</span> + <span class="text-sky-400">vel</span>) e ate o "!" e um token. E nessa unidade que o modelo le, escreve, mede o contexto e — na nuvem — cobra.</p>
+            </div>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Numeros que ajudam a ter nocao</h3>
+              <ul class="space-y-2 text-neutral-300 text-sm">
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>~4 caracteres</strong> = 1 token (em portugues, mais ou menos).</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>100 palavras</strong> ≈ 130 a 150 tokens.</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>1 pagina de livro</strong> ≈ 400 a 600 tokens.</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Contexto de 128 mil tokens</strong> ≈ um livro inteiro de ~300 paginas cabendo na "mesa".</span></li>
+              </ul>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <h3 class="text-base font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Dica pratica</h3>
+              <p class="text-sm text-neutral-300">Conversas longas custam mais e enchem a janela mais rapido — porque o modelo reprocessa tudo a cada resposta. Para tarefas independentes, abrir uma <strong>conversa nova</strong> deixa o Jarvis mais rapido, mais barato e menos sujeito a se confundir com assuntos antigos. "Limpar a mesa" e uma boa pratica, nao um desperdicio.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Token</span><p class="text-sm text-neutral-400 mt-1">O pedacinho de texto que o modelo le e escreve (palavra, fragmento ou sinal).</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Contexto em tokens</span><p class="text-sm text-neutral-400 mt-1">O tamanho da janela e medido em tokens, nao em palavras.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Cobranca por token</span><p class="text-sm text-neutral-400 mt-1">Na nuvem, paga-se pelos tokens de entrada e de saida.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Regra de bolso</span><p class="text-sm text-neutral-400 mt-1">~4 caracteres por token; 100 palavras ≈ 130-150 tokens.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 5 -->
+          <section id="topico-5" data-inema-topic="modulo-1-2#topico-5" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">5</span>
+              <h2 class="text-2xl font-bold">☁️ Modelo local vs nuvem</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t5-p1">Um LLM precisa rodar em algum lugar — e existem dois lugares. Na <strong class="text-emerald-400">nuvem</strong>, o modelo vive no servidor de uma empresa (Claude da Anthropic, GPT da OpenAI, Gemini do Google) e voce conversa com ele pela internet. No <strong class="text-emerald-400">local</strong>, o modelo roda na <strong>sua propria maquina</strong> — em geral via um programa chamado <strong>Ollama</strong>, que baixa e roda modelos abertos de graca. Os dois fazem o mesmo papel: ser o cerebro. Mudam o lugar, o custo e a privacidade.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+                <h4 class="font-bold text-emerald-400 mb-4">✓ Nuvem (Claude, GPT, Gemini)</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Os modelos mais potentes do mundo, sempre prontos.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Nao exige hardware forte — roda ate no celular.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Zero instalacao: e so abrir e usar.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Paga por token e seus dados saem da maquina.</span></li>
+                </ul>
+              </div>
+              <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+                <h4 class="font-bold text-blue-400 mb-4">✓ Local (Ollama na sua maquina)</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Gratis apos baixar: $0 por token, sem medidor.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Privado: nada sai da sua maquina, funciona offline.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Voce e dono do cerebro — sem depender de ninguem.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Exige hardware (RAM/GPU) e modelos menores sao mais fracos.</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t5-p2">A escolha nao e "um e melhor que o outro" — e <strong>qual e melhor para esta tarefa</strong>. Um modelo local barato resolve um resumo simples sem custo nem vazamento. Um modelo de nuvem potente brilha numa tarefa dificil que exige o maximo de raciocinio. O melhor de tudo: o seu Jarvis vai poder <strong class="text-emerald-400">trocar de cerebro</strong> conforme o caso — algo que a Trilha 3 (modulo "Cerebros") mostra em detalhe.</p>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>Ollama</strong> e um programa gratuito que instala e roda LLMs na sua propria maquina, com um comando simples. E o jeito mais comum de ter um "cerebro local". Voce vai ouvir falar muito dele nas trilhas praticas — por ora, guarde: <em>Ollama = rodar o LLM em casa, de graca</em>.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Nuvem</span><p class="text-sm text-neutral-400 mt-1">O modelo roda no servidor da empresa; potente, mas paga por uso.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Local</span><p class="text-sm text-neutral-400 mt-1">O modelo roda na sua maquina; gratis e privado, exige hardware.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Ollama</span><p class="text-sm text-neutral-400 mt-1">O programa que baixa e roda LLMs abertos localmente.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Trocar de cerebro</span><p class="text-sm text-neutral-400 mt-1">Usar local ou nuvem conforme a tarefa — decisao por resposta.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 6 -->
+          <section id="topico-6" data-inema-topic="modulo-1-2#topico-6" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">6</span>
+              <h2 class="text-2xl font-bold">🚧 Limites e como contornar</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t6-p1">Agora que voce entende como o LLM funciona, da pra enxergar com clareza tres limites que vem de fabrica — e, melhor ainda, como cada um deles e contornado. A boa noticia: nenhum desses limites e impeditivo. Eles sao exatamente o motivo pelo qual um Jarvis tem <strong class="text-emerald-400">ferramentas e memoria</strong> por cima do modelo. O LLM sozinho e so o cerebro; o resto da o que falta.</p>
+
+            <div class="space-y-4 mb-6">
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">1</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Ele alucina</h4><p class="text-sm text-neutral-400"><strong>Limite:</strong> inventa fatos com confianca. <strong class="text-emerald-400">Contorno:</strong> dar ferramentas (busca na web, leitura de arquivos) para ele consultar a realidade em vez de chutar.</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">2</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Nao sabe do que e novo</h4><p class="text-sm text-neutral-400"><strong>Limite:</strong> o conhecimento dele para na data em que foi treinado (nao sabe da noticia de ontem). <strong class="text-emerald-400">Contorno:</strong> ferramentas de busca trazem informacao atual para dentro do contexto.</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">3</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Esquece fora do contexto</h4><p class="text-sm text-neutral-400"><strong>Limite:</strong> o que sai da janela some. <strong class="text-emerald-400">Contorno:</strong> memoria persistente em arquivos e busca — assim o Jarvis "lembra" entre conversas.</p></div>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-emerald-400 mb-3 flex items-center"><span class="mr-2">🧩</span> O cerebro nao trabalha sozinho</h3>
+              <p class="text-neutral-300 text-sm mb-3">Repare no padrao: todo limite do LLM "puro" e resolvido adicionando algo <strong>ao redor</strong> dele. Ferramentas resolvem alucinacao e atualidade; memoria resolve o esquecimento. E exatamente por isso que um Jarvis e <strong>mais do que um LLM</strong> — ele e o LLM <em>mais</em> as camadas que o tornam util no mundo real.</p>
+              <p class="text-neutral-400 text-xs">No modulo 1-3 voce ve o salto de "chatbot que responde" para "agente que age", e na Trilha 3 (Anatomia) cada uma dessas camadas vira um capitulo proprio.</p>
+            </div>
+
+            <!-- CHECAGEM LEVE -->
+            <div data-inema-check="modulo-1-2#q1" class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6">
+              <p class="font-medium mb-4">Auto-checagem (opcional): qual frase descreve melhor o que e um LLM?</p>
+              <div class="inema-check-options space-y-2">
+                <button type="button" data-inema-check-option="0" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Um banco de dados gigante que busca a resposta certa para cada pergunta.</button>
+                <button type="button" data-inema-check-option="1" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Um programa que preve a proxima palavra com base em padroes; criativo, mas pode alucinar e esquece fora do contexto.</button>
+                <button type="button" data-inema-check-option="2" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Uma pessoa real respondendo do outro lado da tela.</button>
+              </div>
+              <div data-inema-check-feedback class="mt-4 text-sm" role="status" aria-live="polite"></div>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3 mt-8">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Corte de treino</span><p class="text-sm text-neutral-400 mt-1">O conhecimento do modelo para na data em que ele foi treinado.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Ferramentas resolvem</span><p class="text-sm text-neutral-400 mt-1">Busca e leitura combatem alucinacao e desatualizacao.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Memoria persistente</span><p class="text-sm text-neutral-400 mt-1">Arquivos + busca dao ao Jarvis lembranca entre conversas.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">LLM + camadas</span><p class="text-sm text-neutral-400 mt-1">Um Jarvis e o cerebro mais as camadas que o tornam util.</p></div>
+            </div>
+
+            <div class="flex justify-start mt-6">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- RESUMO -->
+          <section class="mb-8">
+            <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+              <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumo do modulo</h2>
+              <div class="space-y-4 mb-8">
+                <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">O que e um LLM</strong><span class="text-neutral-400"> — o "cerebro" de IA, um programa que preve a proxima palavra apos ler uma montanha de texto.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Como ele pensa</strong><span class="text-neutral-400"> — previsao estatistica, nao busca; por isso e criativo e por isso, as vezes, alucina.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Contexto e tokens</strong><span class="text-neutral-400"> — a janela de contexto e a "RAM" (limitada, esvazia ao sair) e tudo se mede e se cobra em tokens.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Local vs nuvem e limites</strong><span class="text-neutral-400"> — mesmo cerebro, lugares diferentes; e os limites (alucinar, desatualizar, esquecer) viram ferramentas e memoria.</span></div></div>
+              </div>
+              <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+                <h3 class="font-semibold text-emerald-400 mb-2">Proximo modulo:</h3>
+                <p class="text-neutral-300">Modulo 1-3 — De chatbot a agente: quando a IA passa a agir</p>
+              </div>
+              <div class="flex flex-col sm:flex-row gap-4">
+                <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para a Trilha</a>
+                <a href="modulo-1-3.html" class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors">Proximo modulo →</a>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-dark-600 py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
+    </div>
+  </footer>
+
+  <!-- Scripts nucleo v1 -->
+  <script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+
+  <!-- Camada de aprendizagem -->
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-1-2#q1', {
+          answer: 1,
+          explain: {
+            0: 'Quase — mas nao. O LLM nao busca respostas num banco; ele preve a proxima palavra a partir de padroes.',
+            1: 'Isso! Previsao da proxima palavra, criativo mas sujeito a alucinacao, e com memoria limitada ao contexto.',
+            2: 'Nao — e um programa, nao uma pessoa. Soa humano porque aprendeu os padroes da nossa linguagem.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

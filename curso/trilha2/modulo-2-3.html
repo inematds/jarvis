@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="inema-course" content="jarvis">
+  <title>Modulo 2.3 — O mundo la fora (AIOS, MemGPT, Operator) e o caminho | Jarvis · INEMA.CLUB</title>
+  <meta name="description" content="AIOS, MemGPT/Letta, Open Interpreter, assistentes e hardware, MCP e a recomendacao honesta de por onde comecar seu Jarvis.">
+
+  <!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+
+  <!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+  <script type="application/json" data-inema-manifest>
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/learn.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/30 { background-color: rgba(37,99,235,0.10); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a href="#conteudo" class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg">Pular para o conteudo</a>
+
+  <!-- NAVIGATION (completo, identico em todas as paginas) -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-3">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🤖</span>
+            <span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <a id="nav-t1" href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a id="nav-t2" href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+          </a>
+          <a id="nav-t3" href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span>
+          </a>
+          <a id="nav-t4" href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
+            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+          </a>
+          <a id="nav-t5" href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
+            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+          </a>
+          <a id="nav-t6" href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span>
+          </a>
+
+          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Minha jornada">
+            <span aria-hidden="true">◷</span><span class="hidden md:inline">Jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge data-count="0"></span>
+          </button>
+
+          <div class="relative">
+            <button type="button" data-inema-appearance-toggle="[data-inema-appearance]" aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Aparencia">
+              <span aria-hidden="true">◑</span><span class="hidden md:inline">Aparencia</span>
+            </button>
+            <div data-inema-appearance class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left">
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-theme="inema-dark" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Escuro</button>
+                  <button data-inema-set-theme="claro" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Claro</button>
+                  <button data-inema-set-theme="sepia" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sepia</button>
+                  <button data-inema-set-theme="foco" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Foco</button>
+                  <button data-inema-set-theme="contraste" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Alto contraste</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Fonte</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-font="inter" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Inter</button>
+                  <button data-inema-set-font="system" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sistema</button>
+                  <button data-inema-set-font="leitura" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Leitura</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Tamanho</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-fontscale="100" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A</button>
+                  <button data-inema-set-fontscale="112" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A+</button>
+                  <button data-inema-set-fontscale="125" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A++</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Entrelinha</p>
+                <div class="inema-segment flex flex-wrap gap-1.5">
+                  <button data-inema-set-leading="1.45" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Compacto</button>
+                  <button data-inema-set-leading="1.7" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Confortavel</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+                <div class="inema-accent-grid flex flex-wrap gap-2">
+                  <button data-inema-set-accent="emerald" class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" title="Emerald"></button>
+                  <button data-inema-set-accent="blue" class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" title="Blue"></button>
+                  <button data-inema-set-accent="purple" class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" title="Purple"></button>
+                  <button data-inema-set-accent="amber" class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" title="Amber"></button>
+                  <button data-inema-set-accent="teal" class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" title="Teal"></button>
+                  <button data-inema-set-accent="rose" class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" title="Rose"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" title="Alternar claro/escuro">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo">
+    <header class="bg-gradient-to-br from-blue-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+          <a href="../../index.html" class="hover:text-blue-400">Inicio</a><span>/</span>
+          <a href="index.html" class="hover:text-blue-400">Trilha 2</a><span>/</span>
+          <span class="text-blue-400">Modulo 2.3</span>
+        </nav>
+        <span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-4">MODULO 2-3</span>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">🌍 O mundo la fora (AIOS, MemGPT, Operator) e o caminho</h1>
+        <p class="text-lg text-neutral-400 max-w-3xl">A familia que voce viu no modulo anterior nao nasceu no vacuo. La fora, laboratorios, papers academicos e gigantes da tecnologia estao construindo as MESMAS ideias — kernel de IA, memoria infinita, agentes que rodam codigo, hardware de bolso. Neste modulo voce visita esse "mundo la fora", entende o que e o padrao MCP que cola tudo, e fecha com a recomendacao honesta de por onde VOCE comeca.</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">6</div><div class="text-xs text-neutral-400">Topicos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">~35</div><div class="text-xs text-neutral-400">Minutos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">Iniciante</div><div class="text-xs text-neutral-400">Nivel</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">Panorama</div><div class="text-xs text-neutral-400">Tipo</div></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="lg:flex lg:gap-10">
+
+        <!-- TOC sticky -->
+        <aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+          <nav data-inema-toc aria-label="Indice da pagina" class="lg:sticky lg:top-20">
+            <p class="text-sm text-neutral-400 mb-2">Secao <span class="inema-toc-pos" data-inema-section-counter>1</span> de 6</p>
+            <ol class="space-y-1 text-sm">
+              <li><a href="#topico-1" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400">1. AIOS (o paper)</a></li>
+              <li><a href="#topico-2" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400">2. MemGPT / Letta</a></li>
+              <li><a href="#topico-3" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400">3. Open Interpreter</a></li>
+              <li><a href="#topico-4" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400">4. Assistentes e hardware</a></li>
+              <li><a href="#topico-5" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400">5. MCP, o USB das ferramentas</a></li>
+              <li><a href="#topico-6" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400">6. O CAMINHO</a></li>
+            </ol>
+            <div class="mt-4" data-inema-meter="modulo:2-3" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 2.3">
+              <div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-blue-500" data-inema-meter-fill style="width:0%"></div></div>
+              <span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span>
+            </div>
+          </nav>
+        </aside>
+
+        <div class="lg:flex-1 min-w-0 inema-prose">
+
+          <!-- TOPICO 1 -->
+          <section id="topico-1" data-inema-topic="modulo-2-3#topico-1" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">1</span>
+              <h2 class="text-2xl font-bold">📄 AIOS — quando a metafora virou paper</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m23-t1-p1">Na Trilha 1 voce ouviu a frase do Andrej Karpathy: "o LLM e o <strong>kernel</strong> de um sistema operacional novo". Era uma metafora — uma forma bonita de pensar. Pois bem: em 2024 um grupo de pesquisadores resolveu levar a metafora a serio e CONSTRUIR esse sistema. O resultado se chama <strong class="text-blue-400">AIOS</strong> (de "Agent Intelligence Operating System", ou simplesmente "AI OS"), e virou um paper academico aceito na <strong>COLM 2025</strong> (uma das conferencias serias da area).</p>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> Um <strong>"kernel"</strong> (nucleo) e a parte central de um sistema operacional como o Windows ou o Android — a peca que reparte a memoria, decide qual programa roda agora e fala com os perifericos (teclado, tela, disco). Um <strong>"paper"</strong> e um artigo cientifico publicado: uma forma de a comunidade dizer "isto foi testado e revisado, nao e so conversa de marketing".</p>
+            </div>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m23-t1-p2">A sacada do AIOS e simples de entender: quando voce tem MUITOS agentes de IA querendo rodar ao mesmo tempo, eles brigam pelos mesmos recursos — todos querem o modelo, todos querem espaco de memoria, todos querem guardar arquivos. Um sistema operacional comum ja resolve esse tipo de briga para programas normais. O AIOS faz o mesmo, mas para <strong>agentes de IA</strong>: ele coloca um <strong class="text-blue-400">escalonador</strong> (quem roda primeiro), um <strong class="text-blue-400">gerente de memoria</strong> (quem usa o contexto) e um <strong class="text-blue-400">cofre de armazenamento</strong> (onde os dados ficam) entre os agentes e o LLM.</p>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> O numero que importa</h3>
+              <ul class="space-y-2 text-neutral-300 text-sm">
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>2,1x mais rapido:</strong> nos testes do paper, organizar os agentes com o "kernel" do AIOS fez varios agentes terminarem mais de duas vezes mais depressa do que rodando na bagunca.</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Codigo aberto:</strong> nao e um produto fechado; e uma referencia que qualquer um pode estudar.</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>A licao pra voce:</strong> a ideia "LLM = kernel" deixou de ser poesia e virou engenharia de verdade.</span></li>
+              </ul>
+            </div>
+
+            <div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🧭</span> Por que isso te interessa</h3>
+              <p class="text-neutral-300 text-sm">Voce nao vai instalar o AIOS no seu Jarvis pessoal — ele e pesado e voltado a quem roda dezenas de agentes. Mas ele PROVA que o jeito de pensar deste curso (modelo + memoria + ferramentas organizados como um SO) e o mesmo que a academia esta formalizando. Quando voce monta um Jarvis lean em casa, esta construindo a versao "de bolso" da mesma ideia que esta nos papers.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">AIOS</span><p class="text-sm text-neutral-400 mt-1">Um "sistema operacional para agentes de IA": escalonador + memoria + storage.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Kernel</span><p class="text-sm text-neutral-400 mt-1">O nucleo de um SO; aqui, o LLM no centro de tudo.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Escalonador</span><p class="text-sm text-neutral-400 mt-1">Decide qual agente roda primeiro quando varios competem.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">COLM 2025</span><p class="text-sm text-neutral-400 mt-1">Conferencia academica seria — o selo de "isto foi revisado".</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 2 -->
+          <section id="topico-2" data-inema-topic="modulo-2-3#topico-2" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">2</span>
+              <h2 class="text-2xl font-bold">🧠 MemGPT / Letta — dando "memoria infinita" ao agente</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m23-t2-p1">Voce ja sabe da Trilha 1 que o LLM tem uma <strong>janela de contexto</strong> limitada — uma especie de memoria de trabalho que enche e "esquece" o que nao cabe mais. Isso e um problema enorme: como o Jarvis vai lembrar de voce daqui a tres meses se ele esquece tudo quando a conversa fica longa? O projeto <strong class="text-blue-400">MemGPT</strong> (hoje rebatizado de <strong class="text-blue-400">Letta</strong>) nasceu exatamente para resolver isso.</p>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>Memoria hierarquica</strong> quer dizer memoria em camadas, das mais rapidas e pequenas as mais lentas e enormes — igual ao seu computador, que tem RAM (rapida e cara) e disco (lento e barato). A ideia do MemGPT e copiar exatamente esse truque do sistema operacional e aplicar ao agente de IA.</p>
+            </div>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m23-t2-p2">A inspiracao deles foi a <strong>paginacao de memoria</strong> dos sistemas operacionais: quando a RAM enche, o SO manda os pedacos menos usados pro disco e traz de volta quando precisa. O MemGPT faz o agente fazer isso SOZINHO com suas proprias lembrancas: o que e urgente fica "na mesa", o que e antigo vai pro arquivo, e ele aprende a ir buscar la quando o assunto volta. Na pratica, ele divide a memoria em tres niveis:</p>
+
+            <div class="space-y-4 mb-6">
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">1</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Core (nucleo)</h4><p class="text-sm text-neutral-400">O essencial que esta SEMPRE na frente dos olhos do agente: quem voce e, o que ele e. Como a RAM mais quente.</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">2</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Recall (recente)</h4><p class="text-sm text-neutral-400">A conversa recente que ainda importa, mas que ja pode sair de cena se nao for usada.</p></div>
+              </div>
+              <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">3</span></div>
+                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Archival (arquivo)</h4><p class="text-sm text-neutral-400">O baú de tudo que ja foi dito, guardado fora do contexto e buscado sob demanda. A "memoria infinita".</p></div>
+              </div>
+            </div>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> O que isso significa la fora</h3>
+              <p class="text-neutral-300 text-sm mb-3">A ideia foi tao bem recebida que a empresa por tras (Letta) captou cerca de <strong>US$ 10 milhoes</strong> de investimento. O mercado apostou que "dar memoria de verdade ao agente" e um problema valioso.</p>
+              <p class="text-neutral-400 text-xs">Guarde esse conceito: na Trilha 3, modulo "Cerebros", voce vai ver a versao SIMPLES e caseira da mesma ideia — memoria em arquivos de texto + um indice de busca. Voce nao precisa de US$ 10 milhoes; precisa de uma pasta organizada.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">MemGPT / Letta</span><p class="text-sm text-neutral-400 mt-1">O projeto que da "memoria infinita" ao agente.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Memoria hierarquica</span><p class="text-sm text-neutral-400 mt-1">Memoria em camadas: core, recall, archival.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Paginacao</span><p class="text-sm text-neutral-400 mt-1">O truque do SO de trocar pedacos entre memoria rapida e lenta.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Memoria infinita</span><p class="text-sm text-neutral-400 mt-1">O agente busca lembrancas antigas mesmo fora do contexto.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 3 -->
+          <section id="topico-3" data-inema-topic="modulo-2-3#topico-3" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">3</span>
+              <h2 class="text-2xl font-bold">⌨️ Open Interpreter — o LLM que roda codigo na sua maquina</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m23-t3-p1">Imagine pedir "organize minha pasta de Downloads por tipo de arquivo" e a IA simplesmente FAZER — escrevendo um pequeno programa, rodando ali na hora e movendo os arquivos. E exatamente isso que o <strong class="text-blue-400">Open Interpreter</strong> faz: ele deixa o LLM <strong>escrever e executar codigo direto no seu computador</strong>. E o poder bruto de transformar um pedido em linguagem comum numa acao real na maquina.</p>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>"Rodar codigo"</strong> e dar ao computador uma lista de instrucoes para ele cumprir (mover arquivo, baixar algo, fazer uma conta). Normalmente quem escreve essas instrucoes e um programador; aqui, a IA escreve por voce. Isso e poderosissimo — e justamente por isso, perigoso.</p>
+            </div>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m23-t3-p2">A peca de seguranca que torna isso aceitavel e a <strong>confirmacao</strong>: antes de rodar qualquer coisa, o Open Interpreter te MOSTRA o codigo que vai executar e pergunta "posso?". Voce le, entende o que vai acontecer e so entao aprova. E a regra de ouro deste curso aplicada na pratica: poder sem freio e acidente esperando para acontecer; poder COM confirmacao e uma ferramenta util.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+                <h4 class="font-bold text-emerald-400 mb-4">✓ O poder que isso libera</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Tarefas reais no computador, nao so texto.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Organiza arquivos, faz contas, gera graficos, automatiza repeticoes.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Voce descreve em portugues; ele traduz para acao.</span></li>
+                </ul>
+              </div>
+              <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+                <h4 class="font-bold text-red-400 mb-4">✗ O risco que voce assume</h4>
+                <ul class="space-y-3 text-neutral-300 text-sm">
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Codigo errado pode apagar ou baguncar arquivos.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Sem confirmacao, um pedido mal interpretado vira estrago.</span></li>
+                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>NUNCA aprove um codigo que voce nao entendeu.</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> A licao de "poder + responsabilidade"</h3>
+              <p class="text-neutral-300 text-sm">Open Interpreter e o exemplo mais nu de um principio que vale para TODO Jarvis: quanto mais um agente pode fazer no mundo real, mais cuidado a arquitetura precisa ter. Confirmacao, sandbox (uma "caixa isolada" onde o codigo nao alcanca o resto do sistema) e limites nao sao burocracia — sao o que diferencia uma ferramenta de uma arma.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Open Interpreter</span><p class="text-sm text-neutral-400 mt-1">O LLM que escreve e roda codigo na sua maquina.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Confirmacao</span><p class="text-sm text-neutral-400 mt-1">Ele mostra o codigo e pede sua aprovacao antes de agir.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Sandbox</span><p class="text-sm text-neutral-400 mt-1">Uma caixa isolada onde o codigo nao alcanca o resto do sistema.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Poder x responsabilidade</span><p class="text-sm text-neutral-400 mt-1">Mais acao no mundo real exige mais freios na arquitetura.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 4 -->
+          <section id="topico-4" data-inema-topic="modulo-2-3#topico-4" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">4</span>
+              <h2 class="text-2xl font-bold">🤖 Assistentes e hardware — o software e o "boneco"</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m23-t4-p1">Ate aqui falamos de software. Mas la fora tem todo um outro grupo: assistentes de VOZ que rodam na sua casa e ate APARELHOS dedicados que prometiam ser "o telefone da era da IA". Vale conhecer os dois — e, principalmente, a licao que o segundo grupo deixou.</p>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m23-t4-p2">No lado do software de voz local, ha nomes maduros e abertos: <strong class="text-blue-400">Leon</strong> e <strong class="text-blue-400">OpenVoiceOS (OVOS)</strong> (assistentes de voz que voce roda em casa, no espirito de uma "Alexa que e sua"), <strong class="text-blue-400">Jan</strong> (um app de chat com IA local, estilo "ChatGPT offline") e o <strong class="text-blue-400">Home Assistant Assist</strong> (o assistente embutido na plataforma de casa inteligente Home Assistant, que controla luzes, fechaduras e sensores sem mandar nada pra nuvem). Todos compartilham a mesma tese do nosso curso: privacidade e controle vem de rodar localmente.</p>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> A historia do hardware dedicado</h3>
+              <p class="text-neutral-300 text-sm mb-3">Em 2023-2024, duas startups tentaram vender o "gadget de IA": o <strong>Rabbit R1</strong> (um aparelhinho laranja de ~US$ 199) e o <strong>Humane AI Pin</strong> (um broche de ~US$ 699 que projetava a tela na sua mao). Os dois fizeram muito barulho no lancamento — e os dois tiveram recepcao de morna a ruim. O Humane chegou a ser descontinuado.</p>
+              <p class="text-neutral-400 text-xs">A questao quase nunca foi o hardware em si. Foi a EXPERIENCIA: lento, respostas erradas, fazia menos do que o celular que voce ja tinha no bolso.</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">💡</span> A licao que fica</h3>
+              <p class="text-neutral-300 text-sm">"O problema raramente e o hardware." O que faz um assistente bom e o CEREBRO por tras — o modelo, a memoria, as ferramentas, a personalidade — nao a caixinha bonita. E por isso que este curso te ensina a construir o cerebro primeiro. Um Jarvis bom roda no celular que voce ja tem; nao precisa de um broche de US$ 699. Quando, mais a frente (Trilha 6), falarmos de um "boneco" para criancas, lembre-se: o boneco e so mais um canal — o valor esta no cerebro.</p>
+            </div>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>"On-device" / local</strong> = roda no proprio aparelho, sem nuvem. <strong>"Home Assistant"</strong> e uma plataforma popular e gratuita de casa inteligente. <strong>"Descontinuado"</strong> quer dizer que a empresa parou de fabricar/dar suporte ao produto — algo importante de lembrar antes de depender de um gadget fechado.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Leon / OVOS / Jan</span><p class="text-sm text-neutral-400 mt-1">Assistentes de voz e chat que rodam localmente.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Home Assistant Assist</span><p class="text-sm text-neutral-400 mt-1">Assistente de casa inteligente, sem nuvem.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Rabbit R1 / Humane Pin</span><p class="text-sm text-neutral-400 mt-1">Gadgets de IA dedicados, com recepcao morna a ruim.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">O cerebro vence a caixa</span><p class="text-sm text-neutral-400 mt-1">O valor esta no software, nao no hardware bonito.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 5 -->
+          <section id="topico-5" data-inema-topic="modulo-2-3#topico-5" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">5</span>
+              <h2 class="text-2xl font-bold">🔌 MCP — o "USB" das ferramentas de IA</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m23-t5-p1">Aqui esta a peca que faz TODO esse mundo se encaixar. Imagine que cada ferramenta que voce quer dar ao seu Jarvis (Gmail, agenda, GitHub, seu banco de notas) falasse uma lingua diferente, com um encaixe diferente. Voce teria que escrever um adaptador para cada combinacao — um pesadelo. Foi assim ate a Anthropic lancar, em <strong>novembro de 2024</strong>, o <strong class="text-blue-400">MCP</strong> (Model Context Protocol). Ele e, literalmente, o <strong class="text-blue-400">"USB" das ferramentas de IA</strong>.</p>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> Lembra de quando cada aparelho tinha um carregador diferente? O USB resolveu isso com UM encaixe que serve para tudo. Um <strong>"protocolo"</strong> e justamente um acordo de "como conversar" que todo mundo aceita. O MCP e o acordo que faz qualquer ferramenta se conectar a qualquer agente de IA sem adaptador especial.</p>
+            </div>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m23-t5-p2">Antes do USB, cada periferico vinha com seu cabo proprio. Depois do USB, voce pluga e funciona. O MCP faz o mesmo com ferramentas: cada integracao vira um <strong>"servidor MCP"</strong> independente e padronizado. Quer dar Gmail ao seu Jarvis? Pluga o servidor MCP do Gmail. Quer tirar? Despluga. O agente nem precisa ser reescrito — e essa a beleza de um padrao aberto.</p>
+
+            <!-- SVG: 1 padrao MCP conectando muitas ferramentas a muitos agentes -->
+            <div class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+              <svg viewBox="0 0 980 320" class="w-full h-auto" role="img" aria-label="Diagrama: sem um padrao, cada agente precisa de um adaptador para cada ferramenta (uma teia de fios); com o MCP no meio, todos se conectam por um unico encaixe comum">
+                <defs>
+                  <filter id="m23-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  <pattern id="m23-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#3b82f6" opacity="0.12"/></pattern>
+                  <marker id="m23-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+                  <linearGradient id="m23-hub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1e3a8a"/><stop offset="1" stop-color="#0e1622"/></linearGradient>
+                </defs>
+                <rect x="0" y="0" width="980" height="320" fill="url(#m23-grid)"/>
+
+                <!-- LADO ESQUERDO: a teia sem padrao -->
+                <text x="245" y="28" text-anchor="middle" fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600">SEM padrao · cada fio e diferente</text>
+                <g font-family="Inter,sans-serif" font-size="11">
+                  <!-- agentes -->
+                  <rect x="40" y="70" width="92" height="40" rx="10" fill="#1f2937" stroke="#9ca3af" stroke-width="1.5"/><text x="86" y="95" text-anchor="middle" fill="#e5e7eb">agente A</text>
+                  <rect x="40" y="200" width="92" height="40" rx="10" fill="#1f2937" stroke="#9ca3af" stroke-width="1.5"/><text x="86" y="225" text-anchor="middle" fill="#e5e7eb">agente B</text>
+                  <!-- ferramentas -->
+                  <rect x="360" y="55" width="90" height="34" rx="9" fill="#111827" stroke="#6b7280" stroke-width="1.5"/><text x="405" y="77" text-anchor="middle" fill="#cbd5e1">Gmail</text>
+                  <rect x="360" y="143" width="90" height="34" rx="9" fill="#111827" stroke="#6b7280" stroke-width="1.5"/><text x="405" y="165" text-anchor="middle" fill="#cbd5e1">GitHub</text>
+                  <rect x="360" y="231" width="90" height="34" rx="9" fill="#111827" stroke="#6b7280" stroke-width="1.5"/><text x="405" y="253" text-anchor="middle" fill="#cbd5e1">Notas</text>
+                  <!-- teia de fios cruzados -->
+                  <g stroke="#f87171" stroke-width="1.6" fill="none" opacity="0.8">
+                    <path d="M132,90 L360,72"/><path d="M132,90 L360,160"/><path d="M132,90 L360,248"/>
+                    <path d="M132,220 L360,72"/><path d="M132,220 L360,160"/><path d="M132,220 L360,248"/>
+                  </g>
+                  <text x="245" y="300" text-anchor="middle" fill="#f87171" font-size="12">6 adaptadores so para 2x3</text>
+                </g>
+
+                <!-- divisor -->
+                <line x1="490" y1="40" x2="490" y2="285" stroke="#374151" stroke-width="1.5" stroke-dasharray="6 6"/>
+
+                <!-- LADO DIREITO: o hub MCP -->
+                <text x="735" y="28" text-anchor="middle" fill="#38bdf8" font-family="Inter,sans-serif" font-size="13" font-weight="600">COM o MCP · um encaixe comum</text>
+                <g font-family="Inter,sans-serif" font-size="11">
+                  <!-- agentes -->
+                  <rect x="540" y="70" width="92" height="40" rx="10" fill="#0e1622" stroke="#60a5fa" stroke-width="1.5"/><text x="586" y="95" text-anchor="middle" fill="#bfdbfe">agente A</text>
+                  <rect x="540" y="200" width="92" height="40" rx="10" fill="#0e1622" stroke="#60a5fa" stroke-width="1.5"/><text x="586" y="225" text-anchor="middle" fill="#bfdbfe">agente B</text>
+                  <!-- hub central MCP -->
+                  <g filter="url(#m23-glow)"><rect x="688" y="120" width="104" height="70" rx="16" fill="url(#m23-hub)" stroke="#38bdf8" stroke-width="2.5"/></g>
+                  <text x="740" y="150" text-anchor="middle" fill="#38bdf8" font-size="16" font-weight="700">MCP</text>
+                  <text x="740" y="170" text-anchor="middle" fill="#bfdbfe" font-size="10">o "USB"</text>
+                  <!-- ferramentas -->
+                  <rect x="858" y="55" width="90" height="34" rx="9" fill="#0e1622" stroke="#3b82f6" stroke-width="1.5"/><text x="903" y="77" text-anchor="middle" fill="#bfdbfe">Gmail</text>
+                  <rect x="858" y="143" width="90" height="34" rx="9" fill="#0e1622" stroke="#3b82f6" stroke-width="1.5"/><text x="903" y="165" text-anchor="middle" fill="#bfdbfe">GitHub</text>
+                  <rect x="858" y="231" width="90" height="34" rx="9" fill="#0e1622" stroke="#3b82f6" stroke-width="1.5"/><text x="903" y="253" text-anchor="middle" fill="#bfdbfe">Notas</text>
+                  <!-- fios limpos via hub -->
+                  <g stroke="#38bdf8" stroke-width="2" fill="none">
+                    <path class="wf-a" d="M632,90 L688,150" marker-end="url(#m23-ah)"/>
+                    <path class="wf-a" d="M632,220 L688,160" marker-end="url(#m23-ah)"/>
+                    <path class="wf-a" d="M792,150 L858,72" marker-end="url(#m23-ah)"/>
+                    <path class="wf-a" d="M792,155 L858,160" marker-end="url(#m23-ah)"/>
+                    <path class="wf-a" d="M792,160 L858,248" marker-end="url(#m23-ah)"/>
+                  </g>
+                  <text x="735" y="300" text-anchor="middle" fill="#38bdf8" font-size="12">pluga qualquer um · sem reescrever o agente</text>
+                </g>
+              </svg>
+              <p class="text-xs text-neutral-400 mt-1 px-1">A esquerda, <span class="text-red-400">sem um padrao</span> cada agente precisa de um fio proprio para cada ferramenta — uma teia que explode. A direita, com o <span class="text-blue-400">MCP no centro</span>, todos falam a mesma "lingua de encaixe": pluga o servidor da ferramenta e pronto, sem reescrever o Jarvis. E por isso que o MCP e o que faz as pecas do mundo la fora se conectarem ao seu projeto caseiro.</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🛡️</span> Por que MCP tambem e mais SEGURO</h3>
+              <p class="text-neutral-300 text-sm">No modulo anterior voce viu o desastre das 341 "skills maliciosas" do OpenClaw — arquivos de terceiros que faziam coisas escondidas. O MCP e mais seguro porque cada ferramenta e um servidor separado, padronizado e auditavel: voce sabe o que ele faz, liga e desliga quando quiser, e nao precisa colar codigo aleatorio dentro do seu agente. E o caminho limpo para dar maos ao Jarvis.</p>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">MCP</span><p class="text-sm text-neutral-400 mt-1">Model Context Protocol, o padrao aberto da Anthropic (nov/2024).</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">"USB das ferramentas"</span><p class="text-sm text-neutral-400 mt-1">Um encaixe unico que conecta qualquer ferramenta a qualquer agente.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Servidor MCP</span><p class="text-sm text-neutral-400 mt-1">Cada ferramenta vira um modulo separado que voce pluga ou tira.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Auditavel</span><p class="text-sm text-neutral-400 mt-1">Mais seguro que baixar "skills" de terceiros sem saber o que fazem.</p></div>
+            </div>
+
+            <div class="flex justify-start">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- TOPICO 6 -->
+          <section id="topico-6" data-inema-topic="modulo-2-3#topico-6" class="mb-16">
+            <div class="flex items-center space-x-4 mb-6">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">6</span>
+              <h2 class="text-2xl font-bold">🧭 O CAMINHO — a recomendacao honesta</h2>
+            </div>
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m23-t6-p1">Voce viu muita coisa: papers, projetos de milhoes de dolares, gadgets, padroes. E natural pensar "preciso do mais sofisticado". A recomendacao honesta deste curso e o oposto: <strong class="text-blue-400">comece pequeno, lean e local — e cresca so quando uma necessidade real aparecer</strong>. O mundo la fora e o mapa; mas o seu primeiro passo cabe num fim de semana.</p>
+
+            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>"Lean"</strong> (enxuto) quer dizer comecar com o MINIMO que funciona, sem peso extra. <strong>"Single-owner"</strong> = um sistema que serve a UMA pessoa (voce), o que e mais simples e mais seguro do que um que tenta servir todo mundo. <strong>"Por necessidade"</strong> = so adicionar uma peca quando voce sentiu falta dela de verdade — nao "por via das duvidas".</p>
+            </div>
+
+            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m23-t6-p2">Juntando tudo o que voce aprendeu nas Trilhas 1 e 2, esta a receita do caminho seguro — cada item resolvendo um dos perigos que vimos (exposicao, custo, skills maliciosas, complexidade que ninguem entende):</p>
+
+            <div class="space-y-3 mb-6">
+              <div class="flex items-start gap-3 bg-dark-800 rounded-xl p-4 border border-dark-600"><span class="text-blue-400 font-bold text-lg flex-shrink-0">1.</span><div><strong class="text-neutral-100">Lean e local primeiro.</strong><span class="text-neutral-400 text-sm"> Comece com um projeto enxuto (estilo Intelecto ou GravityClaw) e um modelo local (Ollama). Custo fixo ou zero, dados em casa.</span></div></div>
+              <div class="flex items-start gap-3 bg-dark-800 rounded-xl p-4 border border-dark-600"><span class="text-blue-400 font-bold text-lg flex-shrink-0">2.</span><div><strong class="text-neutral-100">So MCP para as ferramentas.</strong><span class="text-neutral-400 text-sm"> Nada de colar "skills" de terceiros. Cada ferramenta plugada por um servidor MCP auditavel.</span></div></div>
+              <div class="flex items-start gap-3 bg-dark-800 rounded-xl p-4 border border-dark-600"><span class="text-blue-400 font-bold text-lg flex-shrink-0">3.</span><div><strong class="text-neutral-100">Single-owner.</strong><span class="text-neutral-400 text-sm"> So VOCE e atendido (whitelist do seu ID). Sem servidor web exposto, sem portas abertas para o mundo.</span></div></div>
+              <div class="flex items-start gap-3 bg-dark-800 rounded-xl p-4 border border-dark-600"><span class="text-blue-400 font-bold text-lg flex-shrink-0">4.</span><div><strong class="text-neutral-100">Memoria em arquivos + indice.</strong><span class="text-neutral-400 text-sm"> Notas em texto (a verdade legivel) com um indice de busca por cima. Sobrevive ao hype porque e so texto.</span></div></div>
+              <div class="flex items-start gap-3 bg-dark-800 rounded-xl p-4 border border-dark-600"><span class="text-blue-400 font-bold text-lg flex-shrink-0">5.</span><div><strong class="text-neutral-100">Cresca por necessidade.</strong><span class="text-neutral-400 text-sm"> Adicione voz, agendamentos, sub-agentes SO quando sentir falta. Entenda cada tijolo que coloca.</span></div></div>
+            </div>
+
+            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🧱</span> Construa entendendo cada tijolo</h3>
+              <p class="text-neutral-300 text-sm">A frase para levar deste modulo: <strong>"codigo que voce entende vale mais que codigo que voce clona e nunca le"</strong>. O OpenClaw inchado (100 mil linhas) virou um risco justamente porque ninguem lia tudo. Um Jarvis de poucas centenas de linhas que voce compreende inteiro e mais poderoso na pratica — porque voce confia nele, conserta quando quebra e o faz crescer no seu ritmo.</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🌉</span> A ponte para as proximas trilhas</h3>
+              <p class="text-neutral-300 text-sm mb-3">Agora voce tem o mapa completo do PANORAMA: os sistemas em casa (modulo 2.2) e o mundo la fora (este modulo). O proximo passo e abrir o capo e ver COMO um Jarvis funciona por dentro.</p>
+              <ul class="space-y-2 text-neutral-300 text-sm">
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Trilha 3 (Anatomia):</strong> as 6 camadas — canais, identidade, ferramentas, skills, agentes e cerebros — que transformam um chat num assistente que ve, lembra e age.</span></li>
+                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Trilha 4 (Construir):</strong> a receita minima e a arquitetura das 4 camadas para montar o seu, de verdade, brick-by-brick.</span></li>
+              </ul>
+            </div>
+
+            <!-- CHECAGEM LEVE -->
+            <div data-inema-check="modulo-2-3#q1" class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6">
+              <p class="font-medium mb-4">Auto-checagem (opcional): qual frase resume melhor o "caminho" recomendado?</p>
+              <div class="inema-check-options space-y-2">
+                <button type="button" data-inema-check-option="0" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Comece pelo sistema mais completo e poderoso possivel, com o maximo de ferramentas e skills da comunidade.</button>
+                <button type="button" data-inema-check-option="1" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Comece lean e local, so com MCP, single-owner e memoria em arquivos; cresca por necessidade, entendendo cada tijolo.</button>
+                <button type="button" data-inema-check-option="2" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Compre um hardware dedicado (Rabbit ou Humane) e deixe o software por conta da empresa.</button>
+              </div>
+              <div data-inema-check-feedback class="mt-4 text-sm" role="status" aria-live="polite"></div>
+            </div>
+
+            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3 mt-8">Conceitos-chave</h3>
+            <div class="grid sm:grid-cols-2 gap-3 mb-6">
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Lean e local</span><p class="text-sm text-neutral-400 mt-1">Comece pequeno, no seu hardware, com custo fixo ou zero.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Single-owner</span><p class="text-sm text-neutral-400 mt-1">Atende so voce; sem portas abertas para o mundo.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Crescer por necessidade</span><p class="text-sm text-neutral-400 mt-1">Adicione pecas quando sentir falta — nao por via das duvidas.</p></div>
+              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Cada tijolo entendido</span><p class="text-sm text-neutral-400 mt-1">Codigo que voce compreende vale mais que codigo que voce clona.</p></div>
+            </div>
+
+            <div class="flex justify-start mt-6">
+              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors">
+                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
+                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- RESUMO -->
+          <section class="mb-8">
+            <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+              <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumo do modulo</h2>
+              <div class="space-y-4 mb-8">
+                <div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">AIOS</strong><span class="text-neutral-400"> — a metafora "LLM = kernel" virou paper academico (COLM 2025), 2,1x mais rapido organizando agentes.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">MemGPT / Letta</strong><span class="text-neutral-400"> — memoria hierarquica (core/recall/archival) que da "memoria infinita" ao agente.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Open Interpreter</strong><span class="text-neutral-400"> — o LLM roda codigo na sua maquina COM confirmacao: poder + responsabilidade.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Assistentes e hardware</strong><span class="text-neutral-400"> — Leon/OVOS/Jan/Home Assistant (locais) e os gadgets Rabbit/Humane: o problema raramente e o hardware.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">MCP</strong><span class="text-neutral-400"> — o "USB das ferramentas de IA" (Anthropic, nov/2024): um encaixe comum, padronizado e auditavel.</span></div></div>
+                <div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">O CAMINHO</strong><span class="text-neutral-400"> — lean e local, so MCP, single-owner, memoria em arquivos; cresca por necessidade, entendendo cada tijolo.</span></div></div>
+              </div>
+              <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+                <h3 class="font-semibold text-blue-400 mb-2">Voce concluiu a Trilha 2 — O Panorama!</h3>
+                <p class="text-neutral-300">Tem agora o mapa completo: como comparar SOs de IA, a familia em casa e o mundo la fora. Proximo: abrir o capo na Trilha 3 (Anatomia) e ver as 6 camadas por dentro.</p>
+              </div>
+              <div class="flex flex-col sm:flex-row gap-4">
+                <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para a Trilha</a>
+                <a href="index.html" class="flex-1 text-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-colors">Concluir a Trilha 2 →</a>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-dark-600 py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
+    </div>
+  </footer>
+
+  <!-- Scripts nucleo v1 -->
+  <script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+
+  <!-- Camada de aprendizagem -->
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-2-3#q1', {
+          answer: 1,
+          explain: {
+            0: 'Cuidado — comecar pelo mais completo (estilo OpenClaw inchado) e justamente o erro: muito codigo que ninguem le, custo alto e furos de seguranca.',
+            1: 'Isso! Lean e local, so MCP, single-owner, memoria em arquivos — e crescer por necessidade, entendendo cada tijolo.',
+            2: 'Nao — a licao do modulo e que o problema raramente e o hardware; o valor esta no cerebro (software) que voce controla.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
