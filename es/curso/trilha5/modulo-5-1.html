@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="jarvis" name="inema-course"/>
+<title>Módulo 5.1 — Dónde vive Jarvis en el celular (los canales) | Jarvis · INEMA.CLUB</title>
+<meta content="Cómo tener un asistente personal de IA en el celular sin una app de tienda: Telegram, WhatsApp, dónde se ejecuta el agente, privacidad en el bolsillo y los límites de Siri/Gemini." name="description"/>
+<!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .bg-teal-900\/20 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .bg-teal-900\/30 { background-color: rgba(13,148,136,0.10); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== code box ===== */
+    .copyrun { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    html:not(.dark) .copyrun-block { background-color: #0f172a; }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+<link href="https://inematds.github.io/jarvis/curso/trilha5/modulo-5-1.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/jarvis/en/curso/trilha5/modulo-5-1.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/jarvis/es/curso/trilha5/modulo-5-1.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha5/modulo-5-1.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha5/modulo-5-1.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-5-1.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<a class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg" href="#conteudo">Saltar al contenido</a>
+<!-- NAVIGATION (completo, identico em todas as paginas) -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-3">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html" id="nav-t1">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html" id="nav-t2">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html" id="nav-t3">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomía</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html" id="nav-t4">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-teal-400 bg-teal-500/10" href="../trilha5/index.html" id="nav-t5">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html" id="nav-t6">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Niños</span>
+</a>
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-journey-open="" title="Mi recorrido" type="button">
+<span aria-hidden="true">◷</span><span class="hidden md:inline">Trayectoria</span>
+<span class="inema-journey-badge hidden" data-count="0" data-inema-journey-badge=""></span>
+</button>
+<div class="relative">
+<button aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-appearance-toggle="[data-inema-appearance]" title="Apariencia" type="button">
+<span aria-hidden="true">◑</span><span class="hidden md:inline">Apariencia</span>
+</button>
+<div class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left" data-inema-appearance="">
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="inema-dark">Oscuro</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="claro">Claro</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="sepia">Sepia</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="foco">Enfoque</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="contraste">Alto contraste</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Fuente</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="inter">Inter</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="system">Sistema</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="leitura">Lectura</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Tamaño</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="100">A</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="112">A+</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="125">A++</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Entre líneas</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.45">Compacto</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.7">Cómodo</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+<div class="inema-accent-grid flex flex-wrap gap-2">
+<button class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" data-inema-set-accent="emerald" title="Esmeralda"></button>
+<button class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" data-inema-set-accent="blue" title="Blue"></button>
+<button class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" data-inema-set-accent="purple" title="Purple"></button>
+<button class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" data-inema-set-accent="amber" title="Amber"></button>
+<button class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" data-inema-set-accent="teal" title="Verde azulado"></button>
+<button class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" data-inema-set-accent="rose" title="Rose"></button>
+</div>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" id="theme-toggle" title="Alternar entre modo claro y oscuro">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main id="conteudo">
+<header class="bg-gradient-to-br from-teal-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+<a class="hover:text-teal-400" href="../../index.html">Inicio</a><span>/</span>
+<a class="hover:text-teal-400" href="index.html">Ruta 5</a><span>/</span>
+<span class="text-teal-400">Módulo 5.1</span>
+</nav>
+<span class="inline-block px-3 py-1 bg-teal-500/20 text-teal-400 text-xs font-semibold rounded-full mb-4">MÓDULO 5-1</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">📲 Dónde vive Jarvis en el celular (los canales)</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">No necesitas descargar ninguna app de una tienda para tener un asistente de IA en tu bolsillo. El secreto es simple y hasta un poco sorprendente: usas una app de mensajería que ya funciona en tu teléfono — Telegram o WhatsApp — como la "puerta" de tu Jarvis. En este módulo descubrirás dónde está realmente, cómo el teléfono se convierte solo en la pantalla de un agente que trabaja 24/7 y por qué es más TUYO que Siri o Gemini.</p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-teal-400">6</div><div class="text-xs text-neutral-400">Temas</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-teal-400">~30</div><div class="text-xs text-neutral-400">Minutos</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-teal-400">Intermedio</div><div class="text-xs text-neutral-400">Nivel</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-teal-400">Práctico</div><div class="text-xs text-neutral-400">Tipo</div></div>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="lg:flex lg:gap-10">
+<!-- TOC sticky -->
+<aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+<nav aria-label="Índice de la página" class="lg:sticky lg:top-20" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-2">Sección <span class="inema-toc-pos" data-inema-section-counter="">1</span> de 6</p>
+<ol class="space-y-1 text-sm">
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-teal-400" href="#topico-1">1. Sin app de tienda</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-teal-400" href="#topico-2">2. Telegram (agentejax)</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-teal-400" href="#topico-3">3. WhatsApp (agentevoz)</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-teal-400" href="#topico-4">4. ¿Dónde se ejecuta el agente?</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-teal-400" href="#topico-5">5. Privacidad en el bolsillo</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-teal-400" href="#topico-6">6. Límites de los nativos</a></li>
+</ol>
+<div aria-label="Progreso del módulo 5.1" aria-valuemax="100" aria-valuemin="0" class="mt-4" data-inema-meter="modulo:5-1" role="progressbar">
+<div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-teal-500" data-inema-meter-fill="" style="width:0%"></div></div>
+<span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 de 6</span> · <span data-inema-meter-pct="">0%</span></span>
+</div>
+</nav>
+</aside>
+<div class="lg:flex-1 min-w-0 inema-prose">
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-5-1#topico-1" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">📲 El cambio: sin app de tienda</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m51-t1-p1">Cuando alguien se imagina «un asistente de IA en el celular», casi siempre piensa en descargar una app nueva de App Store o Play Store, crear una cuenta más, aceptar otro término de uso. El cambio en este módulo es darse cuenta de que <strong class="text-teal-400">nada de eso es necesario</strong>. Ya tienes una app de mensajería instalada y con sesión iniciada que se abre en cualquier celular del mundo: Telegram o WhatsApp. Esa app se convierte en la puerta de entrada de tu Jarvis.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m51-t1-p2">Piensa así: tu asistente no es una aplicación, es un <strong>contacto</strong>. Le envías mensajes como se los envías a un amigo, y te responde en el mismo lugar. La frase que resume todo este recorrido es: <strong class="text-teal-400">"Telegram ya es móvil"</strong>. Como la aplicación de mensajería funciona en iPhone, Android, la computadora y el navegador, tu Jarvis estará disponible automáticamente en todos ellos, sin que escribas una sola línea de código para una app.</p>
+<div class="bg-gradient-to-br from-teal-900/30 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-teal-400 mb-3 flex items-center"><span class="mr-2">🚪</span> Qué es un «canal»</h3>
+<p class="text-neutral-300 mb-4">Uno <strong>canal</strong> y es simplemente la puerta por la que conversas con el asistente. En vez de construir una app entera, reutilizas una puerta que ya existe y que todo el mundo ya sabe usar.</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-teal-400 mt-1">•</span><span>No instalas nada nuevo: usas la app de mensajería que ya está en tu teléfono.</span></li>
+<li class="flex items-start gap-2"><span class="text-teal-400 mt-1">•</span><span>El mismo asistente está disponible desde el celular, la tableta y la PC al mismo tiempo.</span></li>
+<li class="flex items-start gap-2"><span class="text-teal-400 mt-1">•</span><span>Cero mantenimiento de la app: sin build, sin aprobación de la tienda ni actualizaciones de versión.</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">¿Eres nuevo aquí?</strong> "App nativa" es un programa hecho a medida para iPhone o Android, que descargas de la tienda. "Canal" es la puerta de conversación del asistente. La gran idea es usar un canal que ya existe (Telegram/WhatsApp) <em>en lugar de</em> construir una app nativa desde cero.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Canal</span><p class="text-sm text-neutral-400 mt-1">La puerta para conversar con Jarvis (Telegram, WhatsApp, voz, web).</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">"Telegram ya es móvil"</span><p class="text-sm text-neutral-400 mt-1">La app de mensajería lleva tu asistente a cualquier dispositivo.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Sin app nativa</span><p class="text-sm text-neutral-400 mt-1">Cero compilaciones, cero tienda, cero aprobaciones: solo el canal que ya existe.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Asistente = contacto</span><p class="text-sm text-neutral-400 mt-1">Hablas con él como con un amigo de tu lista de conversaciones.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-500/20 border border-teal-500/30 text-teal-400 hover:bg-teal-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-5-1#topico-2" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">✈️ Telegram (agentejax)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m51-t2-p1">O <strong class="text-teal-400">Telegram</strong> y es el canal preferido para un Jarvis de bolsillo, y el proyecto que sirve de referencia aquí se llama <strong>agentejax</strong> — un agente escrito en TypeScript que vive en Telegram, está disponible las 24 horas y está diseñado para ser simple. ¿Por qué Telegram? Porque crear un robot (un «bot») allí es increíblemente fácil: conversas con un robot oficial llamado <strong>@BotFather</strong>, te entrega un <strong>token</strong> (una contraseña larga que identifica a tu bot), y listo: ya tienes un canal.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m51-t2-p2">La segunda razón es técnica, pero importante para tu seguridad: Telegram usa <strong class="text-teal-400">long-polling</strong>. En vez de que tu agente abra una "puerta" en la computadora para que todo Internet pueda tocar (lo cual es arriesgado), y el <em>tu</em> agente que llama a Telegram a cada instante y pregunta: "¿me llegó un mensaje nuevo?". Resultado: ningún puerto expuesto, ningún servidor web abierto al mundo — una falla de seguridad menos.</p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🛡️</span> El primer bloqueo: la whitelist</h3>
+<p class="text-neutral-300 text-sm mb-3">Cualquier persona puede encontrar un bot de Telegram de forma predeterminada. Sin protección, un desconocido podría escribirle y usar TU asistente (y TU cuenta de IA). El control se llama <strong>lista de permitidos</strong>: una lista con tu <strong>user ID</strong> (el número único de tu cuenta de Telegram). El agente solo atiende a quienes están en la lista; ignora en silencio a cualquier otra persona.</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Solo tu ID:</strong> solo tú recibes la respuesta.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Los demás desaparecen:</strong> los mensajes externos ni siquiera generan una respuesta: no hay forma de adivinar que hay un bot ahí.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Seguridad predeterminada:</strong> la puerta queda cerrada para todos, menos para el dueño.</span></li>
+</ul>
+</div>
+<!-- SVG futurista -->
+<div class="rounded-2xl border border-teal-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="Flujo del canal: desde tu celular por Telegram hasta el agente que funciona en la nube o en tu PC, y de ahí a las herramientas" class="w-full h-auto" role="img" viewbox="0 0 980 220">
+<defs>
+<filter height="180%" id="m51-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m51-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#14b8a6" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m51-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#2dd4bf"></path></marker>
+<marker id="m51-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m51-grid)" height="220" width="980" x="0" y="0"></rect>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="490" y="26">el celular es solo la puerta; el agente vive en otro lugar</text>
+<g font-family="Inter,sans-serif">
+<!-- celular -->
+<rect fill="#0c1f1c" height="100" rx="16" stroke="#2dd4bf" stroke-width="2.5" width="120" x="40" y="76"></rect>
+<rect fill="#0e2a26" height="58" rx="6" stroke="#2dd4bf" stroke-width="1.5" width="84" x="58" y="92"></rect>
+<text fill="#5eead4" font-size="13" font-weight="700" text-anchor="middle" x="100" y="126">📱 tú</text>
+<text fill="#5eead4" font-size="11" text-anchor="middle" x="100" y="166">celular</text>
+<!-- seta 1 -->
+<path class="wf-a" d="M160,126 L228,126" fill="none" marker-end="url(#m51-ah)" stroke="#2dd4bf" stroke-width="2.5"></path>
+<!-- telegram -->
+<rect fill="#0c1f1c" height="56" rx="13" stroke="#38bdf8" stroke-width="2" width="148" x="232" y="98"></rect>
+<text fill="#7dd3fc" font-size="13" font-weight="700" text-anchor="middle" x="306" y="122">Telegram</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="306" y="140">long-polling</text>
+<!-- seta 2 -->
+<path class="wf-a" d="M380,126 L450,126" fill="none" marker-end="url(#m51-ahc)" stroke="#38bdf8" stroke-width="2.5"></path>
+<!-- agente -->
+<g filter="url(#m51-glow)"><rect fill="#0e2a26" height="84" rx="15" stroke="#2dd4bf" stroke-width="2.8" width="180" x="454" y="84"></rect></g>
+<text fill="#2dd4bf" font-size="14" font-weight="800" text-anchor="middle" x="544" y="116">🤖 agente</text>
+<text fill="#5eead4" font-size="11" text-anchor="middle" x="544" y="138">nube o tu PC · 24/7</text>
+<!-- seta 3 -->
+<path class="wf-a" d="M634,126 L702,126" fill="none" marker-end="url(#m51-ah)" stroke="#2dd4bf" stroke-width="2.5"></path>
+<!-- ferramentas -->
+<rect fill="#0c1f1c" height="96" rx="14" stroke="#2dd4bf" stroke-width="1.8" width="234" x="706" y="78"></rect>
+<text fill="#5eead4" font-size="12" font-weight="700" text-anchor="middle" x="823" y="104">herramientas (MCP)</text>
+<rect fill="#0e2a26" height="40" rx="8" stroke="#2dd4bf" stroke-width="1.3" width="62" x="722" y="118"></rect><text fill="#a7f3d0" font-size="11" text-anchor="middle" x="753" y="142">agenda</text>
+<rect fill="#0e2a26" height="40" rx="8" stroke="#2dd4bf" stroke-width="1.3" width="62" x="792" y="118"></rect><text fill="#a7f3d0" font-size="11" text-anchor="middle" x="823" y="142">correo electrónico</text>
+<rect fill="#0e2a26" height="40" rx="8" stroke="#38bdf8" stroke-width="1.3" width="62" x="862" y="118"></rect><text fill="#7dd3fc" font-size="11" text-anchor="middle" x="893" y="142">web</text>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">Lectura del diagrama: tu mensaje sale del <span class="text-teal-400">celular</span>, pasa por el <span class="text-sky-400">Telegram</span> (que no abre ninguna puerta en tu agente, gracias al long-polling), llega al <span class="text-teal-400">agente</span> ejecutándose en la nube o en tu PC, y solo allí activa las <span class="text-teal-400">herramientas</span>. El teléfono es solo el escaparate.</p>
+</div>
+<!-- COPY-RUN -->
+<div class="rounded-xl border border-teal-500/30 bg-dark-900/60 overflow-hidden mb-6">
+<div class="flex items-center justify-between px-4 py-2 bg-teal-500/10 border-b border-teal-500/30">
+<span class="text-sm font-semibold text-teal-400 flex items-center gap-2"><span>⌨️</span> Copy-Run · crear el bot y obtener el token</span>
+<span class="text-xs text-neutral-500">~3 min · en la app de Telegram</span>
+</div>
+<div class="p-4 space-y-4">
+<p class="text-sm text-neutral-300"><strong class="text-teal-400">Objetivo:</strong> crear un bot de Telegram propio, obtener el token (la contraseña del bot) y descubrir tu user ID para la whitelist. Son 3 conversaciones dentro del propio Telegram: no hay que instalar ningún programa.</p>
+<div class="copyrun copyrun-block bg-[#0f172a] rounded-lg border border-dark-600 p-4 text-sm text-neutral-200 overflow-x-auto leading-relaxed">
+<span class="text-neutral-500"># 1) Abre la conversación con @BotFather y pega esto, una línea a la vez:</span><br/>
+/start<br/>
+/newbot<br/>
+<span class="text-teal-400">&lt;Nombre-de-tu-Jarvis&gt;</span> <span class="text-neutral-500"># ej.: Mi Jarvis</span><br/>
+<span class="text-teal-400">&lt;usuario_do_bot&gt;</span>_bot           <span class="text-neutral-500"># debe terminar en "_bot", ej.: meujarvis_bot</span><br/>
+<br/>
+<span class="text-neutral-500"># @BotFather responde algo así — guarda esta línea:</span><br/>
+<span class="text-neutral-500"># "Use this token to access the HTTP API:"</span><br/>
+<span class="text-amber-300">123456789:AAExxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span> <span class="text-neutral-500"># &lt;-- ESTE es tu TELEGRAM_BOT_TOKEN</span><br/>
+<br/>
+<span class="text-neutral-500"># 2) Descubre TU user ID: abre @userinfobot y envíale cualquier cosa.</span><br/>
+<span class="text-neutral-500"># Responde "Id: 987654321"  -&gt;  ese número es el tuyo</span> <span class="text-teal-400">&lt;SEU_USER_ID&gt;</span><br/>
+<br/>
+<span class="text-neutral-500"># 3) En el archivo .env del agente (agentejax), completa:</span><br/>
+TELEGRAM_BOT_TOKEN=<span class="text-teal-400">&lt;cole-o-token-do-passo-1&gt;</span><br/>
+TELEGRAM_WHITELIST=<span class="text-teal-400">&lt;SEU_USER_ID&gt;</span> <span class="text-neutral-500"># solo se atenderá este ID</span>
+</div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4">
+<p class="text-sm text-neutral-300"><strong class="text-teal-400">Cómo verificar:</strong> con el agente en marcha, abre la conversación con tu bot y envía <span class="copyrun text-teal-300">hola</span>. Si responde, el token es correcto. Para probar la barrera, pídele a un amigo (que NO está en la lista blanca) que le escriba al bot: no debe recibir ninguna respuesta. Si tu «hola» no vuelve, comprueba que el token se haya copiado completo (sin espacios) y que el agente esté en funcionamiento.</p>
+</div>
+</div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">@BotFather</span><p class="text-sm text-neutral-400 mt-1">El bot oficial de Telegram que crea bots y entrega el token.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Token</span><p class="text-sm text-neutral-400 mt-1">La contraseña larga que identifica y autoriza a tu bot. Nunca la expongas.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Long-polling</span><p class="text-sm text-neutral-400 mt-1">El agente se conecta a Telegram; nada de puertos abiertos al mundo.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Lista de permitidos</span><p class="text-sm text-neutral-400 mt-1">Lista de IDs autorizados; solo se atiende al dueño.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-500/20 border border-teal-500/30 text-teal-400 hover:bg-teal-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-5-1#topico-3" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">💬 WhatsApp (agentevoz)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m51-t3-p1">En Brasil, el canal de mensajería dominante es <strong class="text-teal-400">WhatsApp</strong>. El proyecto de referencia para esto se llama <strong>agentevoz</strong> — un agente en Python que atiende por WhatsApp y fue pensado para brindar atención de verdad: recibe texto, imágenes e incluso audio, y decide en el momento cuál es la mejor forma de responder. El puente técnico entre tu agente y WhatsApp se llama <strong class="text-teal-400">Evolution API</strong>.</p>
+<div class="bg-gradient-to-br from-teal-900/30 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-teal-400 mb-3 flex items-center"><span class="mr-2">🔌</span> Evolution API: el adaptador de WhatsApp</h3>
+<p class="text-neutral-300 text-sm mb-3">WhatsApp no se diseñó originalmente para bots como Telegram. La <strong>Evolution API</strong> y un programa intermediario (un «puente») que conecta tu cuenta de WhatsApp con tu agente: recibe los mensajes entrantes y se los reenvía, y envía de vuelta las respuestas del agente. Lo conectas a tu número leyendo un código QR, parecido a WhatsApp Web.</p>
+<p class="text-neutral-400 text-xs">En otras palabras: el agente no habla directamente con «WhatsApp»; se comunica con la Evolution API, y esta lo traduce para WhatsApp. Cambiar de canal es casi solo cambiar el adaptador.</p>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m51-t3-p2">La gran diferencia de agentevoz es el <strong class="text-teal-400">Policy Engine</strong> ("motor de reglas"): una capa que decide, mensaje por mensaje, <em>como</em> responder. Elige entre <strong>texto, voz o derivación a una persona</strong>, y también entre un <strong>modelo barato o un modelo premium</strong>. Así el asistente no gasta un modelo caro para responder «buen día» y sabe cuándo llamar a una persona de verdad.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-teal-900/20 rounded-xl border border-teal-500/30 p-6">
+<h4 class="font-bold text-teal-400 mb-4">✓ Lo que decide Policy Engine</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-teal-400">✓</span><span>Responder en <strong>texto</strong> (rápido y barato) o en <strong>voz</strong>.</span></li>
+<li class="flex items-start gap-2"><span class="text-teal-400">✓</span><span>Usar modelo <strong>barato</strong> para lo simple, <strong>premium</strong> para lo difícil.</span></li>
+<li class="flex items-start gap-2"><span class="text-teal-400">✓</span><span>Reconocer cuándo es mejor <strong>pasar a una persona</strong>.</span></li>
+<li class="flex items-start gap-2"><span class="text-teal-400">✓</span><span>Ahorro: gasta más solo cuando vale la pena.</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Sin un Policy Engine</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Cada «hola» va al modelo más caro: factura inflada.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Siempre el mismo formato, incluso cuando la voz tendría más sentido.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>El bot intenta resolverlo todo por su cuenta y se traba con lo que solo un humano puede resolver.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Ninguna regla clara para saber cuándo escalar o ahorrar.</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">¿Eres nuevo aquí?</strong> "Evolution API" es el programa puente que conecta WhatsApp con tu agente. "Policy Engine" es la capa de decisión que elige texto/voz/humano y un modelo barato/caro para cada mensaje. "Modelo" es el cerebro de IA (lo vimos en la Ruta 1). La voz en sí, con Whisper y TTS, es el tema del próximo módulo (5.2).</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Evolution API</span><p class="text-sm text-neutral-400 mt-1">El puente que conecta tu cuenta de WhatsApp con el agente.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Policy Engine</span><p class="text-sm text-neutral-400 mt-1">Decide entre texto, voz o una persona, y entre un modelo económico o premium, para cada mensaje.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Multicanal</span><p class="text-sm text-neutral-400 mt-1">El mismo cerebro atiende varios canales al mismo tiempo.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Escalar a una persona</span><p class="text-sm text-neutral-400 mt-1">Cuando el bot reconoce que solo una persona puede resolverlo.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-500/20 border border-teal-500/30 text-teal-400 hover:bg-teal-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-5-1#topico-4" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">🖥️ ¿Dónde se ejecuta el agente?</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m51-t4-p1">Esta es la pregunta que más confunde a quienes llegan: si el celular es solo la puerta, <strong>¿dónde se ejecuta realmente el asistente?</strong> La respuesta: el programa del agente —el código que piensa, recuerda y actúa— se ejecuta en una computadora que permanece encendida, y el celular solo se comunica con él. Tienes dos opciones principales de «hogar» para ese agente.</p>
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-teal-500/20 flex items-center justify-center"><span class="text-teal-400 font-bold">A</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">En la nube (ej.: Railway)</h4><p class="text-sm text-neutral-400">Subes el agente a un servicio que mantiene el programa encendido 24/7 por una pequeña tarifa mensual fija. No depende de que tu PC esté encendida; el asistente responde incluso mientras duermes. El <strong>Railway</strong> y un ejemplo popular: haces el deploy y te olvidas.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-teal-500/20 flex items-center justify-center"><span class="text-teal-400 font-bold">B</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">En tu PC de casa</h4><p class="text-sm text-neutral-400">El agente se ejecuta en tu propia computadora (o en una mini PC dedicada) encendida en casa. Costo de alojamiento cero, y los datos nunca salen de tu sala. La contrapartida: la PC debe permanecer encendida para que el asistente esté disponible.</p></div>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> La regla mental</h3>
+<p class="text-neutral-300 text-sm mb-3">Separa siempre dos cosas que parecen una sola:</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>El canal</strong> (Telegram/WhatsApp) vive en el celular y es la puerta.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>El agente</strong> (el programa que piensa) está en la nube O en tu PC — y es el motor.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Como el agente se ejecuta en una máquina siempre encendida, puede trabajar <strong>24/7</strong> — incluso cuando no miras el celular.</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<h3 class="text-base font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Consejo práctico</h3>
+<p class="text-sm text-neutral-300">Empieza en tu PC para aprender y probar gratis; cuando quieras disponibilidad total (responder de madrugada, enviar el resumen de las 7h por sí solo), migra a la nube. El código es casi el mismo: solo cambia dónde ejecutas el programa.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Canal ≠ agente</span><p class="text-sm text-neutral-400 mt-1">La puerta (celular) y el motor (servidor) son cosas separadas.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Nube (Railway)</span><p class="text-sm text-neutral-400 mt-1">Aloja el agente 24/7 sin depender de que tu PC esté encendida.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Self-host (PC de casa)</span><p class="text-sm text-neutral-400 mt-1">Costo cero de alojamiento y datos que no salen de casa.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">24/7</span><p class="text-sm text-neutral-400 mt-1">Cómo el agente vive en una máquina encendida y actúa todo el tiempo.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-500/20 border border-teal-500/30 text-teal-400 hover:bg-teal-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-5-1#topico-5" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">🔒 Privacidad en tu bolsillo</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m51-t5-p1">Aquí está lo más bonito de "Jarvis en el celular": tener al asistente en el bolsillo <strong>no significa</strong> entregar tus datos a cualquier nube. Como el canal (en el celular) y el cerebro (en el agente) están separados, puedes mantener el <strong class="text-teal-400">cerebro 100% local</strong> — funcionando en la computadora de casa — y dejar solo el canal en el teléfono mientras viajas.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m51-t5-p2">La pieza que hace posible esto se llama <strong class="text-teal-400">Ollama</strong>: un programa que ejecuta modelos de IA en tu propia máquina, gratis, sin internet y sin enviar nada al exterior. Conversas por Telegram desde el celular; el mensaje llega al agente en tu PC; el agente consulta a un modelo que vive ahí mismo, en tu sala. Los datos van de tu celular a tu computadora y vuelven — nunca a OpenAI o Anthropic.</p>
+<div class="bg-gradient-to-br from-teal-900/30 to-dark-800 rounded-xl border border-teal-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-teal-400 mb-3 flex items-center"><span class="mr-2">🏠</span> El cerebro se queda en casa, el acceso va en el bolsillo</h3>
+<p class="text-neutral-300 text-sm mb-3">Es lo mejor de ambos mundos: la comodidad de hablar desde el celular desde cualquier lugar, con la privacidad de un cerebro que nunca sale de tu casa.</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-teal-400">•</span><span><strong>Canal en el celular:</strong> el Telegram que ya usas.</span></li>
+<li class="flex items-start gap-2"><span class="text-teal-400">•</span><span><strong>Cerebro local:</strong> Ollama ejecutándose en la PC de casa, $0 por token.</span></li>
+<li class="flex items-start gap-2"><span class="text-teal-400">•</span><span><strong>Resultado:</strong> asistente en tu bolsillo, datos en tu sala.</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">Honestidad técnica:</strong> el mensaje todavía pasa por los servidores de Telegram/WhatsApp para llegar hasta ti — eso aplica a cualquier conversación en estas apps. La ventaja de privacidad aquí es que <em>el razonamiento y la memoria</em> del asistente ocurren en tu máquina, y no en el servidor de una empresa de IA. Para una confidencialidad total de extremo a extremo, el siguiente módulo (5.2) detalla el verdadero funcionamiento en el dispositivo.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Cerebro local</span><p class="text-sm text-neutral-400 mt-1">El modelo se ejecuta en tu PC; los datos no salen de casa.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Ollama</span><p class="text-sm text-neutral-400 mt-1">Programa que ejecuta modelos de IA localmente, gratis y sin conexión.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Separar el canal y el cerebro</span><p class="text-sm text-neutral-400 mt-1">Permite tener un puerto en el celular e inteligencia en casa al mismo tiempo.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">$0 por token</span><p class="text-sm text-neutral-400 mt-1">El modelo local no cobra por uso: explóralo todo lo que quieras.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-500/20 border border-teal-500/30 text-teal-400 hover:bg-teal-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-5-1#topico-6" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🚧 Limitaciones de los asistentes nativos</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m51-t6-p1">"Pero mi celular ya tiene Siri (o Gemini, o Alexa). ¿Para qué todo este trabajo?" Buena pregunta. La diferencia está en una palabra: <strong class="text-teal-400">posesión</strong>. Siri y Gemini son <strong>asistentes nativos</strong> — cerrados, controlados por Apple y Google. No ves el código, no eliges el modelo, no defines la personalidad ni decides adónde van tus datos. Tu bot de Telegram/WhatsApp, en cambio, es <strong>tu</strong>.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Asistente nativo (Siri / Gemini / Alexa)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span><strong>Caja negra:</strong> no lees el código ni sabes qué hace por dentro.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span><strong>Sin tu personalidad:</strong> no se puede reescribir quién es.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span><strong>Datos en la empresa:</strong> lo que dices va a sus servidores.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span><strong>Herramientas limitadas:</strong> solo hace lo que el fabricante permitió.</span></li>
+</ul>
+</div>
+<div class="bg-teal-900/20 rounded-xl border border-teal-500/30 p-6">
+<h4 class="font-bold text-teal-400 mb-4">✓ Tu bot de Telegram / WhatsApp</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-teal-400">✓</span><span><strong>Abierto:</strong> ves, entiendes y cambias cada parte del código.</span></li>
+<li class="flex items-start gap-2"><span class="text-teal-400">✓</span><span><strong>Tu persona:</strong> define su tono, sus valores y su forma de ser (el alma, en SOUL.md).</span></li>
+<li class="flex items-start gap-2"><span class="text-teal-400">✓</span><span><strong>Cerebro a tu elección:</strong> nube o local, tú decides dónde viven los datos.</span></li>
+<li class="flex items-start gap-2"><span class="text-teal-400">✓</span><span><strong>Herramientas abiertas:</strong> conecta la agenda, el correo electrónico o lo que quieras, mediante MCP.</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> El punto del que nadie habla</h3>
+<p class="text-neutral-300 text-sm">Con un asistente nativo, si la empresa cambia de opinión, desactiva una función o aumenta el precio, el problema es tuyo y no puedes hacer nada. Con tu bot, tú eres dueño de la regla. Cómodo no es lo mismo que libre, y la propuesta de esta ruta es un asistente cómodo <em>e</em> libre.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Asistente nativo</span><p class="text-sm text-neutral-400 mt-1">Siri/Gemini/Alexa: cerrados y controlados por el fabricante.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Caja negra</span><p class="text-sm text-neutral-400 mt-1">No ves ni controlas lo que ocurre por dentro.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Propiedad</span><p class="text-sm text-neutral-400 mt-1">Tu bot es tuyo: código, persona, datos y herramientas.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-teal-400 font-semibold text-sm">Cómodo ≠ libre</span><p class="text-sm text-neutral-400 mt-1">Puedes tener ambas cosas: un asistente fácil de usar y realmente tuyo.</p></div>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-5-1#q1">
+<p class="font-medium mb-4">Autoevaluación (opcional): en el "Jarvis de bolsillo", ¿dónde funciona realmente el agente?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">Dentro de la aplicación de Telegram, en el propio celular.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">En una máquina siempre encendida (en la nube, como Railway, o en tu PC de casa); el celular es solo el canal.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">En los servidores de Apple o Google, como Siri.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-500/20 border border-teal-500/30 text-teal-400 hover:bg-teal-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-8">
+<div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumen del módulo</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-teal-400 mt-1">✓</span><div><strong class="text-neutral-100">Sin app de tienda</strong><span class="text-neutral-400"> — el canal es una app de mensajería que ya funciona en el celular. «Telegram ya es móvil».</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-teal-400 mt-1">✓</span><div><strong class="text-neutral-100">Telegram (agentejax)</strong><span class="text-neutral-400"> — @BotFather entrega el token, el long-polling evita los puertos abiertos y la lista de permitidos de tu ID es el primer bloqueo.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-teal-400 mt-1">✓</span><div><strong class="text-neutral-100">WhatsApp (agentevoz)</strong><span class="text-neutral-400"> — vía Evolution API, con un Policy Engine que decide entre texto/voz/persona y modelo económico/premium.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-teal-400 mt-1">✓</span><div><strong class="text-neutral-100">El agente se ejecuta fuera del celular</strong><span class="text-neutral-400"> — en la nube (Railway) o en tu PC; el teléfono es solo la puerta de entrada, y funciona 24/7.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-teal-400 mt-1">✓</span><div><strong class="text-neutral-100">Privacidad y propiedad</strong><span class="text-neutral-400"> — un cerebro local con Ollama mantiene los datos en casa; a diferencia de Siri/Gemini, el bot es TUYO.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-teal-400 mb-2">Siguiente módulo:</h3>
+<p class="text-neutral-300">5.2 — Voz y on-device: hablar, escuchar y ejecutar en local</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 justify-start">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Volver a la Trilha</a>
+<a class="flex-1 text-center px-6 py-3 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-500 transition-colors" href="modulo-5-2.html">Siguiente módulo →</a>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+<p>🤖 Jarvis — Tu sistema operativo de IA</p>
+<p>Curso abierto · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<!-- Scripts nucleo v1 -->
+<script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+<!-- Camada de aprendizagem -->
+<script src="../../../assets/learn.js"></script>
+<script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-5-1#q1', {
+          answer: 1,
+          explain: {
+            0: 'Nao — o Telegram no celular e so o CANAL (a porta). O programa que pensa roda fora dele.',
+            1: 'Isso! O agente vive numa maquina sempre ligada (nuvem ou seu PC); o celular apenas conversa com ele.',
+            2: 'Esse e o modelo da Siri/Gemini (fechado). O seu Jarvis e o oposto: voce escolhe onde ele roda.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

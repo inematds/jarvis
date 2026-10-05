@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="jarvis" name="inema-course"/>
+<title>Módulo 3-4 — Skills: habilidades empaquetadas | Jarvis · INEMA.CLUB</title>
+<meta content="Qué es una skill, por qué empaquetar pasos repetidos en una receta, la carga progresiva, las skills frente a las herramientas, la portabilidad con polyskill y cómo las skills se autocorrigen." name="description"/>
+<!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .bg-purple-900\/20 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .bg-purple-900\/30 { background-color: rgba(124,58,237,0.10); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+
+    /* ===== Code box (copy-run) ===== */
+    .codebox { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; }
+    html:not(.dark) .codebox-shell { background-color: #0f172a; }
+    html:not(.dark) .codebox-shell .text-neutral-100 { color: #e5e7eb; }
+    html:not(.dark) .codebox-shell .text-neutral-300 { color: #cbd5e1; }
+    html:not(.dark) .codebox-shell .text-neutral-400 { color: #94a3b8; }
+  </style>
+<link href="https://inematds.github.io/jarvis/curso/trilha3/modulo-3-4.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/jarvis/en/curso/trilha3/modulo-3-4.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/jarvis/es/curso/trilha3/modulo-3-4.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/modulo-3-4.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha3/modulo-3-4.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-3-4.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<a class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg" href="#conteudo">Saltar al contenido</a>
+<!-- NAVIGATION (completo, identico em todas as paginas) -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-3">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html" id="nav-t1">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html" id="nav-t2">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10" href="../trilha3/index.html" id="nav-t3">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomía</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html" id="nav-t4">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html" id="nav-t5">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html" id="nav-t6">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Niños</span>
+</a>
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-journey-open="" title="Mi recorrido" type="button">
+<span aria-hidden="true">◷</span><span class="hidden md:inline">Trayectoria</span>
+<span class="inema-journey-badge hidden" data-count="0" data-inema-journey-badge=""></span>
+</button>
+<div class="relative">
+<button aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-appearance-toggle="[data-inema-appearance]" title="Apariencia" type="button">
+<span aria-hidden="true">◑</span><span class="hidden md:inline">Apariencia</span>
+</button>
+<div class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left" data-inema-appearance="">
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="inema-dark">Oscuro</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="claro">Claro</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="sepia">Sepia</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="foco">Enfoque</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="contraste">Alto contraste</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Fuente</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="inter">Inter</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="system">Sistema</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="leitura">Lectura</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Tamaño</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="100">A</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="112">A+</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="125">A++</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Entre líneas</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.45">Compacto</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.7">Cómodo</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+<div class="inema-accent-grid flex flex-wrap gap-2">
+<button class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" data-inema-set-accent="emerald" title="Esmeralda"></button>
+<button class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" data-inema-set-accent="blue" title="Blue"></button>
+<button class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" data-inema-set-accent="purple" title="Purple"></button>
+<button class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" data-inema-set-accent="amber" title="Amber"></button>
+<button class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" data-inema-set-accent="teal" title="Verde azulado"></button>
+<button class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" data-inema-set-accent="rose" title="Rose"></button>
+</div>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" id="theme-toggle" title="Alternar entre modo claro y oscuro">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main id="conteudo">
+<header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+<a class="hover:text-purple-400" href="../../index.html">Inicio</a><span>/</span>
+<a class="hover:text-purple-400" href="index.html">Ruta 3</a><span>/</span>
+<span class="text-purple-400">Módulo 3-4</span>
+</nav>
+<span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">MÓDULO 3-4</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🧩 Skills: habilidades empaquetadas</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">Tu Jarvis ya tiene manos (herramientas) y un alma (identidad). Falta darle <strong>recetas</strong>: pasos a paso que no tienes que repetir cada vez. Eso es una <strong>skill</strong> — un archivo de texto que empaqueta «cómo hacer tal cosa». En este módulo entenderás qué es una skill, por qué conviene empaquetar, cómo ahorran memoria, en qué se diferencian de una herramienta, cómo funcionan en más de un programa y cómo mejoran por sí solas.</p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">6</div><div class="text-xs text-neutral-400">Temas</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">~45</div><div class="text-xs text-neutral-400">Minutos</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Intermedio</div><div class="text-xs text-neutral-400">Nivel</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Práctico</div><div class="text-xs text-neutral-400">Tipo</div></div>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="lg:flex lg:gap-10">
+<!-- TOC sticky -->
+<aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+<nav aria-label="Índice de la página" class="lg:sticky lg:top-20" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-2">Sección <span class="inema-toc-pos" data-inema-section-counter="">1</span> de 6</p>
+<ol class="space-y-1 text-sm">
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-1">1. Qué es una skill</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-2">2. Por qué empaquetar</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-3">3. Carga progresiva</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-4">4. Skills vs. herramientas</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-5">5. Portabilidad (polyskill)</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-6">6. Las skills se autocorrigen</a></li>
+</ol>
+<div aria-label="Progreso del módulo 3-4" aria-valuemax="100" aria-valuemin="0" class="mt-4" data-inema-meter="modulo:3-4" role="progressbar">
+<div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-purple-500" data-inema-meter-fill="" style="width:0%"></div></div>
+<span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 de 6</span> · <span data-inema-meter-pct="">0%</span></span>
+</div>
+</nav>
+</aside>
+<div class="lg:flex-1 min-w-0 inema-prose">
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-3-4#topico-1" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">📒 Qué es una skill</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m34-t1-p1">Imagina una <strong>receta de cocina</strong> guardada en una carpeta. No es el pastel, ni el horno, ni la harina: es el <strong>paso a paso</strong> que indica, en el orden correcto, qué hacer con todo esto. Una <strong class="text-purple-400">skill</strong> (habilidad) es exactamente eso para tu Jarvis: un archivo de texto que empaqueta un procedimiento repetido. Cuando dices «escribe una publicación para LinkedIn», la skill correspondiente ya conoce la secuencia: investigar el tema, crear un gráfico, escribir el texto, revisarlo y publicarlo, sin que tengas que explicar cada paso otra vez.</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">¿Eres nuevo aquí?</strong> Una <strong>skill</strong> y una «receta reutilizable» guardada en un archivo de texto llamado <code class="text-purple-400">SKILL.md</code>. O <strong>.md</strong> y es solo la extensión de Markdown: texto simple con títulos y listas que cualquiera puede leer y editar en el bloc de notas. No es un programa, no necesitas instalar nada: son instrucciones escritas que Jarvis sigue.</p>
+</div>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">🧩</span> Anatomía de una skill</h3>
+<p class="text-neutral-300 mb-4 text-sm">Toda skill tiene dos partes: un <strong>encabezado corto</strong> (la «etiqueta» de la receta, con el nombre y cuándo usarla) y el <strong>cuerpo</strong> (el paso a paso real). El encabezado siempre está a la vista; el cuerpo solo se lee cuando se invoca la receta.</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Nombre</strong> — cómo se llama la skill (p. ej., <code class="text-purple-400">post-linkedin</code>).</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Descripción</strong> — una frase que diga <em>cuando</em> activar (y eso es lo que hace que Jarvis decida usarla).</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Pasos</strong> — la receta en sí: haz esto, luego aquello, con este criterio.</span></li>
+</ul>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m34-t1-p2">La gran revelación es que una skill es <strong class="text-purple-400">conocimiento que se convierte en capacidad</strong>. Enseñas el procedimiento una vez, por escrito, y queda disponible para siempre —en cualquier conversación, sin que tengas que recordar los detalles. Y como es solo texto, puedes leerlo, editarlo y versionarlo como cualquier documento.</p>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Skill</span><p class="text-sm text-neutral-400 mt-1">Una receta: paso a paso empaquetado en un archivo de texto.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">SKILL.md</span><p class="text-sm text-neutral-400 mt-1">El archivo Markdown que guarda el nombre, la descripción y los pasos.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Markdown (.md)</span><p class="text-sm text-neutral-400 mt-1">Texto simple, legible para las personas, sin programar nada.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Conocimiento → capacidad</span><p class="text-sm text-neutral-400 mt-1">Escribes el procedimiento una vez; se convierte en una habilidad permanente.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-3-4#topico-2" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">📦 Por qué empaquetar</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m34-t2-p1">Sin skills, te conviertes en un <strong>disco rayado</strong>: cada vez que pides lo mismo, tienes que volver a explicar los 5 pasos. "Investiga el tema, pero usa solo fuentes de 2025; después, haz un gráfico sencillo; el texto debe tener como máximo 3 párrafos; revisa el tono; y solo entonces publícalo". Repetir todo eso en cada solicitud te cansa, y el resultado sale <strong class="text-purple-400">diferente cada vez</strong>, porque la explicación nunca es idéntica.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Sin skill (explicarlo cada vez)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Vuelves a escribir los mismos pasos con cada solicitud.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>El resultado varía: a veces olvida la revisión, a veces el límite de párrafos.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>El conocimiento solo vive en tu cabeza — nadie más lo reutiliza.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Mejorar el proceso significa recordar cambiar la explicación la próxima vez.</span></li>
+</ul>
+</div>
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+<h4 class="font-bold text-purple-400 mb-4">✓ Con skill (basta una frase)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Dices "haz una publicación para LinkedIn" y los pasos se ejecutan solos.</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>El resultado es <strong>coherente</strong>: la misma receta, siempre.</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>La receta está en un archivo; puedes compartirlo con el equipo.</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>¿Mejoró? Edita el archivo una vez y sirve para siempre.</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Tres beneficios concretos de empaquetar</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Consistencia:</strong> la misma calidad cada vez, porque el paso a paso no cambia.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Velocidad:</strong> una frase en lugar de un párrafo de instrucciones.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Repositorio:</strong> cada skill que escribes queda en el estante: se convierte en una biblioteca de capacidades.</span></li>
+</ul>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Empaquetar</span><p class="text-sm text-neutral-400 mt-1">Guardar un procedimiento repetido en un archivo, en lugar de en tu memoria.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Consistencia</span><p class="text-sm text-neutral-400 mt-1">La misma receta produce el mismo patrón de resultados.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Repositorio de skills</span><p class="text-sm text-neutral-400 mt-1">Tu biblioteca de habilidades crece y se reutiliza.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Editar una vez</span><p class="text-sm text-neutral-400 mt-1">La mejora queda en el archivo y sirve para todos los usos futuros.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-3-4#topico-3" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🔎 Carga progresiva</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m34-t3-p1">Aquí está el truco que hace que las skills sean baratas. Recuerda que el LLM tiene una <strong>memoria de trabajo limitada</strong> — la ventana de contexto (lo vimos en la Ruta 1). Si volcaras el texto completo de 50 skills en esa memoria, se llenaría antes incluso de empezar. La solución es el <strong class="text-purple-400">carga progresiva</strong> (en inglés, <em>progressive disclosure</em>): Jarvis solo ve, todo el tiempo, el <strong>etiqueta</strong> de cada skill: nombre y descripción, algo como ~100 tokens. El cuerpo pesado (la receta completa) solo se lee <strong>cuando esa skill se activa realmente</strong>.</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">¿Eres nuevo aquí?</strong> <strong>Frontmatter</strong> y es el encabezado en la parte superior del archivo (nombre + descripción), entre dos líneas de tres guiones <code class="text-purple-400">---</code>. <strong>Token</strong> y es el fragmento de texto que el modelo cuenta como «memoria usada». <strong>Progressive disclosure</strong> = "revelar poco a poco": muestra solo la etiqueta hasta que necesitas el contenido. Es como el índice de un libro: lees los títulos de los capítulos y solo abres el que te interesa.</p>
+</div>
+<!-- SVG: carregamento progressivo -->
+<div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="Carga progresiva: en la biblioteca, Jarvis solo ve la etiqueta (nombre y descripción, unos 100 tokens) de cada skill; cuando se activa una skill, el cuerpo completo de la receta se carga en la memoria de trabajo" class="w-full h-auto" role="img" viewbox="0 0 980 240">
+<defs>
+<filter height="180%" id="m34-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m34-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#a855f7" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m34-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m34-grid)" height="240" width="980" x="0" y="0"></rect>
+<text fill="#c084fc" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="200" y="28">BIBLIOTECA · solo las etiquetas visibles</text>
+<g font-family="Inter,sans-serif">
+<rect fill="#1a1230" height="38" rx="9" stroke="#a855f7" stroke-width="2" width="320" x="40" y="46"></rect><text fill="#e9d5ff" font-size="13" x="58" y="70">post-linkedin · ~100 tokens</text>
+<rect fill="#1a1230" height="38" rx="9" stroke="#a855f7" stroke-width="2" width="320" x="40" y="94"></rect><text fill="#e9d5ff" font-size="13" x="58" y="118">resumen del día · ~100 tokens</text>
+<rect fill="#1a1230" height="38" rx="9" stroke="#a855f7" stroke-width="2" width="320" x="40" y="142"></rect><text fill="#e9d5ff" font-size="13" x="58" y="166">triagem-inbox · ~100 tokens</text>
+<rect fill="#1a1230" height="38" rx="9" stroke="#a855f7" stroke-width="2" width="320" x="40" y="190"></rect><text fill="#e9d5ff" font-size="13" x="58" y="214">revisar-codigo · ~100 tokens</text>
+</g>
+<path d="M360,113 C440,113 440,120 520,120" fill="none" marker-end="url(#m34-ah)" stroke="#38bdf8" stroke-width="2.5"></path>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="440" y="104">activó →</text>
+<line stroke="#374151" stroke-dasharray="6 6" stroke-width="1.5" x1="500" x2="500" y1="36" y2="210"></line>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="755" y="28">MEMORIA DE TRABAJO · cuerpo cargado</text>
+<g filter="url(#m34-glow)"><rect fill="#0e1622" height="160" rx="14" stroke="#38bdf8" stroke-width="2.5" width="400" x="540" y="50"></rect></g>
+<g font-family="Inter,sans-serif">
+<text fill="#38bdf8" font-size="14" font-weight="700" x="560" y="80">post-linkedin (cuerpo completo)</text>
+<text fill="#cbd5e1" font-size="12.5" x="560" y="108">1. investigar el tema (fuentes recientes)</text>
+<text fill="#cbd5e1" font-size="12.5" x="560" y="130">2. crear un gráfico simple</text>
+<text fill="#cbd5e1" font-size="12.5" x="560" y="152">3. escribir el copy (máx. 3 párrafos)</text>
+<text fill="#cbd5e1" font-size="12.5" x="560" y="174">4. revisar el tono</text>
+<text fill="#cbd5e1" font-size="12.5" x="560" y="196">5. publicar</text>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">A la izquierda, la <span class="text-purple-400">biblioteca</span> guarda decenas de skills, pero solo expone la etiqueta de cada una (barato). Cuando activas una, el <span class="text-sky-400">cuerpo completo</span> de la receta entra en la memoria de trabajo: solo esa, solo en ese momento. Así es como tener muchas skills no satura el contexto.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Progressive disclosure</span><p class="text-sm text-neutral-400 mt-1">Revelar solo la etiqueta hasta que se active la skill.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Frontmatter</span><p class="text-sm text-neutral-400 mt-1">El encabezado ligero (nombre + descripción) siempre a la vista.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">~100 tokens</span><p class="text-sm text-neutral-400 mt-1">El costo mínimo de mantener una skill disponible.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Ahorro de contexto</span><p class="text-sm text-neutral-400 mt-1">Decenas de skills sin saturar la memoria de trabajo.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-3-4#topico-4" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">🔧 Skills vs. herramientas</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m34-t4-p1">Cuidado con confundir los dos, porque sus nombres suelen aparecer juntos. En el módulo anterior (3-3) viste <strong>herramientas</strong>: las «manos» de Jarvis: buscar en la web, leer un archivo, enviar un correo electrónico. Una herramienta es una <strong class="text-purple-400">acción atómica</strong>: hace <em>una</em> algo y devuelve el resultado. Una <strong class="text-purple-400">skill</strong> y es otra capa: es un <strong>procedimiento</strong> que decide <em>cuáles</em> qué herramientas llamar, en qué orden y qué hacer con cada resultado. La herramienta es el verbo; la skill es la receta que usa varios verbos.</p>
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">🍳</span> La metáfora de la cocina</h3>
+<p class="text-neutral-300 text-sm mb-3">En una cocina, las <strong>herramientas</strong> son el cuchillo, el horno y la batidora; cada uno realiza una acción. La <strong>skill</strong> y es la receta del pastel: "bate los huevos (batidora), corta la fruta (cuchillo), hornea 40 min (horno)". La receta orquesta las herramientas con criterio: sabe el orden, las cantidades y cuándo algo salió mal.</p>
+<p class="text-neutral-400 text-xs">Sin herramientas, la receta no tiene con qué trabajar. Sin la receta, tienes herramientas sueltas y ningún pastel.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-4">🔨 Herramienta = acción atómica</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>«buscar en la web», «leer archivo», «enviar correo electrónico».</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Hace <strong>una</strong> algo y devuelve un resultado.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>No decide nada por sí sola: alguien tiene que invocarla.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Suele llegar por <strong>MCP</strong> (el «USB» de las herramientas, del módulo 3-3).</span></li>
+</ul>
+</div>
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+<h4 class="font-bold text-purple-400 mb-4">🧩 Skill = procedimiento + criterio</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400">•</span><span>«escribir una publicación», «hacer un resumen del día», «clasificar la bandeja de entrada».</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">•</span><span><strong>Orquesta</strong> varias herramientas, en el orden correcto.</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">•</span><span>Aplica un criterio: "si no encuentras una fuente, avisa antes de publicar".</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">•</span><span>Es solo texto (SKILL.md): no instala nada, solo describe cómo hacerlo.</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">En resumen:</strong> herramienta responde «qué <em>puedo</em> hacer» (una acción). Skill responde «cómo <em>hago</em> tal cosa bien hecha" (un procedimiento con criterio, que usa varias acciones). Una skill casi siempre <strong>usa</strong> herramientas, pero no todas se convierten en skills.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Acción atómica</span><p class="text-sm text-neutral-400 mt-1">Una herramienta hace una sola cosa y devuelve el resultado.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Orquestación</span><p class="text-sm text-neutral-400 mt-1">La skill encadena herramientas en el orden adecuado y con criterio.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Juicio</span><p class="text-sm text-neutral-400 mt-1">La skill decide qué hacer cuando algo sale de lo esperado.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Capas que se suman</span><p class="text-sm text-neutral-400 mt-1">Herramienta = verbo; skill = receta que usa varios verbos.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-3-4#topico-5" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">🔁 Portabilidad (polyskill)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m34-t5-p1">Porque una skill es solo un archivo de texto que sigue un formato acordado (la <strong>Especificación de Agent Skills</strong>), no queda atada a un programa. La misma receta puede ejecutarse en <strong>Claude Code</strong> y en el <strong>Codex</strong> (dos asistentes de IA diferentes): basta con una herramienta llamada <strong class="text-purple-400">polyskill</strong> que toma <em>una única fuente</em> y genera la versión adecuada para cada uno. Escribes la skill una vez; sirve en más de un lugar.</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">¿Eres nuevo aquí?</strong> <strong>Especificación de Agent Skills</strong> y es solo un «formato acordado»: un estándar para escribir el archivo de skill, para que distintos programas sepan leerlo. <strong>Polyskill</strong> y es el traductor: a partir de una única fuente, <strong>emite</strong> (genera) la versión para cada programa. <strong>Entre entornos de ejecución</strong> = "se ejecuta en más de un entorno de ejecución". <strong>Portabilidad</strong> = la propiedad de llevar lo mismo de un lugar a otro sin reescribirlo.</p>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> Honestidad: lo que «múltiples modelos» NO quiere decir aquí</h3>
+<p class="text-neutral-300 text-sm">Cuando se dice que las skills funcionan con «varios modelos», eso es <strong>portabilidad</strong> (la misma receta funciona en Claude Code y Codex), y <strong>no</strong> un consejo de varios cerebros que opinan juntos, ni una recomendación sobre qué modelo elegir. Portabilidad = un archivo, varios destinos. Nada de votación mágica entre modelos. (Volvemos a este mito en el módulo 3-6, sobre Cerebros.)</p>
+</div>
+<!-- COPY-RUN: SKILL.md minimo -->
+<div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 overflow-hidden mb-6">
+<div class="px-4 py-3 border-b border-purple-500/30 bg-purple-500/10 flex items-center gap-2">
+<span class="text-purple-400">🧪</span>
+<span class="text-sm font-semibold text-purple-400">Ejemplo COPY-RUN · tu primer SKILL.md</span>
+</div>
+<div class="p-4">
+<p class="text-sm text-neutral-300 mb-3"><strong class="text-neutral-100">Objetivo:</strong> crear una skill mínima y portable: un <code class="text-purple-400">SKILL.md</code> con encabezado (nombre + descripción) y los pasos de la receta. Después generamos la versión para otro programa con polyskill.</p>
+<p class="text-xs text-neutral-400 mb-2">1) Crea la carpeta y pega el contenido de abajo en el archivo <code class="text-purple-400">SKILL.md</code> (cambia las partes <code class="text-purple-400">&lt;...&gt;</code>):</p>
+<div class="codebox codebox-shell bg-dark-900 rounded-lg border border-dark-600 p-4 text-sm overflow-x-auto mb-4">
+<pre class="text-neutral-100 leading-relaxed">mkdir -p ~/.jarvis/skills/<span class="text-purple-400">&lt;nome-da-skill&gt;</span>
+cat &gt; ~/.jarvis/skills/<span class="text-purple-400">&lt;nome-da-skill&gt;</span>/SKILL.md &lt;&lt;'EOF'
+<span class="text-neutral-400">---</span>
+<span class="text-sky-400">name</span>: <span class="text-purple-400">&lt;resumo-do-dia&gt;</span>
+<span class="text-sky-400">description</span>: <span class="text-neutral-300">Use quando eu pedir um resumo do meu dia. Le a agenda</span>
+  <span class="text-neutral-300">e os e-mails nao lidos e devolve 3 bullets curtos.</span>
+<span class="text-neutral-400">---</span>
+
+<span class="text-neutral-100"># Resumo do dia</span>
+
+Passos:
+1. Buscar os compromissos de hoje na agenda.
+2. Listar os e-mails nao lidos das ultimas <span class="text-purple-400">&lt;24h&gt;</span>.
+3. Resumir em <span class="text-purple-400">&lt;3&gt;</span> bullets curtos, do mais urgente ao menos.
+4. Se nada for urgente, dizer "dia tranquilo" e parar.
+EOF</pre>
+</div>
+<p class="text-xs text-neutral-400 mb-2">2) (Opcional) Genera la versión para otro programa a partir de esta única fuente:</p>
+<div class="codebox codebox-shell bg-dark-900 rounded-lg border border-dark-600 p-4 text-sm overflow-x-auto mb-4">
+<pre class="text-neutral-100 leading-relaxed">polyskill build ~/.jarvis/skills/<span class="text-purple-400">&lt;nome-da-skill&gt;</span> --target codex</pre>
+</div>
+<div class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-3">
+<p class="text-xs text-neutral-300"><strong class="text-purple-400">Cómo verificar:</strong> ejecuta <code class="text-purple-400">cat ~/.jarvis/skills/&lt;nome-da-skill&gt;/SKILL.md</code> y comprueba que el archivo se abra con <code>---</code>, tiene <code>name:</code> e <code>description:</code>, y luego los pasos numerados. En tu Jarvis, pide «dame el resumen del día»: si sigue los 4 pasos en orden, reconoció la skill. Si ejecutaste el paso 2, comprueba que apareció una versión en la carpeta de salida de polyskill para el destino <code>codex</code>.</p>
+</div>
+<p class="text-[11px] text-neutral-500 mt-3">Observación didáctica: nombres de comandos (<code>polyskill</code>) y las rutas son ilustrativas del concepto; lo importante es la estructura del archivo (encabezado entre <code>---</code> + pasos). La spec es el formato; el programa solo lee.</p>
+</div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Especificación de Agent Skills</span><p class="text-sm text-neutral-400 mt-1">El formato combinado que permite que varios programas lean la skill.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Polyskill</span><p class="text-sm text-neutral-400 mt-1">El traductor: a partir de una única fuente, genera la versión de cada destino.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Entre entornos de ejecución</span><p class="text-sm text-neutral-400 mt-1">La misma skill funciona en Claude Code y en Codex.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Portabilidad ≠ consejo</span><p class="text-sm text-neutral-400 mt-1">"Varios modelos" aquí = un archivo, varios destinos.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-3-4#topico-6" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🌱 Las skills se autocorrigen</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m34-t6-p1">La parte más bonita: una skill no es una piedra, sino algo <strong class="text-purple-400">vivo que mejora con el uso</strong>. Cada vez que se ejecuta la receta, tú (o el propio Jarvis) notas qué se podría mejorar: «faltó verificar la fuente», «el tono quedó demasiado formal», «este paso era innecesario». Como la skill es solo texto, basta <strong>editar el archivo</strong> y la próxima ejecución ya sale mejor. La receta aprende de su propia práctica.</p>
+<!-- TIMELINE: ciclo de auto-correcao -->
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Funciona</h4><p class="text-sm text-neutral-400">La skill ejecuta la tarea de verdad: genera la publicación, hace el resumen.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Observa</h4><p class="text-sm text-neutral-400">Notas un inconveniente: faltó un paso, sobró otro, el resultado necesitaba un ajuste.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Edita el SKILL.md</h4><p class="text-sm text-neutral-400">Ajustas el texto de la receta: una línea más, un criterio más claro.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">4</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Mejora a partir de ahí</h4><p class="text-sm text-neutral-400">La corrección se aplica a <strong>todas</strong> las próximas ejecuciones — sin que tengas que recordarlas.</p></div>
+</div>
+</div>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">📚</span> La biblioteca de skills y su colección de capacidades</h3>
+<p class="text-neutral-300 text-sm mb-3">Cada skill que escribes y perfeccionas queda guardada. Con el tiempo, no tienes «un asistente»: tienes un <strong>colección de habilidades afiladas</strong> que solo crece. Un Jarvis con 20 skills buenas vale mucho más que un modelo sin procesar, porque incluye procedimientos probados en tu realidad.</p>
+<p class="text-neutral-400 text-xs">Y como todo es texto legible, este acervo «sobrevive a la moda»: la tecnología cambia, pero tus recetas siguen siendo válidas.</p>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Por qué esto es tan poderoso</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Mejora compuesta:</strong> los pequeños ajustes se acumulan: la skill de hoy es mejor que la de ayer.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Memoria de proceso:</strong> la lección aprendida queda en el archivo, no en tu cabeza.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Transferible:</strong> una skill madura se puede compartir con otras personas ya pulida.</span></li>
+</ul>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-3-4#q1">
+<p class="font-medium mb-4">Autoevaluación (opcional): ¿qué frase describe mejor qué es una skill?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">Una acción única y atómica, como "enviar un correo electrónico" — se realiza una vez y devuelve un resultado.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">Una receta en texto (SKILL.md) que orquesta herramientas con criterio, solo carga la etiqueta hasta que se usa y mejora con cada ajuste.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">Un consejo de varios modelos que votan por la mejor respuesta.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3 mt-8">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Autocorrección</span><p class="text-sm text-neutral-400 mt-1">Cada ejecución revela un ajuste; editar el archivo mejora el futuro.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Mejora compuesta</span><p class="text-sm text-neutral-400 mt-1">Los pequeños refinamientos se acumulan con el tiempo.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Repositorio de capacidades</span><p class="text-sm text-neutral-400 mt-1">Tu biblioteca de Skills bien afinadas es lo que hace que Jarvis sea tuyo.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Sobrevive al hype</span><p class="text-sm text-neutral-400 mt-1">Es solo texto: sigue siendo válido incluso cuando cambia la tecnología.</p></div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-8">
+<div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumen del módulo</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Skill = receta</strong><span class="text-neutral-400"> — un SKILL.md (texto) que empaqueta un paso a paso repetido.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Empaquetar da consistencia</strong><span class="text-neutral-400"> — una frase en lugar de volver a explicar 5 pasos; el archivo crece.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Carga progresiva</strong><span class="text-neutral-400"> — solo queda visible la etiqueta (~100 tokens); el cuerpo se carga al activarlo.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Skill ≠ herramienta</strong><span class="text-neutral-400"> — herramienta y acción atómica; una skill orquesta herramientas con criterio.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Portátil y viva</strong><span class="text-neutral-400"> — polyskill lleva la misma fuente a varios programas; cada ejecución mejora la receta.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-purple-400 mb-2">Siguiente módulo:</h3>
+<p class="text-neutral-300">3-5 — Agentes: el ciclo que trabaja solo</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Volver a la Trilha</a>
+<a class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors" href="modulo-3-5.html">Siguiente módulo →</a>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+<p>🤖 Jarvis — Tu sistema operativo de IA</p>
+<p>Curso abierto · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<!-- Scripts nucleo v1 -->
+<script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+<!-- Camada de aprendizagem -->
+<script src="../../../assets/learn.js"></script>
+<script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-3-4#q1', {
+          answer: 1,
+          explain: {
+            0: 'Isso e uma FERRAMENTA (acao atomica), nao uma skill. A skill orquestra varias ferramentas com criterio.',
+            1: 'Exato! Skill = receita em texto que orquestra ferramentas, carrega so o rotulo ate ser usada, e melhora a cada ajuste.',
+            2: 'Esse e o mito do "conselho de modelos" — nao e o que skills sao. "Multiplos modelos" aqui significa portabilidade.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

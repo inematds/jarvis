@@ -6,15 +6,14 @@
     - paginas em trilhaN/:   {{REL}} = "../../"  ->  src="../../assets/learn.js"
   Nao edite os scripts.
 -->
-  <footer class="border-t border-dark-600 py-8 mt-8">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
-      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
-      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
-    </div>
-  </footer>
-
-  <!-- Scripts nucleo v1 -->
-  <script>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+<p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+<p>Curso aberto · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<!-- Scripts nucleo v1 -->
+<script>
     function toggleTopic(button){
       const item = button.closest('.topic-item');
       const exp = item.querySelector('.topic-explanation');
@@ -33,15 +32,12 @@
     function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
     document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
   </script>
-
-  <!-- Camada de aprendizagem -->
-  <script src="{{REL}}assets/learn.js"></script>
-  <script>
+<!-- Camada de aprendizagem -->
+<script src="{{REL}}assets/learn.js"></script>
+<script>
     if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
     document.addEventListener('click', function(e){
       var r = e.target.closest('[data-inema-resume]');
       if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
     });
   </script>
-</body>
-</html>

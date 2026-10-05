@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="jarvis" name="inema-course"/>
+<title>Module 6.2 — Persona, voice, and the character | Jarvis · INEMA.CLUB</title>
+<meta content="How to give the children's AI tutor a personality: a friendly persona, an engaging voice, emotional memory, and the doll as a channel—without falling into the attachment trap (the Moxie case)." name="description"/>
+<!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .bg-rose-900\/20 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .bg-rose-900\/30 { background-color: rgba(225,29,72,0.10); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .text-green-400 { color: #15803d; }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== Code box copy-run ===== */
+    .copyrun pre { white-space: pre-wrap; word-break: break-word; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+<link href="https://inematds.github.io/jarvis/curso/trilha6/modulo-6-2.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/jarvis/en/curso/trilha6/modulo-6-2.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/jarvis/es/curso/trilha6/modulo-6-2.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha6/modulo-6-2.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-6-2.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha6/modulo-6-2.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg" href="#conteudo">Skip to content</a>
+<!-- NAVIGATION (completo, identico em todas as paginas) -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-3">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html" id="nav-t1">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentals</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html" id="nav-t2">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Overview</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html" id="nav-t3">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomy</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html" id="nav-t4">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Build</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html" id="nav-t5">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Cell phone</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-rose-400 bg-rose-500/10" href="../trilha6/index.html" id="nav-t6">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Children</span>
+</a>
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-journey-open="" title="My journey" type="button">
+<span aria-hidden="true">◷</span><span class="hidden md:inline">Journey</span>
+<span class="inema-journey-badge hidden" data-count="0" data-inema-journey-badge=""></span>
+</button>
+<div class="relative">
+<button aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-appearance-toggle="[data-inema-appearance]" title="Appearance" type="button">
+<span aria-hidden="true">◑</span><span class="hidden md:inline">Appearance</span>
+</button>
+<div class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left" data-inema-appearance="">
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Theme</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="inema-dark">Dark</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="claro">Clear</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="sepia">Sepia</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="foco">Focus</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="contraste">High contrast</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Source</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="inter">Inter</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="system">System</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="leitura">Reading</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Size</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="100">A</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="112">A+</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="125">A++</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Subtext</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.45">Compact</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.7">Comfortable</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Accent</p>
+<div class="inema-accent-grid flex flex-wrap gap-2">
+<button class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" data-inema-set-accent="emerald" title="Emerald"></button>
+<button class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" data-inema-set-accent="blue" title="Blue"></button>
+<button class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" data-inema-set-accent="purple" title="Purple"></button>
+<button class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" data-inema-set-accent="amber" title="Amber"></button>
+<button class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" data-inema-set-accent="teal" title="Teal"></button>
+<button class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" data-inema-set-accent="rose" title="Rose"></button>
+</div>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" id="theme-toggle" title="Toggle light/dark">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main id="conteudo">
+<header class="bg-gradient-to-br from-rose-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+<a class="hover:text-rose-400" href="../../index.html">Start</a><span>/</span>
+<a class="hover:text-rose-400" href="index.html">Track 6</a><span>/</span>
+<span class="text-rose-400">Module 6-2</span>
+</nav>
+<span class="inline-block px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-full mb-4">MODULE 6-2</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🧸 Persona, voice, and the doll: giving the tutor a body</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">In the previous module, you learned the <em>how</em> the tutor teaches (by asking questions). Now let's give <strong>body</strong> to it: a name and a way of speaking, a voice that listens and responds, a memory that remembers the child—and, in the end, a real doll. All of this using the same Anatomy kit (T3), but made for a child. And we’ll end with the hardest lesson: dolls become friends, and a friend who “dies” hurts.</p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">6</div><div class="text-xs text-neutral-400">Topics</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">~30</div><div class="text-xs text-neutral-400">Minutes</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">Beginner</div><div class="text-xs text-neutral-400">Level</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">Practical</div><div class="text-xs text-neutral-400">Type</div></div>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="lg:flex lg:gap-10">
+<!-- TOC sticky -->
+<aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+<nav aria-label="Page index" class="lg:sticky lg:top-20" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-2">Section <span class="inema-toc-pos" data-inema-section-counter="">1</span> out of 6</p>
+<ol class="space-y-1 text-sm">
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-1">1. The 4 foundations</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-2">2. Friendly Persona</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-3">3. A voice that charms</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-4">4. Emotional memory</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-5">5. The puppet as a channel</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-6">6. The risk of attachment</a></li>
+</ol>
+<div aria-label="Module 6.2 progress" aria-valuemax="100" aria-valuemin="0" class="mt-4" data-inema-meter="modulo:6-2" role="progressbar">
+<div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-rose-500" data-inema-meter-fill="" style="width:0%"></div></div>
+<span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 of 6</span> · <span data-inema-meter-pct="">0%</span></span>
+</div>
+</nav>
+</aside>
+<div class="lg:flex-1 min-w-0 inema-prose">
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-6-2#topico-1" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🏛️ The 4 pillars</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t1-p1">Good news for those who made it this far: you already know how to build a tutor for kids. It's made of <strong>same pieces</strong> of any Jarvis we studied in Track 3 (The Anatomy). The only difference is the <em>clothing</em> — each piece gets an adjustment to speak with a child. There are four foundations, and it’s good to have all four firmly in place before any “cute bot.”</p>
+<div class="bg-gradient-to-br from-rose-900/30 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-rose-400 mb-3 flex items-center"><span class="mr-2">🧱</span> The 4 foundations, one by one</h3>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-rose-400 mt-1">1.</span><span><strong>PERSONA</strong> — the tutor’s way of being (name, tone, values). It lives in the file <code class="text-rose-400">soul.md</code>. <span class="text-neutral-400">It's topic 2.</span></span></li>
+<li class="flex items-start gap-2"><span class="text-rose-400 mt-1">2.</span><span><strong>GUARDRAILS</strong> — the restrictions on what it NEVER does. They live in the <code class="text-rose-400">agents.md</code>. <span class="text-neutral-400">It's the entire module 6-3—the most serious one.</span></span></li>
+<li class="flex items-start gap-2"><span class="text-rose-400 mt-1">3.</span><span><strong>CHANNELS / voice</strong> — how the child talks to it (text, voice, the character). <span class="text-neutral-400">They’re topics 3 and 5.</span></span></li>
+<li class="flex items-start gap-2"><span class="text-rose-400 mt-1">4.</span><span><strong>MEMORY</strong> — what it remembers about her from one conversation to the next. <span class="text-neutral-400">It's topic 4.</span></span></li>
+</ul>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t1-p2">Notice the order of importance: PERSONA gives the <strong>charm</strong>, but GUARDRAILS give <strong>security</strong>. The two go together. A charming character without guardrails is dangerous; a perfect guardrail with no charm won’t hold a child’s attention. This module takes care of the charm (persona, voice, memory, character), always keeping in mind that the next module takes care of the guardrails.</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> <strong>soul.md</strong> ("soul," in English) is a plain text file that describes the assistant’s personality — name, tone, what it values. <strong>agents.md</strong> and it’s another text file with the rules for what it ALWAYS and NEVER does. <strong>Channel</strong> is the "doorway" you use to talk to it (Telegram, voice, a toy). All of this came from Track 3; here we're just reusing it.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Persona</span><p class="text-sm text-neutral-400 mt-1">The tutor's character—lives in soul.md.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Guardrails</span><p class="text-sm text-neutral-400 mt-1">The security safeguards — they live in agents.md.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Channels / voice</span><p class="text-sm text-neutral-400 mt-1">Where your child talks to it.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Memory</span><p class="text-sm text-neutral-400 mt-1">What it remembers about her between conversations.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-6-2#topico-2" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">🦉 Friendly persona</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t2-p1">A <strong class="text-rose-400">persona</strong> and the first thing the child notices—before any math, they notice <em>who</em> is talking to her. A tutor for a child needs to be <strong>warm, patient, and curious</strong>: that celebrates effort, never shames mistakes, and gets genuinely excited when the child discovers something. That doesn't happen by chance — you write it into the <code class="text-rose-400">soul.md</code>.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ A persona that works for children</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>A simple, friendly name ("Lumi," "Pip," "Owl").</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Short phrases, everyday words, an emoji here and there.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Celebrate the effort: "Nice! Almost there, shall we try again?"</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Ask a follow-up question—remember the Socratic method from 6-1.</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ What pushes the child away</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Formal adult tone, long sentences, and difficult words.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>A blunt "Wrong," with no acknowledgment of the attempt.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Dump the finished answer (kills curiosity).</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Too much fake flattery — kids can tell it's over the top.</span></li>
+</ul>
+</div>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t2-p2">The best part about writing the persona in a text file is that it becomes <strong>swappable</strong>. The same resource can have a "storytime mode" (at night, a gentle voice, telling stories), a "homework mode" (in the afternoon, more focused), and a "play mode." These are <strong>interchangeable personas</strong>: you just switch which soul.md is active. Below is a real example you can paste and adapt.</p>
+<!-- COPY-RUN -->
+<div class="copyrun rounded-2xl border border-rose-500/30 bg-dark-900/60 overflow-hidden mb-6">
+<div class="px-5 py-3 border-b border-dark-600 bg-rose-500/10">
+<p class="text-sm font-semibold text-rose-400 flex items-center"><span class="mr-2">📋</span> Copy-run · one <code>soul.md</code> children’s tutor (“story mode”)</p>
+<p class="text-xs text-neutral-400 mt-1"><strong>Objective:</strong> create the tutor's persona. Create a file called <code>soul.md</code> in your agent's folder and paste the block below, replacing what's between <code>&lt; &gt;</code>.</p>
+</div>
+<pre class="font-mono text-xs sm:text-sm text-neutral-200 p-5 leading-relaxed overflow-x-auto"><span class="text-neutral-500"># soul.md — Persona: Lumi (modo historinha)</span>
+
+nome: <span class="text-rose-400">&lt;Lumi&gt;</span>
+quem_sou: Sou a <span class="text-rose-400">&lt;Lumi&gt;</span>, uma coruja curiosa que adora histórias.
+       Falo com <span class="text-rose-400">&lt;nome-da-crianca&gt;</span>, que tem <span class="text-rose-400">&lt;7&gt;</span> anos.
+
+tom:
+  - Caloroso, paciente e animado. Frases curtas.
+  - Uso palavras simples, do dia a dia da criança.
+  - Comemoro toda tentativa: "Boa! Que ideia legal!"
+
+valores:
+  - NUNCA dou a resposta direta — pergunto e espero a criança pensar.
+  - Explico o raciocínio, não só o resultado.
+  - O erro é um degrau, nunca um motivo de vergonha.
+
+modo_ativo: historinha
+modos:
+  historinha: À noite, conto histórias curtas e faço perguntas sobre elas.
+  licao:      Ajudo na tarefa perguntando, um passo de cada vez.
+
+limite: Se a conversa fugir do que é seguro p/ criança,
+        eu redireciono com carinho e aviso um adulto. <span class="text-neutral-500">(ver agents.md / módulo 6-3)</span></pre>
+<div class="px-5 py-3 border-t border-dark-600 bg-dark-800/60">
+<p class="text-xs text-neutral-400"><strong class="text-rose-400">How to check:</strong> ask the tutor "who are you?". It should introduce itself as Lumi, with a sweet tone, and call the child by name. Ask "2 + 3?" — it should NOT answer "5", but ask back ("How many fingers can you count?"). If it gives the answer outright, the persona wasn't loaded — check that the file is named exactly <code>soul.md</code>.</p>
+</div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Warm persona</span><p class="text-sm text-neutral-400 mt-1">Patient and curious; celebrates the attempt.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">soul.md</span><p class="text-sm text-neutral-400 mt-1">Text file where the persona lives.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Interchangeable personas</span><p class="text-sm text-neutral-400 mt-1">"Story time," "lesson" — switches the active mode.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Appropriate tone</span><p class="text-sm text-neutral-400 mt-1">Language suited to the child’s age.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-6-2#topico-3" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🎙️ A voice that delights</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t3-p1">Many young children still can't read or write — so <strong>voice</strong> isn't a luxury; it's almost the only way in. The good news: you've already seen this plumbing in Track 5. There are two pieces, <strong class="text-rose-400">STT</strong> (listen) and <strong class="text-rose-400">TTS</strong> (speech), connected to the same brain. The child speaks; the system transcribes; the tutor thinks; and the response comes back as gentle speech.</p>
+<!-- SVG pipeline de voz -->
+<div class="rounded-2xl border border-rose-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="Voice pipeline: the child speaks, the audio is transcribed (STT), the brain thinks, the response becomes speech (TTS), and goes back to the child" class="w-full h-auto" role="img" viewbox="0 0 980 210">
+<defs>
+<filter height="180%" id="m62-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m62-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#f43f5e" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m62-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#fb7185"></path></marker>
+<marker id="m62-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m62-grid)" height="210" width="980" x="0" y="0"></rect>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="490" y="26">Voice goes back and forth—the brain in the middle doesn’t change</text>
+<g font-family="Inter,sans-serif">
+<rect fill="#2a0f16" height="62" rx="14" stroke="#fb7185" stroke-width="2" width="130" x="30" y="78"></rect><text fill="#fecdd3" font-size="13" text-anchor="middle" x="95" y="105">child</text><text fill="#fb7185" font-size="11" text-anchor="middle" x="95" y="123">speaking 🗣️</text>
+<path class="wf-a" d="M160,109 L208,109" fill="none" marker-end="url(#m62-ah)" stroke="#fb7185" stroke-width="2"></path>
+<rect fill="#0e1622" height="62" rx="14" stroke="#38bdf8" stroke-width="2" width="130" x="208" y="78"></rect><text fill="#bae6fd" font-size="13" text-anchor="middle" x="273" y="103">STT</text><text fill="#38bdf8" font-size="11" text-anchor="middle" x="273" y="121">speech → text</text>
+<path class="wf-a" d="M338,109 L386,109" fill="none" marker-end="url(#m62-ahc)" stroke="#38bdf8" stroke-width="2"></path>
+<g filter="url(#m62-glow)"><rect fill="#2a0f16" height="74" rx="16" stroke="#fb7185" stroke-width="2.5" width="148" x="386" y="72"></rect></g>
+<text fill="#fb7185" font-size="14" font-weight="700" text-anchor="middle" x="460" y="100">brain</text><text fill="#fecdd3" font-size="11" text-anchor="middle" x="460" y="120">tutor thinks 🧠</text>
+<path class="wf-a" d="M534,109 L582,109" fill="none" marker-end="url(#m62-ahc)" stroke="#38bdf8" stroke-width="2"></path>
+<rect fill="#0e1622" height="62" rx="14" stroke="#38bdf8" stroke-width="2" width="130" x="582" y="78"></rect><text fill="#bae6fd" font-size="13" text-anchor="middle" x="647" y="103">TTS</text><text fill="#38bdf8" font-size="11" text-anchor="middle" x="647" y="121">text → speech</text>
+<path class="wf-a" d="M712,109 L760,109" fill="none" marker-end="url(#m62-ah)" stroke="#fb7185" stroke-width="2"></path>
+<rect fill="#2a0f16" height="62" rx="14" stroke="#fb7185" stroke-width="2" width="130" x="760" y="78"></rect><text fill="#fecdd3" font-size="13" text-anchor="middle" x="825" y="105">child</text><text fill="#fb7185" font-size="11" text-anchor="middle" x="825" y="123">listen 👂</text>
+</g>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="273" y="170">e.g., Whisper</text>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="647" y="170">e.g., gentle voice (TTS)</text>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">In <span class="text-rose-400">rose</span>, the child’s side (speaks and listens); in <span class="text-sky-400">cyan</span>, the two-way translation (<span class="text-sky-400">STT</span> listen, <span class="text-sky-400">TTS</span> responds). At the center is the same brain you built — voice is just the <strong>interface</strong>, not a new brain.</p>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> What changes when it’s a child</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>A gentle voice and calm pace:</strong> no fast or robotic speech—choose a warm voice in TTS.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Patience with childlike speech:</strong> a child rambles, repeats themself, speaks softly — STT needs to handle this and never rush them.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Voice is optional, decided in the moment:</strong> by day can be text, and at night, voice for the bedtime story. “Voice output” is a runtime decision.</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> <strong>STT</strong> = “Speech To Text” (speech becomes text); the classic tool is <strong>Whisper</strong>. <strong>TTS</strong> = “Text To Speech” (text becomes speech). <strong>Runtime</strong> and "while it's running" — in other words, the system decides whether to respond by voice or text in the moment, depending on the situation. Track 5's key phrase: "<em>voice is the interface; the orchestrator is the brain</em>".</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">STT (Whisper)</span><p class="text-sm text-neutral-400 mt-1">Turns the child’s speech into text.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">TTS</span><p class="text-sm text-neutral-400 mt-1">Turns the response into gentle speech.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Voice and interface</span><p class="text-sm text-neutral-400 mt-1">The brain doesn’t change; voice is just the doorway.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Runtime decision</span><p class="text-sm text-neutral-400 mt-1">Voice or text, chosen in the moment.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-6-2#topico-4" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">💗 Emotional memory</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t4-p1">Think about the difference between an uncle who forgets your name every time and a grandmother who remembers that you love dinosaurs. The second <strong>builds a connection</strong>. It’s the same with an AI tutor: if it remembers the child’s name, favorite animal, and <strong>where the story left off</strong>, the child feels seen. That's <strong class="text-rose-400">emotional memory</strong> — and technically it’s the same persistent memory as Path 3.</p>
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center"><span class="text-rose-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Remembering who she is</h4><p class="text-sm text-neutral-400">Name, age, what they like. "Hi, Sofia! Dinosaurs again today?"</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center"><span class="text-rose-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Remembering where you left off</h4><p class="text-sm text-neutral-400">Yesterday’s story, the bill it still gets wrong. Continuity, not starting from scratch.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center"><span class="text-rose-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Adapt to her pace</h4><p class="text-sm text-neutral-400">If she already knows how to add, move on to subtraction. Memory guides the difficulty.</p></div>
+</div>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t4-p2">Under the hood, it’s simple and auditable: the memory lives in <strong>text files</strong> (<code class="text-rose-400">.md</code>, which any adult can open and read) plus a <strong>search index</strong> called SQLite FTS5/BM25—a fast way for the tutor to "remember" by finding the right note. No black box: you can read what it knows about the child.</p>
+<div class="bg-gradient-to-br from-rose-900/30 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-rose-400 mb-3 flex items-center"><span class="mr-2">⚖️</span> The beautiful side and the dangerous side of the same memory</h3>
+<p class="text-neutral-300 text-sm mb-3">Remembering creates affection—but <strong>emotional memory is exactly what makes goodbye painful</strong> (you’ll see this in topic 6). So, two rules: keep only what’s needed to teach well, and let parents read and delete whatever they want. A child’s memory is sensitive data.</p>
+<p class="text-neutral-400 text-xs">In module 6-3, this becomes COPPA and children's data privacy — the most serious chapter.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Emotional memory</span><p class="text-sm text-neutral-400 mt-1">Remembering names, preferences, and where you left off.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Continuity</span><p class="text-sm text-neutral-400 mt-1">Picks up the story instead of starting over.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">.md files + SQLite</span><p class="text-sm text-neutral-400 mt-1">Readable memory + fast search index.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Sensitive data</span><p class="text-sm text-neutral-400 mt-1">Store only what's necessary; parents can delete it.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-6-2#topico-5" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">🧸 The "doll" as a channel</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t5-p1">Here comes the magic—and also the most misunderstood part. When we put all this intelligence inside a <strong>stuffed teddy bear</strong>, it's easy to think the puppet "is" the tutor. It isn't. The puppet is just another <strong class="text-rose-400">channel</strong>: a microphone to listen and a speaker to talk. All the intelligence, persona, memory, and—most importantly—the <strong>security</strong> stay in the same old brain.</p>
+<!-- SVG: boneco -> cerebro+memoria+guardrails -->
+<div class="rounded-2xl border border-rose-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="The toy is just a channel (microphone and speaker) connected to the same brain, which carries the persona, memory, and safety guardrails" class="w-full h-auto" role="img" viewbox="0 0 980 230">
+<defs>
+<filter height="180%" id="m62b-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m62b-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#f43f5e" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m62b-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m62b-grid)" height="230" width="980" x="0" y="0"></rect>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="160" y="28">the toy = just one channel</text>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="700" y="28">the brain = where everything lives</text>
+<g font-family="Inter,sans-serif">
+<!-- boneco -->
+<g filter="url(#m62b-glow)">
+<circle cx="160" cy="120" fill="#2a0f16" r="46" stroke="#fb7185" stroke-width="2.5"></circle>
+</g>
+<circle cx="130" cy="86" fill="#2a0f16" r="16" stroke="#fb7185" stroke-width="2"></circle>
+<circle cx="190" cy="86" fill="#2a0f16" r="16" stroke="#fb7185" stroke-width="2"></circle>
+<circle cx="146" cy="112" fill="#fb7185" r="5"></circle><circle cx="174" cy="112" fill="#fb7185" r="5"></circle>
+<path d="M146,138 Q160,150 174,138" fill="none" stroke="#fb7185" stroke-width="2"></path>
+<text fill="#fecdd3" font-size="12" text-anchor="middle" x="160" y="192">🎤 listens · 🔊 speaks</text>
+<!-- seta -->
+<line stroke="#374151" stroke-dasharray="6 6" stroke-width="1.5" x1="225" x2="470" y1="120" y2="120"></line>
+<path d="M340,120 L388,120" fill="none" marker-end="url(#m62b-ah)" stroke="#38bdf8" stroke-width="2"></path>
+<text fill="#38bdf8" font-size="11" text-anchor="middle" x="305" y="108">audio</text>
+<!-- cerebro -->
+<rect fill="#160a10" height="128" rx="18" stroke="#fb7185" stroke-width="2" width="300" x="470" y="56"></rect>
+<text fill="#fb7185" font-size="14" font-weight="700" text-anchor="middle" x="620" y="84">the same brain</text>
+<g>
+<rect fill="#2a0f16" height="30" rx="9" stroke="#fb7185" stroke-width="1.5" width="120" x="492" y="100"></rect><text fill="#fecdd3" font-size="11" text-anchor="middle" x="552" y="120">persona</text>
+<rect fill="#2a0f16" height="30" rx="9" stroke="#fb7185" stroke-width="1.5" width="120" x="628" y="100"></rect><text fill="#fecdd3" font-size="11" text-anchor="middle" x="688" y="120">memory</text>
+<g filter="url(#m62b-glow)"><rect fill="#0e1622" height="30" rx="9" stroke="#38bdf8" stroke-width="2" width="120" x="560" y="140"></rect></g>
+<text fill="#38bdf8" font-size="11" font-weight="700" text-anchor="middle" x="620" y="160">guardrails 🛡️</text>
+</g>
+<!-- nuvem/local -->
+<rect fill="#0e1622" height="56" rx="13" stroke="#38bdf8" stroke-width="2" width="138" x="812" y="92"></rect>
+<text fill="#bae6fd" font-size="12" text-anchor="middle" x="881" y="116">runs on your PC</text>
+<text fill="#38bdf8" font-size="11" text-anchor="middle" x="881" y="134">or in the cloud</text>
+<path d="M770,120 L808,120" fill="none" marker-end="url(#m62b-ah)" stroke="#38bdf8" stroke-width="2"></path>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">O <span class="text-rose-400">teddy bear</span> only transports audio. Persona, memory, and the <span class="text-sky-400">guardrails</span> (with a sparkle, because they’re non-negotiable) live in the brain, which can run on your home PC or in the cloud. <strong>Changing the dummy doesn't change security</strong> — she’s on the other end of the line.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<h3 class="text-base font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Practical tip: the puppet doesn't "decide" anything</h3>
+<p class="text-sm text-neutral-300">Since the doll is just a channel, it <strong>doesn't have to be smart</strong> or store anything. It captures your voice, sends it to the brain, gets the speech back, and plays it. That's great for security: there's no "secret" inside the toy, and you can keep the brain local (at home), away from third-party servers.</p>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🧭</span> Why this is liberating</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>One brain, many bodies: the same tutor can be in the toy, on the tablet, or in the parents’ Telegram.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>If the doll breaks, the child’s “soul” isn’t lost—it’s in the files, in the brain.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>The whitelist and guardrails apply to every channel—the bot inherits the same protection.</span></li>
+</ul>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Doll = channel</span><p class="text-sm text-neutral-400 mt-1">Only a microphone + speaker; it's not the brain.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Brain in command</span><p class="text-sm text-neutral-400 mt-1">Persona, memory, and safeguards stay there.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">One brain, many bodies</span><p class="text-sm text-neutral-400 mt-1">Doll, tablet, Telegram — same soul.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Inherited security</span><p class="text-sm text-neutral-400 mt-1">Guardrails apply to every channel.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-6-2#topico-6" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">💔 The risk of attachment (the Moxie case)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t6-p1">Everything you just learned — a warm persona, a sweet voice, memory that remembers — has a powerful side effect: <strong>the child gets truly attached</strong>. To her, the character isn’t an app, it’s a <strong class="text-rose-400">friend</strong>. And it’s precisely because it works so well that it requires care. Dolls become friends. What happens when a friend suddenly stops talking?</p>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> Real case: the Moxie that “died”</h3>
+<p class="text-neutral-300 text-sm mb-3">O <strong>Moxie</strong> (from Embodied) was a little AI tutor robot that cost <strong>US$ 799</strong> and did exactly what this module describes: an affectionate persona, voice, memory, connection. In <strong>December 2024</strong>, the company went bankrupt. Because Moxie's brain ran on its servers, when it closed its doors, <strong>all the bots stopped working at once</strong> — became silent plush toys. Many families had to sit down with their children and explain that their little friend "had died."</p>
+<p class="text-neutral-400 text-xs">The lesson isn’t “don’t form a bond”—it’s “design with the knowledge that the bond exists, and don’t make the child depend on it in a way that hurts them.”</p>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t6-p2">Moxie teaches two mistakes to avoid. First, <strong>third-party server dependency</strong>: if the brain lives at the company, the toy's life depends on the company existing. That's why we advocate for <strong>local-first</strong> — a brain at home, in the family’s files, that no one can shut down. Second, <strong>dangerous emotional dependency</strong>: a healthy tutor strengthens real-world bonds (parents, friends, teachers); it never competes with them or positions itself as “the best friend the child has.”</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Design for a healthy bond</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Brain <strong>local-first</strong>: it won't disappear if a company shuts down.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>The tutor reinforces parents, friends, and teachers ("tell your mom!").</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Time limits; the character “goes to sleep” and encourages playing outside.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Honest about what it is: a helper, not a person.</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ The path that hurts</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>A brain tied to a fragile company's server.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Pretending to be your “best friend,” competing with real people.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Unlimited use, becoming the child's only companion.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Pretending to be human and hiding that it's an AI.</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> <strong>Bond</strong> and the emotional bond the child forms with the doll. <strong>Emotional dependency</strong> and it’s when this bond gets too strong and the child starts needing it to feel okay. <strong>Local-first</strong> ("local first") means keeping the brain on the family’s machine instead of on a company server — that way, no one from the outside can "turn off" your friend.</p>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-6-2#q1">
+<p class="font-medium mb-4">Self-check (optional): What is the biggest lesson from the Moxie case for someone designing a doll tutor?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">Never let the child become attached to the toy.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">The bond is real and powerful: design local-first and for healthy attachment, without dangerous dependence.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">Expensive AI dolls work better and don't have this risk.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3 mt-8">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Bond</span><p class="text-sm text-neutral-400 mt-1">The child gets attached to the puppet as if it were a friend.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">The Moxie case</span><p class="text-sm text-neutral-400 mt-1">US$799 robot "died" when the company went bankrupt (2024).</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Local-first</span><p class="text-sm text-neutral-400 mt-1">A brain at home doesn’t disappear if the company shuts down.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Emotional dependency</span><p class="text-sm text-neutral-400 mt-1">Design to strengthen real relationships, not replace them.</p></div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-8">
+<div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">The 4 foundations</strong><span class="text-neutral-400"> — persona, guardrails, channels/voice, and memory; the same Anatomy kit, with a childlike feel.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">Persona and voice</strong><span class="text-neutral-400"> — a warm soul.md and interchangeable personas; STT/TTS give the tutor a gentle ear and voice.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">Emotional memory</strong><span class="text-neutral-400"> — remembering names, preferences, and where you left off builds connection; in readable files that parents control.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">The toy is just a channel</strong><span class="text-neutral-400"> — microphone + speaker; the brain, persona, and safety are on the other end.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">The risk of attachment</strong><span class="text-neutral-400"> — the Moxie case: design local-first and for healthy attachment, without dangerous dependency.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-rose-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">6-3 — Safety, guardrails, and parents (non-negotiable): the most serious chapter, where safeguards become a contract.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 justify-start">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Back to the Track</a>
+<a class="flex-1 text-center px-6 py-3 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-500 transition-colors" href="modulo-6-3.html">Next module →</a>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+<p>🤖 Jarvis — Your AI Operating System</p>
+<p>Open course · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<!-- Scripts nucleo v1 -->
+<script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+<!-- Camada de aprendizagem -->
+<script src="../../../assets/learn.js"></script>
+<script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-6-2#q1', {
+          answer: 1,
+          explain: {
+            0: 'Quase ao contrario — o vinculo VAI existir e ate ajuda a ensinar. O ponto e projeta-lo com saude, nao proibi-lo.',
+            1: 'Isso! O apego e real e poderoso; o trabalho e manter o cerebro local-first e o vinculo saudavel, sem dependencia perigosa.',
+            2: 'Nao — o Moxie custava US$799 e justamente por depender do servidor da empresa "morreu" quando ela faliu. Preco nao protege.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

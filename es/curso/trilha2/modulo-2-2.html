@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="jarvis" name="inema-course"/>
+<title>Módulo 2.2 — La familia en casa: OpenClaw, GravityClaw, Hermes e Intelecto | Jarvis · INEMA.CLUB</title>
+<meta content="Conoce los cinco sistemas del ecosistema del curso — OpenClaw, GravityClaw, Intelecto, Antidote y Hermes — y lo que cada uno enseña sobre cómo construir un Jarvis seguro, lean y que realmente entiendas." name="description"/>
+<!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/30 { background-color: rgba(37,99,235,0.10); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+<link href="https://inematds.github.io/jarvis/curso/trilha2/modulo-2-2.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/jarvis/en/curso/trilha2/modulo-2-2.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/jarvis/es/curso/trilha2/modulo-2-2.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha2/modulo-2-2.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha2/modulo-2-2.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-2-2.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<a class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg" href="#conteudo">Saltar al contenido</a>
+<!-- NAVIGATION (completo, identico em todas as paginas) -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-3">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html" id="nav-t1">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10" href="../trilha2/index.html" id="nav-t2">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html" id="nav-t3">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomía</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html" id="nav-t4">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html" id="nav-t5">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html" id="nav-t6">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Niños</span>
+</a>
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-journey-open="" title="Mi recorrido" type="button">
+<span aria-hidden="true">◷</span><span class="hidden md:inline">Trayectoria</span>
+<span class="inema-journey-badge hidden" data-count="0" data-inema-journey-badge=""></span>
+</button>
+<div class="relative">
+<button aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-appearance-toggle="[data-inema-appearance]" title="Apariencia" type="button">
+<span aria-hidden="true">◑</span><span class="hidden md:inline">Apariencia</span>
+</button>
+<div class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left" data-inema-appearance="">
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="inema-dark">Oscuro</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="claro">Claro</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="sepia">Sepia</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="foco">Enfoque</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="contraste">Alto contraste</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Fuente</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="inter">Inter</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="system">Sistema</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="leitura">Lectura</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Tamaño</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="100">A</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="112">A+</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="125">A++</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Entre líneas</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.45">Compacto</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.7">Cómodo</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+<div class="inema-accent-grid flex flex-wrap gap-2">
+<button class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" data-inema-set-accent="emerald" title="Esmeralda"></button>
+<button class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" data-inema-set-accent="blue" title="Blue"></button>
+<button class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" data-inema-set-accent="purple" title="Purple"></button>
+<button class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" data-inema-set-accent="amber" title="Amber"></button>
+<button class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" data-inema-set-accent="teal" title="Verde azulado"></button>
+<button class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" data-inema-set-accent="rose" title="Rose"></button>
+</div>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" id="theme-toggle" title="Alternar entre modo claro y oscuro">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main id="conteudo">
+<header class="bg-gradient-to-br from-blue-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+<a class="hover:text-blue-400" href="../../index.html">Inicio</a><span>/</span>
+<a class="hover:text-blue-400" href="index.html">Ruta 2</a><span>/</span>
+<span class="text-blue-400">Módulo 2.2</span>
+</nav>
+<span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-4">MÓDULO 2-2</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🏠 La familia en casa: OpenClaw, GravityClaw, Hermes e Intelecto</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">En el módulo anterior aprendiste a comparar sistemas. Ahora vamos a conocer la «familia» que nació de una idea común —un asistente personal que ejecutas y gobiernas— y a ver, lado a lado, qué acertó y qué falló cada uno. Desde el gigante popular (y peligrosamente expuesto) hasta el antiframework de 3.000 líneas, y la lección de seguridad que lo conecta todo.</p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">6</div><div class="text-xs text-neutral-400">Temas</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">~35</div><div class="text-xs text-neutral-400">Minutos</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">Principiante</div><div class="text-xs text-neutral-400">Nivel</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">Panorama</div><div class="text-xs text-neutral-400">Tipo</div></div>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="lg:flex lg:gap-10">
+<!-- TOC sticky -->
+<aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+<nav aria-label="Índice de la página" class="lg:sticky lg:top-20" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-2">Sección <span class="inema-toc-pos" data-inema-section-counter="">1</span> de 6</p>
+<ol class="space-y-1 text-sm">
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400" href="#topico-1">1. OpenClaw, el original</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400" href="#topico-2">2. GravityClaw, ligero y seguro</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400" href="#topico-3">3. Intelecto, el anti-framework</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400" href="#topico-4">4. Antidote</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400" href="#topico-5">5. Hermes / claude-hermes-os</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400" href="#topico-6">6. La lección de seguridad</a></li>
+</ol>
+<div aria-label="Progreso del módulo 2.2" aria-valuemax="100" aria-valuemin="0" class="mt-4" data-inema-meter="modulo:2-2" role="progressbar">
+<div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-blue-500" data-inema-meter-fill="" style="width:0%"></div></div>
+<span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 de 6</span> · <span data-inema-meter-pct="">0%</span></span>
+</div>
+</nav>
+</aside>
+<div class="lg:flex-1 min-w-0 inema-prose">
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-2-2#topico-1" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🦾 OpenClaw, el original</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m22-t1-p1">Toda familia tiene un hermano mayor que abrió el camino, y aquí se llama <strong class="text-blue-400">OpenClaw</strong>. Lanzado a principios de 2026, se convirtió en un fenómeno: superó los <strong>250 mil estrellas en GitHub</strong> (una «estrella» equivale a un «me gusta» de los desarrolladores), lo que demuestra que mucha gente quería lo mismo: un asistente personal de IA que conversa, recuerda y actúa, bajo tu control y no dentro del chatbot cerrado de una empresa.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m22-t1-p2">OpenClaw ofrecía prácticamente todo lo que imaginas en un “Jarvis”: varios <strong>canales</strong> (las formas de hablar con él —Telegram, web, voz), el <strong>bucle de herramientas</strong> (el ciclo en el que el asistente decide llamar a una herramienta, lee el resultado y sigue), memoria, voz y un catálogo enorme de <strong>700+ skills de la comunidad</strong> (recetas listas que cualquiera podía descargar). Tenía hasta <strong>heartbeat</strong> — un «latido» automático que hace que el agente se despierte solo cada cierto tiempo para las tareas programadas. Ambicioso y completo. El problema no era la visión, sino el precio que exigía.</p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> OpenClaw en cifras</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>250.000+ estrellas</strong> — explosión de popularidad a principios de 2026.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>700+ skills</strong> de la comunidad: cualquiera podía publicar y descargar recetas.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>100 mil+ líneas de código</strong> — potente, pero demasiado grande para que alguien lo lea de principio a fin.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>US$ 500 a US$ 5.000 por mes</strong> — con un uso intensivo, la factura de la nube podía dispararse.</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> El lado oscuro del éxito</h3>
+<p class="text-neutral-300 text-sm mb-3">La popularidad dejó al descubierto dos heridas. Primera: OpenClaw iniciaba un <strong>servidor web</strong> (un programa que se queda escuchando conexiones por internet). Un análisis encontró <strong>42.665 instancias públicas</strong> en la red abierta, y <strong>93,4% de ellas sin ninguna contraseña</strong>. Era como dejar la puerta de casa abierta de par en par para que cualquiera entrara y usara (o leyera) tu asistente.</p>
+<p class="text-neutral-300 text-sm">Segundo: el catálogo abierto de skills se convirtió en un vector de ataque. Los investigadores encontraron <strong>341 skills maliciosas</strong> — recetas que parecían útiles, pero robaban datos o ejecutaban comandos peligrosos. Confiar en el código de un desconocido salió caro.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">¿Eres nuevo aquí?</strong> «Skill» es una receta empaquetada — un archivo que enseña al asistente a realizar una tarea repetitiva (ej.: «resumir mi día»). «Heartbeat» es un disparador de tiempo que hace que el agente actúe por su cuenta sin que se lo pidas. Y «instancia expuesta» quiere decir una copia del programa accesible desde la internet pública, en vez de estar solo en tu máquina.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">El original</span><p class="text-sm text-neutral-400 mt-1">OpenClaw abrió la categoría de "Jarvis personal" para las masas.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Servidor web expuesto</span><p class="text-sm text-neutral-400 mt-1">42.665 instancias públicas, 93,4% sin contraseña — la mayor brecha.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Skills de terceros</span><p class="text-sm text-neutral-400 mt-1">700+ útiles, pero 341 maliciosas escondidas entre ellas.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Engorde</span><p class="text-sm text-neutral-400 mt-1">100K+ líneas y hasta US$5K/mes: poder con costos y riesgos altos.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-2-2#topico-2" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">🛡️ GravityClaw, lean y seguro</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m22-t2-p1">Si OpenClaw fue el hermano ambicioso y expuesto, el <strong class="text-blue-400">GravityClaw</strong> y es la respuesta breve y cuidadosa. Es una <strong>reimplementación</strong> (una reescritura desde cero de la misma idea) hecha en TypeScript, con un lema que lo resume todo: <em>"un agente personal lean, seguro y totalmente comprendido"</em>. «Lean» significa ligero: solo lo necesario. Y «totalmente comprendido» es la parte más importante: código lo bastante pequeño para que tú mismo puedas leer y entender cada parte.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m22-t2-p2">La primera gran decisión de GravityClaw fue cerrar la puerta que hundió a OpenClaw: <strong>solo Telegram</strong>, y por <strong>long-polling</strong>. El long-polling es una técnica en la que TU programa se conecta al servidor de Telegram para preguntar "¿hay algún mensaje nuevo?", en vez de abrir un servidor web y esperar a que todo el mundo toque a tu puerta. El efecto práctico: <strong class="text-blue-400">cero puertos abiertos</strong> en internet: esas 42.665 instancias expuestas simplemente no pueden ocurrir aquí.</p>
+<div class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="Comparación: OpenClaw abre un servidor web expuesto a todo Internet; GravityClaw usa long-polling, sin puertos, solo se comunica con Telegram" class="w-full h-auto" role="img" viewbox="0 0 980 240">
+<defs>
+<filter height="180%" id="m22-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m22-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#3b82f6" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m22-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+<marker id="m22-x" markerheight="12" markerwidth="12" orient="auto" refx="6" refy="6"><path d="M2,2 L10,10 M10,2 L2,10" stroke="#f87171" stroke-width="2"></path></marker>
+</defs>
+<rect fill="url(#m22-grid)" height="240" width="980" x="0" y="0"></rect>
+<text fill="#f87171" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="245" y="28">OpenClaw · servidor web expuesto</text>
+<g font-family="Inter,sans-serif">
+<text fill="#9ca3af" font-size="12" text-anchor="middle" x="135" y="72">internet entera</text>
+<path d="M70,90 L210,135" fill="none" marker-end="url(#m22-ah)" stroke="#f87171" stroke-dasharray="5 5" stroke-width="2"></path>
+<path d="M110,82 L210,135" fill="none" marker-end="url(#m22-ah)" stroke="#f87171" stroke-dasharray="5 5" stroke-width="2"></path>
+<path d="M160,80 L210,135" fill="none" marker-end="url(#m22-ah)" stroke="#f87171" stroke-dasharray="5 5" stroke-width="2"></path>
+<rect fill="#2a0f10" height="64" rx="13" stroke="#f87171" stroke-width="2.5" width="160" x="210" y="110"></rect>
+<text fill="#fca5a5" font-size="14" font-weight="700" text-anchor="middle" x="290" y="138">puerta abierta</text>
+<text fill="#f87171" font-size="12" text-anchor="middle" x="290" y="158">93,4% sin contraseña</text>
+</g>
+<line stroke="#374151" stroke-dasharray="6 6" stroke-width="1.5" x1="490" x2="490" y1="36" y2="208"></line>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="735" y="28">GravityClaw · sondeo largo, sin puertos</text>
+<g font-family="Inter,sans-serif">
+<g filter="url(#m22-glow)"><rect fill="#0e1622" height="64" rx="14" stroke="#60a5fa" stroke-width="2.5" width="160" x="560" y="110"></rect></g>
+<text fill="#60a5fa" font-size="14" font-weight="700" text-anchor="middle" x="640" y="138">tu agente</text>
+<text fill="#93c5fd" font-size="12" text-anchor="middle" x="640" y="158">cero puertos</text>
+<path d="M720,142 L820,142" fill="none" marker-end="url(#m22-ah)" stroke="#38bdf8" stroke-width="2"></path>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="770" y="132">"¿hay algún mensaje?"</text>
+<rect fill="#0e1622" height="60" rx="13" stroke="#38bdf8" stroke-width="2" width="130" x="820" y="112"></rect>
+<text fill="#bae6fd" font-size="13" text-anchor="middle" x="885" y="147">Telegram</text>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">A la izquierda, OpenClaw <span class="text-red-400">abre una puerta</span> y toda internet puede atacarla; a la derecha, GravityClaw <span class="text-blue-400">solo se conecta a Telegram</span> preguntando si llegó un mensaje: nadie puede iniciar una conexión con él. La misma función, con el riesgo opuesto.</p>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m22-t2-p3">La segunda decisión fue sobre las herramientas. En lugar del catálogo de skills de desconocidos que contaminó OpenClaw, GravityClaw es <strong>solo MCP</strong>. MCP (Model Context Protocol) es un estándar abierto, creado por Anthropic, para conectar herramientas con agentes. Piensa en él como el "USB de las herramientas de IA": cada integración es un conector estandarizado y <strong>auditable</strong> (que puedes inspeccionar). El resto es coherente con la filosofía: costo <strong>fijo</strong> (cerca de US$200) o ejecutándose localmente, y está construido <em>brick-by-brick</em> — ladrillo por ladrillo, cada pieza probada antes de pasar a la siguiente.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Lo que elige GravityClaw</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Solo Telegram, mediante long-polling: <strong>cero puertos</strong> abiertas.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Solo MCP: herramientas estandarizadas y auditables.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Costo predecible (~US$200 fijo) o 100% local.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Código conciso que te resulta fácil de entender.</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Lo que rechaza a propósito</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Servidor web expuesto a Internet.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Descargar skills de autores desconocidos.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Cuenta en la nube que puede dispararse a US$5K.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>100 mil líneas que nadie puede auditar.</span></li>
+</ul>
+</div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Reimplementación lean</span><p class="text-sm text-neutral-400 mt-1">La misma idea de OpenClaw, reescrita de forma concisa en TypeScript.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Long-polling</span><p class="text-sm text-neutral-400 mt-1">Preguntas a Telegram; nadie toca a tu puerta. Cero puertas.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Solo MCP</span><p class="text-sm text-neutral-400 mt-1">Herramientas mediante un estándar auditable, en lugar de skills de terceros.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Brick-by-brick</span><p class="text-sm text-neutral-400 mt-1">Construir ladrillo por ladrillo, entendiendo cada pieza.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-2-2#topico-3" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🪶 Intelecto, el anti-framework</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m22-t3-p1">Si GravityClaw es ligero, el <strong class="text-blue-400">Intelecto</strong> lleva el «menos es más» al extremo. Se llama <strong>anti-framework</strong>: mientras que un framework es una estructura grande y genérica que adoptas completa (y rara vez lees), Intelecto es lo opuesto: alrededor de <strong>3.000 líneas de Python</strong>, sin Docker, sin panel web, sin capas que ocultan el funcionamiento. La tesis es provocadora: <em>el código que entiendes vale más que el código que clonas y nunca lees</em>.</p>
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🧩</span> Las decisiones del Intelecto</h3>
+<p class="text-neutral-300 mb-4 text-sm">Cada decisión del proyecto apunta a la simplicidad y al control:</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-1">•</span><span><strong>Canal:</strong> solo Telegram, como toda la familia: simple y sin puertos expuestos.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-1">•</span><span><strong>Memoria:</strong> archivos de texto + un índice <strong>SQLite FTS5/BM25</strong> para búsqueda rápida.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-1">•</span><span><strong>Personalidad:</strong> tres archivos — <strong>SOUL</strong>, <strong>AGENTS</strong> e <strong>USUARIO</strong>.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-1">•</span><span><strong>Cerebro:</strong> nube (vía OpenRouter) o local (vía Ollama), tú eliges.</span></li>
+</ul>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m22-t3-p2">Vale la pena desglosar dos puntos. La memoria usa <strong>SQLite FTS5 con BM25</strong>: SQLite es una base de datos que cabe en un único archivo; FTS5 es su módulo de «búsqueda de texto completo»; y BM25 es la fórmula clásica que ordena los resultados por relevancia (la misma idea detrás de un buscador). En otras palabras: encuentra rápido la nota correcta entre miles, sin un servicio externo. En cambio, la personalidad vive en <strong>archivos legibles</strong>: o <strong>SOUL.md</strong> guarda quién es él (valores, tono de voz); el <strong>AGENTS.md</strong>, lo que siempre o nunca hace; y el <strong>USUARIO</strong>, quién eres. Editas el "alma" del asistente en un editor de texto, sin programar.</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">¿Eres nuevo aquí?</strong> "Framework" es una estructura de software lista y genérica que adoptas por completo. "SQLite" es una base de datos ligera, guardada en un solo archivo. "OpenRouter" es un portal que da acceso a varios modelos en la nube con una sola clave; "Ollama" es el programa que ejecuta modelos en TU computadora, gratis. "SOUL.md" es simplemente un archivo de texto con la personalidad del asistente.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Antiframework</span><p class="text-sm text-neutral-400 mt-1">~3.000 líneas que lees completas, sin Docker ni web UI.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">FTS5 / BM25</span><p class="text-sm text-neutral-400 mt-1">Búsqueda de texto clasificada por relevancia, dentro del propio SQLite.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">SOUL / AGENTS / USER</span><p class="text-sm text-neutral-400 mt-1">Personalidad, reglas y perfil: todo en archivos editables.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Nube o local</span><p class="text-sm text-neutral-400 mt-1">OpenRouter (nube) u Ollama (local), intercambiables sin reescribir.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-2-2#topico-4" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">💊 Antidote</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m22-t4-p1">O <strong class="text-blue-400">Antídoto</strong> y es pariente cercano de Intelecto: mismo proyecto, misma stack, en una etapa aún más sencilla. Piensa en él como una versión «destilada» de la misma idea. Dos características lo hacen interesante para quienes están empezando: <strong>genera un archivo <code class="text-blue-400 font-mono text-xs">.md</code></strong> que es 100% <strong>tool-agnostic</strong>, y él <strong>viene con una guía de build paso a paso</strong>.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m22-t4-p2"><strong>Tool-agnostic</strong> quiere decir "que no depende de una herramienta específica". Antidote genera la descripción de tu asistente como un documento de texto común (<code class="text-blue-400 font-mono text-xs">.md</code>, formato Markdown) — y ese mismo archivo se puede usar dentro de Codex, Gemini, Cursor o cualquier otro entorno de IA. En vez de atarte a un programa, te ofrece una receta portátil que viaja entre plataformas.</p>
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">La misma raíz de Intelecto</h4><p class="text-sm text-neutral-400">El mismo stack y la filosofía de «menos es más», en una forma más reducida y directa.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Salida tool-agnostic (.md)</h4><p class="text-sm text-neutral-400">Genera un Markdown portátil que funciona en Codex, Gemini, Cursor, sin ataduras.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Guía de build paso a paso</h4><p class="text-sm text-neutral-400">Tiene documentación para construir desde cero — un buen punto de entrada para principiantes.</p></div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<h3 class="text-base font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Por qué esto te importa</h3>
+<p class="text-sm text-neutral-300">Una receta <strong>tool-agnostic</strong> y un seguro contra el futuro: si cambia la herramienta de moda (y siempre cambia), la descripción de tu asistente sigue siendo válida. No tienes que reconstruir todo; solo apuntas el mismo archivo al nuevo entorno. Portabilidad es libertad.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Primo del intelecto</span><p class="text-sm text-neutral-400 mt-1">El mismo proyecto/stack, en una etapa más sencilla.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Tool-agnostic</span><p class="text-sm text-neutral-400 mt-1">No depende de una herramienta: funciona en Codex, Gemini, Cursor.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Salida en .md</span><p class="text-sm text-neutral-400 mt-1">Un Markdown portátil como artefacto principal.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Guía de build</span><p class="text-sm text-neutral-400 mt-1">Paso a paso documentado para construir desde cero.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-2-2#topico-5" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">🪽 Hermes / claude-hermes-os</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m22-t5-p1">Cuidado con confundirlos: hay <strong>dos</strong> proyectos con nombres parecidos, y hacen cosas diferentes. El <strong class="text-blue-400">Hermes</strong> y es un agente self-hosted («self-hosted» = que tú mismo alojas y ejecutas) con la marca <em>"un cerebro, varias bocas"</em> — un único núcleo de IA que habla por varios canales y puede usar varios modelos. En cambio, el <strong class="text-blue-400">claude-hermes-os</strong> y es otra cosa: un <strong>panel local de solo lectura</strong> (solo lectura) lo que ya tienes, sin actuar por ti.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-3 flex items-center"><span class="mr-2">🪽</span> Hermes (el agente)</h4>
+<p class="text-sm text-neutral-300 mb-3">Un agente completo que une las piezas y se convierte en casi todo un «SO de IA»:</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Memoria, personas y skills propias.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Herramientas vía MCP y tareas programadas (cron).</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>«Un cerebro, varias bocas»: varios modelos detrás de varios canales.</span></li>
+</ul>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-3 flex items-center"><span class="mr-2">🖥️</span> claude-hermes-os (el panel)</h4>
+<p class="text-sm text-neutral-300 mb-3">Un observador local que LEE lo que ya usas, sin modificar nada:</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Lee Claude Code, Codex, OpenClaw, Obsidian, Pinecone.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Muestra el gasto, una memoria en 3D y sus skills.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Tiene "Dream": una mejora automática diaria de las skills.</span></li>
+</ul>
+</div>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m22-t5-p2">La marca <em>"un cerebro, varias bocas"</em> merece atención porque es fácil entenderlo mal. No significa que varios modelos voten juntos para dar una respuesta. Significa que el <strong>el motor de IA es intercambiable</strong>: puedes conectar un modelo local económico para tareas simples y un modelo potente en la nube para las difíciles — y el mismo Hermes habla por Telegram, web o voz (las "bocas"). Un núcleo, muchas salidas. Y es <strong>"Dream"</strong> del panel es un detalle encantador: una rutina que, todos los días, revisa y refina las recetas (skills) que usaste, como si el sistema "durmiera y organizara lo aprendido".</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">¿Eres nuevo aquí?</strong> «Self-hosted» = se ejecuta en tu propio servidor/computadora, bajo tu control. «Read-only» = solo observa, nunca modifica. «Whitelist» (lo veremos en el siguiente tema) es la lista de quién tiene permiso — solo se atiende a esas personas, el resto se ignora. Y «cron» es un programador que activa tareas en horarios fijos (ej.: un resumen todos los días a las 7h).</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Hermes (agente)</span><p class="text-sm text-neutral-400 mt-1">Self-hosted, memoria+personas+skills+MCP+cron: casi un SO de IA.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">claude-hermes-os (panel)</span><p class="text-sm text-neutral-400 mt-1">Observador de solo lectura que lee tus herramientas y muestra gasto/memoria/skills.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Un cerebro, varias bocas</span><p class="text-sm text-neutral-400 mt-1">Motor intercambiable + varios canales — no es una votación de modelos.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">"Dream"</span><p class="text-sm text-neutral-400 mt-1">Mejora diaria de las skills en el panel.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-2-2#topico-6" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🔐 La lección de seguridad</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m22-t6-p1">Si vas a guardar una sola cosa de este módulo, que sea esta: los dos mayores desastres de la familia se debieron a <strong>seguridad</strong>, no de inteligencia. OpenClaw no falló por ser "tonto", sino por <strong class="text-blue-400">exponer un puerto</strong> (42.665 instancias abiertas) y por <strong class="text-blue-400">confiar en código de un desconocido</strong> (341 skills maliciosas). En el fondo, lo único que hicieron de manera diferente GravityClaw, Intelecto y Antidote fue cerrar esos dos agujeros.</p>
+<div class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="Los dos huecos de OpenClaw — puerto abierto y skill de un desconocido — y los cuatro pilares del camino seguro: sin puertos, solo MCP, local-first y whitelist" class="w-full h-auto" role="img" viewbox="0 0 980 230">
+<defs>
+<filter height="180%" id="m22b-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m22b-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#3b82f6" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m22b-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m22b-grid)" height="230" width="980" x="0" y="0"></rect>
+<text fill="#f87171" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="200" y="28">los 2 agujeros</text>
+<g font-family="Inter,sans-serif">
+<rect fill="#2a0f10" height="50" rx="12" stroke="#f87171" stroke-width="2" width="280" x="60" y="50"></rect><text fill="#fca5a5" font-size="13" text-anchor="middle" x="200" y="80">puerta abierta · 93,4% sin contraseña</text>
+<rect fill="#2a0f10" height="50" rx="12" stroke="#f87171" stroke-width="2" width="280" x="60" y="118"></rect><text fill="#fca5a5" font-size="13" text-anchor="middle" x="200" y="148">skill de terceros · 341 maliciosas</text>
+</g>
+<path d="M360,109 L430,115" fill="none" marker-end="url(#m22b-ah)" stroke="#38bdf8" stroke-width="2"></path>
+<path d="M360,109 L430,165" fill="none" marker-end="url(#m22b-ah)" stroke="#38bdf8" stroke-width="2"></path>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="640" y="28">el camino seguro</text>
+<g font-family="Inter,sans-serif">
+<g class="wf-a"><rect fill="#0e1622" height="44" rx="11" stroke="#60a5fa" stroke-width="2" width="230" x="440" y="44"></rect><text fill="#93c5fd" font-size="13" text-anchor="middle" x="555" y="71">sin puertos (long-polling)</text></g>
+<g class="wf-a"><rect fill="#0e1622" height="44" rx="11" stroke="#60a5fa" stroke-width="2" width="230" x="440" y="98"></rect><text fill="#93c5fd" font-size="13" text-anchor="middle" x="555" y="125">solo MCP (auditable)</text></g>
+<g class="wf-a"><rect fill="#0e1622" height="44" rx="11" stroke="#60a5fa" stroke-width="2" width="220" x="700" y="44"></rect><text fill="#93c5fd" font-size="13" text-anchor="middle" x="810" y="71">local-first</text></g>
+<g class="wf-a"><g filter="url(#m22b-glow)"><rect fill="#0e1622" height="44" rx="11" stroke="#38bdf8" stroke-width="2.5" width="220" x="700" y="98"></rect></g><text fill="#bae6fd" font-size="13" font-weight="700" text-anchor="middle" x="810" y="125">lista de permitidos</text></g>
+<text fill="#9ca3af" font-size="12" text-anchor="middle" x="680" y="190">4 bloqueos que, juntos, cierran los 2 agujeros del original</text>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">A la izquierda, los <span class="text-red-400">dos agujeros</span> que derribaron OpenClaw; a la derecha, los cuatro bloqueos de <span class="text-blue-400">camino seguro</span>. <strong>Sin puertos</strong> e <strong>local-first</strong> cierran la exposición; <strong>solo MCP</strong> e <strong>lista de permitidos</strong> cierran la confianza ciega. Fíjate: ninguna exige genialidad; requieren disciplina.</p>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m22-t6-p2">El cuarto bloqueo, la <strong>lista de permitidos</strong>, y es la más simple y la más subestimada. Es una lista de quién puede usar el asistente; normalmente, solo tu identificador de Telegram. Cualquier mensaje de otra persona se ignora en silencio. Esa es la diferencia entre un asistente que solo te atiende a ti y uno que, por descuido, atiende a todo Internet.</p>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> El error que no debes repetir</h3>
+<p class="text-neutral-300 text-sm">Construir un Jarvis poderoso y emocionante, y es precisamente en ese entusiasmo donde aparece el descuido. «Déjalo expuesto solo para probar», «descargué esta skill que parecía útil»: fueron esas frases las que produjeron 42.665 puertos abiertos y 341 recetas envenenadas. La seguridad no es un módulo avanzado que puedas dejar para después; es la base, desde el primer ladrillo.</p>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 mb-6 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-2-2#q1">
+<p class="font-medium mb-4">Autoevaluación (opcional): ¿qué frase resume la lección de seguridad de la familia?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">OpenClaw falló porque el modelo de IA era demasiado débil.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">Los huecos fueron de seguridad (puerto expuesto + skill de un desconocido); el camino seguro es sin puertos, solo MCP, local-first y whitelist.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">Cuantas más skills de la comunidad instales, más seguro será el asistente.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Los 2 huecos</span><p class="text-sm text-neutral-400 mt-1">Puerto expuesto + confianza en código de desconocidos.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Sin puertos + local-first</span><p class="text-sm text-neutral-400 mt-1">Long-polling y ejecutar localmente cierran la exposición.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Solo MCP</span><p class="text-sm text-neutral-400 mt-1">Herramientas auditables en lugar de skills de terceros.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Lista de permitidos</span><p class="text-sm text-neutral-400 mt-1">Solo se atiende a tu ID; el resto se ignora en silencio.</p></div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-8">
+<div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumen del módulo</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">OpenClaw, el original</strong><span class="text-neutral-400"> — popularizó el Jarvis personal (250K+ estrellas), pero tuvo un costo alto: una puerta expuesta, 341 skills maliciosas y hasta US$5K/mes.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">GravityClaw, ligero y seguro</strong><span class="text-neutral-400"> — solo Telegram mediante long-polling (cero puertos), solo MCP, costo fijo, ladrillo por ladrillo.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Intelecto y Antidote</strong><span class="text-neutral-400"> — el antiframework de ~3.000 líneas (SOUL/AGENTS/USER, SQLite FTS5) y su primo destilado, con salida .md tool-agnostic.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">Hermes y la lección de seguridad</strong><span class="text-neutral-400"> — "un cerebro, varias bocas" + panel de solo lectura; es el camino seguro: sin puertos, solo MCP, local-first y lista de permitidos.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-blue-400 mb-2">Siguiente módulo:</h3>
+<p class="text-neutral-300">2-3 — El mundo allá afuera (AIOS, MemGPT, Operator) y el camino</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Volver a la Trilha</a>
+<a class="flex-1 text-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-colors" href="modulo-2-3.html">Siguiente módulo →</a>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+<p>🤖 Jarvis — Tu sistema operativo de IA</p>
+<p>Curso abierto · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<!-- Scripts nucleo v1 -->
+<script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+<!-- Camada de aprendizagem -->
+<script src="../../../assets/learn.js"></script>
+<script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-2-2#q1', {
+          answer: 1,
+          explain: {
+            0: 'Nao — o modelo de IA do OpenClaw era capaz; o que falhou foi a seguranca (exposicao e confianca em codigo de estranho).',
+            1: 'Isso! Os furos foram de seguranca, e a familia mostrou as quatro travas: sem portas, so MCP, local-first e whitelist.',
+            2: 'Pelo contrario — foi justamente baixar skills de terceiros que trouxe as 341 receitas maliciosas.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

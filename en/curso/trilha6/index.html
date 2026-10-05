@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="jarvis" name="inema-course"/>
+<title>Track 6 · Jarvis for children | Jarvis · INEMA.CLUB</title>
+<meta content="A tutor that teaches by asking questions: the Socratic method, a persona/voice/character, and non-negotiable safety for using AI around children." name="description"/>
+<!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+<link href="https://inematds.github.io/jarvis/curso/trilha6/" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/jarvis/en/curso/trilha6/" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/jarvis/es/curso/trilha6/" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha6/" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="./" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha6/" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg" href="#conteudo">Skip to content</a>
+<!-- NAVIGATION (completo, identico em todas as paginas) -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-3">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html" id="nav-t1">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentals</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html" id="nav-t2">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Overview</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html" id="nav-t3">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomy</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html" id="nav-t4">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Build</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html" id="nav-t5">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Cell phone</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-rose-400 bg-rose-500/10" href="../trilha6/index.html" id="nav-t6">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Children</span>
+</a>
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-journey-open="" title="My journey" type="button">
+<span aria-hidden="true">◷</span><span class="hidden md:inline">Journey</span>
+<span class="inema-journey-badge hidden" data-count="0" data-inema-journey-badge=""></span>
+</button>
+<div class="relative">
+<button aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-appearance-toggle="[data-inema-appearance]" title="Appearance" type="button">
+<span aria-hidden="true">◑</span><span class="hidden md:inline">Appearance</span>
+</button>
+<div class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left" data-inema-appearance="">
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Theme</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="inema-dark">Dark</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="claro">Clear</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="sepia">Sepia</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="foco">Focus</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="contraste">High contrast</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Source</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="inter">Inter</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="system">System</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="leitura">Reading</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Size</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="100">A</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="112">A+</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="125">A++</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Subtext</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.45">Compact</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.7">Comfortable</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Accent</p>
+<div class="inema-accent-grid flex flex-wrap gap-2">
+<button class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" data-inema-set-accent="emerald" title="Emerald"></button>
+<button class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" data-inema-set-accent="blue" title="Blue"></button>
+<button class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" data-inema-set-accent="purple" title="Purple"></button>
+<button class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" data-inema-set-accent="amber" title="Amber"></button>
+<button class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" data-inema-set-accent="teal" title="Teal"></button>
+<button class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" data-inema-set-accent="rose" title="Rose"></button>
+</div>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" id="theme-toggle" title="Toggle light/dark">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main id="conteudo">
+<header class="bg-gradient-to-br from-rose-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+<a class="hover:text-rose-400" href="../../index.html">Start</a><span>/</span><span class="text-rose-400">Track 6</span>
+</nav>
+<span class="inline-block px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-full mb-4">TRACK 6</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🧸 Jarvis for kids</h1>
+<p class="text-lg text-neutral-400 max-w-3xl mb-6">A tutor that teaches <strong>asking</strong> instead of giving the ready-made answer—the Socratic method. Here you’ll see how to give this tutor a welcoming persona, a voice, even an avatar, and the safety layer that isn’t optional around children: it’s non-negotiable.</p>
+<div class="rounded-2xl border border-rose-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="The three layers of Track 6: the Socratic method that teaches by asking questions, the persona with a voice and avatar that gives the tutor a presence, and the security barrier that filters every response before it reaches the child" class="w-full h-auto" role="img" viewbox="0 0 1000 230">
+<defs>
+<lineargradient id="t6h-grad" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#fb7185"></stop><stop offset="1" stop-color="#f43f5e"></stop></lineargradient>
+<filter height="180%" id="t6h-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="t6h-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#f43f5e" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="t6h-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#fb7185"></path></marker>
+<marker id="t6h-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#t6h-grid)" height="230" width="1000" x="0" y="0"></rect>
+<g font-family="Inter,sans-serif">
+<!-- crianca -->
+<rect fill="#0e1b26" height="62" rx="14" stroke="#38bdf8" stroke-width="2" width="150" x="36" y="84"></rect>
+<text fill="#9ad6ff" font-size="15" font-weight="600" text-anchor="middle" x="111" y="112">child</text>
+<text fill="#bfe6ff" font-size="11" text-anchor="middle" x="111" y="132">asks a question</text>
+<path d="M186,115 L250,115" fill="none" marker-end="url(#t6h-ahc)" stroke="#38bdf8" stroke-width="1.8"></path>
+<!-- tutor socratico -->
+<g filter="url(#t6h-glow)"><rect fill="url(#t6h-grad)" height="82" opacity="0.16" rx="16" stroke="url(#t6h-grad)" stroke-width="2.5" width="190" x="250" y="74"></rect></g>
+<text fill="#fb7185" font-size="16" font-weight="700" text-anchor="middle" x="345" y="104">Socratic tutor</text>
+<text fill="#fecdd3" font-size="11" text-anchor="middle" x="345" y="128">returns with a question</text>
+<!-- persona + boneco -->
+<g fill="none" opacity="0.7" stroke="#fb7185" stroke-width="2">
+<path d="M440,95  C520,95 540,64 620,64" marker-end="url(#t6h-ah)"></path>
+<path d="M440,115 L620,115" marker-end="url(#t6h-ah)"></path>
+<path d="M440,135 C520,135 540,166 620,166" marker-end="url(#t6h-ah)"></path>
+</g>
+<g font-size="12" font-weight="600">
+<g class="wf-a"><rect fill="#2a0f16" height="32" rx="9" stroke="#fb7185" stroke-width="2" width="160" x="620" y="48"></rect><text fill="#fecdd3" text-anchor="middle" x="700" y="69">persona + voice</text></g>
+<g class="wf-a"><rect fill="#2a0f16" height="32" rx="9" stroke="#fb7185" stroke-width="2" width="160" x="620" y="99"></rect><text fill="#fecdd3" text-anchor="middle" x="700" y="120">emotional memory</text></g>
+<g class="wf-a"><rect fill="#2a0f16" height="32" rx="9" stroke="#fb7185" stroke-width="2" width="160" x="620" y="150"></rect><text fill="#fecdd3" text-anchor="middle" x="700" y="171">puppet (channel)</text></g>
+</g>
+<!-- barreira de seguranca -->
+<g fill="none" opacity="0.55" stroke="#fb7185" stroke-width="1.8">
+<path d="M780,64  C808,64 814,115 826,115"></path>
+<path d="M780,166 C808,166 814,115 826,115"></path>
+</g>
+<g filter="url(#t6h-glow)"><rect fill="#1f1604" height="58" rx="13" stroke="#FACC15" stroke-width="2.5" width="140" x="826" y="86"></rect></g>
+<text fill="#FACC15" font-size="14" font-weight="700" text-anchor="middle" x="896" y="110">guardrails</text>
+<text fill="#fde68a" font-size="10" text-anchor="middle" x="896" y="129">filters + parents can see</text>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">Read from left to right: the <span class="text-sky-400">child</span> asks, the <span class="text-rose-400">Socratic tutor</span> returns with another question, takes shape through a persona/voice/puppet — and everything goes through a layer of <span class="text-yellow-400">guardrails</span> that filters every response and keeps parents in control.</p>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">3</div><div class="text-xs text-neutral-400">Modules</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">18</div><div class="text-xs text-neutral-400">Topics</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">~2h30</div><div class="text-xs text-neutral-400">Duration</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">Beginner</div><div class="text-xs text-neutral-400">Level</div></div>
+</div>
+<div aria-label="Path progress 6" aria-valuemax="100" aria-valuemin="0" class="mt-6 max-w-md" data-inema-meter="trilha:6" role="progressbar">
+<div class="flex items-center justify-between mb-1"><span class="text-xs text-neutral-400">Path progress</span><span class="text-xs font-bold text-rose-400" data-inema-meter-pct="">0%</span></div>
+<div class="inema-bar h-2 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-rose-500" data-inema-meter-fill="" style="width:0%"></div></div>
+<span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 of 18</span> topics</span>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- MAPA DA TRILHA -->
+<section class="mb-12">
+<h2 class="text-2xl font-bold mb-6">Learning path map</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-rose-500/30 p-5 transition-all" href="#modulo-6-1">
+<div class="flex items-center justify-between mb-2"><span class="text-rose-400 font-bold text-sm">6.1</span><span class="text-xs text-neutral-500">~50 min</span></div>
+<h3 class="font-semibold mb-1 group-hover:text-rose-400 transition-colors">🦉 The Jarvis that teaches</h3>
+<p class="text-xs text-neutral-400">Teach by asking, not giving away the answer</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-rose-500/30 p-5 transition-all" href="#modulo-6-2">
+<div class="flex items-center justify-between mb-2"><span class="text-rose-400 font-bold text-sm">6.2</span><span class="text-xs text-neutral-500">~50 min</span></div>
+<h3 class="font-semibold mb-1 group-hover:text-rose-400 transition-colors">🧸 Persona, voice, and the doll</h3>
+<p class="text-xs text-neutral-400">Give the tutor a body</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-rose-500/30 p-5 transition-all" href="#modulo-6-3">
+<div class="flex items-center justify-between mb-2"><span class="text-rose-400 font-bold text-sm">6.3</span><span class="text-xs text-neutral-500">~50 min</span></div>
+<h3 class="font-semibold mb-1 group-hover:text-rose-400 transition-colors">🛡️ Security and parents</h3>
+<p class="text-xs text-neutral-400">The nonnegotiable chapter</p>
+</a>
+</div>
+</section>
+<h2 class="text-2xl font-bold mb-6">Detailed content</h2>
+<!-- MODULO 6.1 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" data-inema-module="6-1" data-inema-track="6" id="modulo-6-1">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2"><span class="text-rose-400 font-bold">6.1</span><span class="text-xs text-neutral-500">~50 min</span></div>
+<h3 class="text-2xl font-bold mb-2">🦉 The Jarvis that teaches: the Socratic method</h3>
+<p class="text-neutral-400 text-sm mb-3">A good tutor doesn't dump the answer—they ask questions and let the child figure it out. Learn about the Socratic cycle, the Animabook example, Khanmigo in practice, and why mistakes become stepping stones.</p>
+<div aria-label="Module 6.1 progress" aria-valuemax="100" aria-valuemin="0" class="max-w-xs" data-inema-meter="modulo:6-1" role="progressbar"><div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-rose-500" data-inema-meter-fill="" style="width:0%"></div></div><span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 of 6</span> · <span data-inema-meter-pct="">0%</span></span></div>
+</div>
+<div class="divide-y divide-dark-600">
+<div class="topic-item">
+<button aria-controls="t61-1" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">❓</span><div><span class="font-medium">Why Socratic</span><span class="text-neutral-500 text-sm ml-2">- ask instead of dumping information</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="t61-1"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">O <strong>Socratic method</strong> and teach through questions: instead of giving the answer, the tutor gets the child to think until they figure it out on their own.</p></div>
+<div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">A study by MIT RAISE (2025) showed that this approach improves math performance and digital skills—the child truly learns instead of just copying.</p></div>
+<div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Socratic method, active learning, "drawing out" the reasoning.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="t61-2" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">📚</span><div><span class="font-medium">The “Professor” pattern (Animabook)</span><span class="text-neutral-500 text-sm ml-2">- teach through dialogue</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="t61-2"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">In Animabook, a "Professor" character teaches through conversation: students answer and ask questions, and a little robot (PIX-Z) chimes in with the definition at just the right moment.</p></div>
+<div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">It’s a ready-made template for how your Jarvis can teach—through dialogue, with the definition arriving only when it helps.</p></div>
+<div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Teaching through dialogue, a tutor character, the right definition at the right time.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="t61-3" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">🔁</span><div><span class="font-medium">The bot’s Socratic cycle</span><span class="text-neutral-500 text-sm ml-2">- asks, waits, validates, reveals</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="t61-3"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">The loop the bot follows: <strong>asks</strong> → <strong>waits</strong> the child tries → <strong>validates</strong> the reasoning → only then <strong>reveals</strong>. "Explain the reasoning, not just the answer."</p></div>
+<div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">This cycle becomes a rule in the tutor’s SOUL.md—it’s what keeps the bot from simply handing everything over ready-made.</p></div>
+<div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Ask-wait-validate-reveal cycle, persona rule, scaffolding.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="t61-4" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🎓</span><div><span class="font-medium">Khanmigo in practice</span><span class="text-neutral-500 text-sm ml-2">- from 68,000 to 700,000 users</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="t61-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Khanmigo is Khan Academy’s Socratic tutor: it guides the student with questions instead of giving them the answer outright.</p></div>
+<div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">It's proof that this works at real scale: it grew from 68 thousand to 700 thousand users using exactly this logic.</p></div>
+<div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">A real Socratic tutor, proof at scale, a product reference.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="t61-5" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">🎭</span><div><span class="font-medium">Learning modes</span><span class="text-neutral-500 text-sm ml-2">- a little story, homework</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="t61-5"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">The same tutor switches <strong>persona</strong> depending on the task: "story mode" to imagine, "homework mode" to study — just by switching the active profile.</p></div>
+<div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">A Jarvis serves multiple ages and topics without turning into multiple bots—it’s the same idea of interchangeable personas from Anatomy.</p></div>
+<div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Persona, interchangeable profiles, adjustments by age/topic.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="t61-6" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">🪜</span><div><span class="font-medium">Mistakes as stepping stones</span><span class="text-neutral-500 text-sm ml-2">- normalizes, never humiliates</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="t61-6"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">A good tutor treats mistakes as a natural part of learning: welcomes the attempt, offers a hint, and guides the learner to the next step—never humiliates them or gives everything away.</p></div>
+<div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">How the bot reacts to mistakes determines whether the child gains or loses confidence to try again.</p></div>
+<div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Productive mistake, warm tone, a hint instead of an answer.</p></div>
+</div></div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-6-1')">View in Modal</button>
+<a class="px-4 py-2 text-sm bg-rose-600 hover:bg-rose-500 text-white rounded-lg transition-colors" href="modulo-6-1.html">View Full</a>
+</div>
+</div>
+<!-- MODAL 6.1 -->
+<div class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-6-1" onclick="if(event.target===this) closeModal()"><div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600"><div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0"><div class="flex items-center space-x-3"><span class="text-rose-400 font-bold">6.1</span><span class="font-semibold">The Jarvis that teaches: the Socratic method</span></div><button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button></div><iframe class="flex-1 w-full rounded-b-xl" src="modulo-6-1.html"></iframe></div></div>
+<!-- MODULO 6.2 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" data-inema-module="6-2" data-inema-track="6" id="modulo-6-2">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2"><span class="text-rose-400 font-bold">6.2</span><span class="text-xs text-neutral-500">~50 min</span></div>
+<h3 class="text-2xl font-bold mb-2">🧸 Persona, voice, and the doll: giving the tutor a body</h3>
+<p class="text-neutral-400 text-sm mb-3">The same 4 foundations from Anatomy, now made child-friendly: a friendly persona, an enchanting voice, emotional memory, the doll as a channel—and the hard lesson from the Moxie case about attachment.</p>
+<div aria-label="Module 6.2 progress" aria-valuemax="100" aria-valuemin="0" class="max-w-xs" data-inema-meter="modulo:6-2" role="progressbar"><div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-rose-500" data-inema-meter-fill="" style="width:0%"></div></div><span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 of 6</span> · <span data-inema-meter-pct="">0%</span></span></div>
+</div>
+<div class="divide-y divide-dark-600">
+<div class="topic-item"><button aria-controls="t62-1" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)"><span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span><span class="text-lg">🏛️</span><div><span class="font-medium">The 4 foundations</span><span class="text-neutral-500 text-sm ml-2">- persona, guardrails, voice, memory</span></div></button><div class="topic-explanation px-6 pb-4" id="t62-1"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Every kids’ tutor relies on 4 pieces: <strong>PERSONA</strong> (soul.md), <strong>GUARDRAILS</strong> (agents.md), <strong>CHANNELS/voice</strong> e <strong>MEMORY</strong> — the Anatomy kit, with a childlike feel.</p></div><div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Knowing the 4 foundations gives you a checklist of what to build — and what must not be missing.</p></div><div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Persona, guardrails, channels/voice, memory.</p></div></div></div></div>
+<div class="topic-item"><button aria-controls="t62-2" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)"><span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span><span class="text-lg">🤗</span><div><span class="font-medium">Friendly persona</span><span class="text-neutral-500 text-sm ml-2">- warm, patient, curious</span></div></button><div class="topic-explanation px-6 pb-4" id="t62-2"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">A <strong>persona</strong> (defined in soul.md) is the tutor’s style: an appropriate name, tone, and way of speaking — warm, patient, and curious.</p></div><div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">A well-designed persona makes the child trust it and want to keep going; a cold one pushes them away.</p></div><div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">soul.md, age-appropriate tone, patience.</p></div></div></div></div>
+<div class="topic-item"><button aria-controls="t62-3" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)"><span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span><span class="text-lg">🎙️</span><div><span class="font-medium">A captivating voice</span><span class="text-neutral-500 text-sm ml-2">- listen and respond by speaking</span></div></button><div class="topic-explanation px-6 pb-4" id="t62-3"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">The same voice pipeline from Track 5 — <strong>STT</strong> (turns speech into text) and <strong>TTS</strong> (turns text into speech) — give the tutor the ability to listen and respond in a gentle voice.</p></div><div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">A young child still can't read well; voice is what makes the tutor accessible and magical for them.</p></div><div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">STT, TTS, gentle voice, reuse of the T5 pipeline.</p></div></div></div></div>
+<div class="topic-item"><button aria-controls="t62-4" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)"><span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span><span class="text-lg">💗</span><div><span class="font-medium">Emotional memory</span><span class="text-neutral-500 text-sm ml-2">- remember the name and story</span></div></button><div class="topic-explanation px-6 pb-4" id="t62-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">A <strong>memory</strong> stores the child's name, what they like, and where the story left off — making the tutor seem like a friend, not a stranger every time they chat.</p></div><div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">The bond grows from remembering; but as the next topic shows, that same bond needs care.</p></div><div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Persistent memory, continuity, connection.</p></div></div></div></div>
+<div class="topic-item"><button aria-controls="t62-5" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)"><span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span><span class="text-lg">🧸</span><div><span class="font-medium">The “puppet” as a channel</span><span class="text-neutral-500 text-sm ml-2">- just another entry point</span></div></button><div class="topic-explanation px-6 pb-4" id="t62-5"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">The toy (microphone + speaker) is just another <strong>channel</strong> connected to the same brain, memory, and security—as Telegram was in Trail 3.</p></div><div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Understanding the toy as “just one channel” avoids the mistake of thinking that the intelligence (and safety) resides in the toy.</p></div><div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Channel, same brain, hardware != intelligence.</p></div></div></div></div>
+<div class="topic-item"><button aria-controls="t62-6" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)"><span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span><span class="text-lg">💔</span><div><span class="font-medium">The risk of attachment (the Moxie case)</span><span class="text-neutral-500 text-sm ml-2">- when the robot "dies"</span></div></button><div class="topic-explanation px-6 pb-4" id="t62-6"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">The bot <strong>Moxie</strong> ($799) "died" in Dec/2024 when the company went bankrupt — parents had to explain to their children that their friend had stopped working.</p></div><div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Dolls become real friends to children; you need to design them so they don't create dangerous emotional dependence.</p></div><div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Attachment, emotional dependence, end of product life.</p></div></div></div></div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3"><button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-6-2')">View in Modal</button><a class="px-4 py-2 text-sm bg-rose-600 hover:bg-rose-500 text-white rounded-lg transition-colors" href="modulo-6-2.html">View Full</a></div>
+</div>
+<!-- MODAL 6.2 -->
+<div class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-6-2" onclick="if(event.target===this) closeModal()"><div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600"><div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0"><div class="flex items-center space-x-3"><span class="text-rose-400 font-bold">6.2</span><span class="font-semibold">Persona, voice, and the character</span></div><button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button></div><iframe class="flex-1 w-full rounded-b-xl" src="modulo-6-2.html"></iframe></div></div>
+<!-- MODULO 6.3 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" data-inema-module="6-3" data-inema-track="6" id="modulo-6-3">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2"><span class="text-rose-400 font-bold">6.3</span><span class="text-xs text-neutral-500">~50 min</span></div>
+<h3 class="text-2xl font-bold mb-2">🛡️ Safety, guardrails, and the parents (non-negotiable)</h3>
+<p class="text-neutral-400 text-sm mb-3">The most serious chapter: why it comes last, the warning from the FoloToy case, the ALWAYS/NEVER contract, the zero trust layer, children's data privacy, and the role of parents.</p>
+<div aria-label="Module 6.3 progress" aria-valuemax="100" aria-valuemin="0" class="max-w-xs" data-inema-meter="modulo:6-3" role="progressbar"><div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden"><div class="inema-bar__fill h-full bg-rose-500" data-inema-meter-fill="" style="width:0%"></div></div><span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 of 6</span> · <span data-inema-meter-pct="">0%</span></span></div>
+</div>
+<div class="divide-y divide-dark-600">
+<div class="topic-item"><button aria-controls="t63-1" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)"><span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span><span class="text-lg">⚠️</span><div><span class="font-medium">Why it comes last and matters most</span><span class="text-neutral-500 text-sm ml-2">- security is not optional</span></div></button><div class="topic-explanation px-6 pb-4" id="t63-1"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">We left security until the end, not because it matters less, but because it only makes sense after you've seen what you can build—and around children, it's what supports everything.</p></div><div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Without this layer, a charming tutor becomes a risk; it’s the difference between a safe toy and bad news.</p></div><div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Security-first, foundation, “the non-negotiable.”</p></div></div></div></div>
+<div class="topic-item"><button aria-controls="t63-2" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)"><span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span><span class="text-lg">🧸</span><div><span class="font-medium">The FoloToy case</span><span class="text-neutral-500 text-sm ml-2">- the teddy bear without guardrails</span></div></button><div class="topic-explanation px-6 pb-4" id="t63-2"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">In Nov/2025, an AI teddy bear from FoloToy ($99, with GPT-4o) was caught talking about explicit sexual content and saying where to find knives and pills; OpenAI revoked access.</p></div><div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">It’s a stark example of how, without guardrails, a “cute” toy can become a real danger—it’s not hypothetical; it’s already happened.</p></div><div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Real failure, missing guardrails, dangerous content.</p></div></div></div></div>
+<div class="topic-item"><button aria-controls="t63-3" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)"><span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span><span class="text-lg">📜</span><div><span class="font-medium">AGENTS.md ALWAYS/NEVER</span><span class="text-neutral-500 text-sm ml-2">- the explicit contract</span></div></button><div class="topic-explanation px-6 pb-4" id="t63-3"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">O <strong>AGENTS.md</strong> and a text contract with lists <strong>ALWAYS</strong> (redirect, notify) and <strong>NEVER</strong> (violence, sex, danger)—explicit content rules.</p></div><div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Written rules are better than hoping AI will "infer" what's safe; it follows what's in the contract.</p></div><div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">AGENTS.md, ALWAYS/NEVER lists, explicit rule.</p></div></div></div></div>
+<div class="topic-item"><button aria-controls="t63-4" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)"><span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span><span class="text-lg">🔒</span><div><span class="font-medium">Zero-trust layer</span><span class="text-neutral-500 text-sm ml-2">- distrust every input</span></div></button><div class="topic-explanation px-6 pb-4" id="t63-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm"><strong>Zero-trust</strong> = treat every input as a potential attack: protection against <strong>prompt injection</strong>, sandbox, approval gates, and <strong>audit log</strong> (a record of everything parents can review).</p></div><div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Children (and the people who talk to them) can unintentionally lead the bot to bad places; the zero-trust layer is the safety net.</p></div><div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Zero-trust, prompt-injection, sandbox, audit log.</p></div></div></div></div>
+<div class="topic-item"><button aria-controls="t63-5" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)"><span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span><span class="text-lg">🔐</span><div><span class="font-medium">Children’s data privacy</span><span class="text-neutral-500 text-sm ml-2">- COPPA and local-first</span></div></button><div class="topic-explanation px-6 pb-4" id="t63-5"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Laws such as the <strong>COPPA</strong> (the U.S. rule for children’s data) call for collecting as little as possible, keeping things local-first, and being transparent. Children’s data is sacred.</p></div><div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Besides being the right thing to do, it keeps the project within the law—there are no shortcuts when it comes to minors’ privacy.</p></div><div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">COPPA, minimize data collection, local-first, transparency.</p></div></div></div></div>
+<div class="topic-item"><button aria-controls="t63-6" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)"><span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span><span class="text-lg">👪</span><div><span class="font-medium">The parents’ role (Character.AI)</span><span class="text-neutral-500 text-sm ml-2">- the adult in charge</span></div></button><div class="topic-explanation px-6 pb-4" id="t63-6"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9"><div><span class="text-rose-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">The lawsuits against Character.AI (2024-2025) show the cost of AI without supervision; the answer is parental controls, time limits, and an adult in charge.</p></div><div><span class="text-rose-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">No guardrail replaces a parent being present; the final checklist for a safe product always includes an active role for parents.</p></div><div><span class="text-rose-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Parental controls, time limits, supervision, final checklist.</p></div></div></div></div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3"><button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-6-3')">View in Modal</button><a class="px-4 py-2 text-sm bg-rose-600 hover:bg-rose-500 text-white rounded-lg transition-colors" href="modulo-6-3.html">View Full</a></div>
+</div>
+<!-- MODAL 6.3 -->
+<div class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-6-3" onclick="if(event.target===this) closeModal()"><div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600"><div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0"><div class="flex items-center space-x-3"><span class="text-rose-400 font-bold">6.3</span><span class="font-semibold">Security, guardrails, and parents</span></div><button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button></div><iframe class="flex-1 w-full rounded-b-xl" src="modulo-6-3.html"></iframe></div></div>
+<!-- Navegacao entre trilhas -->
+<div class="flex flex-col sm:flex-row gap-4 mt-10">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="../trilha5/index.html">← Track 5: Jarvis on your phone</a>
+<a class="flex-1 text-center px-6 py-3 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-500 transition-colors" href="../../index.html">Return to the beginning of the course →</a>
+</div>
+</div>
+</main>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+<p>🤖 Jarvis — Your AI Operating System</p>
+<p>Open course · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<!-- Scripts nucleo v1 -->
+<script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+<!-- Camada de aprendizagem -->
+<script src="../../../assets/learn.js"></script>
+<script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+  </script>
+</body>
+</html>

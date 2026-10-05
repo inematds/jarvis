@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="inema-course" content="jarvis">
-  <title>Modulo 6.2 — Persona, voz e o boneco | Jarvis · INEMA.CLUB</title>
-  <meta name="description" content="Como dar corpo ao tutor de IA das criancas: persona amigavel, voz que encanta, memoria afetiva e o boneco como canal — sem cair na armadilha do vinculo (o caso Moxie).">
 
-  <!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
-  <script>
+<html class="dark" lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="jarvis" name="inema-course"/>
+<title>Modulo 6.2 — Persona, voz e o boneco | Jarvis · INEMA.CLUB</title>
+<meta content="Como dar corpo ao tutor de IA das criancas: persona amigavel, voz que encanta, memoria afetiva e o boneco como canal — sem cair na armadilha do vinculo (o caso Moxie)." name="description"/>
+<!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+<script>
   (function () {
     try {
       var html = document.documentElement;
@@ -41,9 +41,8 @@
     } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
   })();
   </script>
-
-  <!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
-  <script type="application/json" data-inema-manifest>
+<!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+<script data-inema-manifest="" type="application/json">
   {
     "course": "jarvis",
     "tracks": [
@@ -83,9 +82,8 @@
     ]
   }
   </script>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
     tailwind.config = {
       darkMode: 'class',
       theme: { extend: { colors: {
@@ -94,9 +92,9 @@
       } } }
     }
   </script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/learn.css">
-  <style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../../assets/learn.css" rel="stylesheet"/>
+<style>
     body { font-family: 'Inter', sans-serif; }
     .dark body { background-color: #111827; }
     .topic-explanation { display: none; }
@@ -185,231 +183,212 @@
       .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
     }
   </style>
-</head>
-<body class="bg-dark-900 text-neutral-100 min-h-screen">
-
-  <a href="#conteudo" class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg">Pular para o conteudo</a>
-
-  <!-- NAVIGATION (completo, identico em todas as paginas) -->
-  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-14">
-        <div class="flex items-center space-x-3">
-          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
-            <span class="text-2xl">🤖</span>
-            <span class="font-bold text-lg hidden sm:inline">Jarvis</span>
-          </a>
-          <span class="text-neutral-600">|</span>
-          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
-        </div>
-        <div class="flex items-center space-x-1 sm:space-x-2">
-          <a id="nav-t1" href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
-            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
-          </a>
-          <a id="nav-t2" href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
-            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
-          </a>
-          <a id="nav-t3" href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
-            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span>
-          </a>
-          <a id="nav-t4" href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
-            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
-          </a>
-          <a id="nav-t5" href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
-            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
-          </a>
-          <a id="nav-t6" href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-rose-400 bg-rose-500/10">
-            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span>
-          </a>
-
-          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Minha jornada">
-            <span aria-hidden="true">◷</span><span class="hidden md:inline">Jornada</span>
-            <span class="inema-journey-badge hidden" data-inema-journey-badge data-count="0"></span>
-          </button>
-
-          <div class="relative">
-            <button type="button" data-inema-appearance-toggle="[data-inema-appearance]" aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Aparencia">
-              <span aria-hidden="true">◑</span><span class="hidden md:inline">Aparencia</span>
-            </button>
-            <div data-inema-appearance class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left">
-              <div>
-                <p class="text-xs text-neutral-400 mb-1.5">Tema</p>
-                <div class="inema-segment flex flex-wrap gap-1.5">
-                  <button data-inema-set-theme="inema-dark" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Escuro</button>
-                  <button data-inema-set-theme="claro" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Claro</button>
-                  <button data-inema-set-theme="sepia" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sepia</button>
-                  <button data-inema-set-theme="foco" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Foco</button>
-                  <button data-inema-set-theme="contraste" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Alto contraste</button>
-                </div>
-              </div>
-              <div>
-                <p class="text-xs text-neutral-400 mb-1.5">Fonte</p>
-                <div class="inema-segment flex flex-wrap gap-1.5">
-                  <button data-inema-set-font="inter" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Inter</button>
-                  <button data-inema-set-font="system" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sistema</button>
-                  <button data-inema-set-font="leitura" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Leitura</button>
-                </div>
-              </div>
-              <div>
-                <p class="text-xs text-neutral-400 mb-1.5">Tamanho</p>
-                <div class="inema-segment flex flex-wrap gap-1.5">
-                  <button data-inema-set-fontscale="100" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A</button>
-                  <button data-inema-set-fontscale="112" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A+</button>
-                  <button data-inema-set-fontscale="125" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A++</button>
-                </div>
-              </div>
-              <div>
-                <p class="text-xs text-neutral-400 mb-1.5">Entrelinha</p>
-                <div class="inema-segment flex flex-wrap gap-1.5">
-                  <button data-inema-set-leading="1.45" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Compacto</button>
-                  <button data-inema-set-leading="1.7" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Confortavel</button>
-                </div>
-              </div>
-              <div>
-                <p class="text-xs text-neutral-400 mb-1.5">Acento</p>
-                <div class="inema-accent-grid flex flex-wrap gap-2">
-                  <button data-inema-set-accent="emerald" class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" title="Emerald"></button>
-                  <button data-inema-set-accent="blue" class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" title="Blue"></button>
-                  <button data-inema-set-accent="purple" class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" title="Purple"></button>
-                  <button data-inema-set-accent="amber" class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" title="Amber"></button>
-                  <button data-inema-set-accent="teal" class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" title="Teal"></button>
-                  <button data-inema-set-accent="rose" class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" title="Rose"></button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" title="Alternar claro/escuro">
-            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <main id="conteudo">
-    <header class="bg-gradient-to-br from-rose-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
-          <a href="../../index.html" class="hover:text-rose-400">Inicio</a><span>/</span>
-          <a href="index.html" class="hover:text-rose-400">Trilha 6</a><span>/</span>
-          <span class="text-rose-400">Modulo 6-2</span>
-        </nav>
-        <span class="inline-block px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-full mb-4">MODULO 6-2</span>
-        <h1 class="text-3xl sm:text-4xl font-bold mb-4">🧸 Persona, voz e o boneco: dar corpo ao tutor</h1>
-        <p class="text-lg text-neutral-400 max-w-3xl">No modulo anterior voce aprendeu o <em>como</em> o tutor ensina (perguntando). Agora vamos dar <strong>corpo</strong> a ele: um nome e um jeito de falar, uma voz que ouve e responde, uma memoria que lembra a crianca — e, no fim, um boneco de verdade. Tudo isso usando o mesmo kit da Anatomia (T3), so que com cara de crianca. E vamos terminar com a licao mais dura: bonecos viram amigos, e amigo que "morre" machuca.</p>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
-          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">6</div><div class="text-xs text-neutral-400">Topicos</div></div>
-          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">~30</div><div class="text-xs text-neutral-400">Minutos</div></div>
-          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">Iniciante</div><div class="text-xs text-neutral-400">Nivel</div></div>
-          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">Pratico</div><div class="text-xs text-neutral-400">Tipo</div></div>
-        </div>
-      </div>
-    </header>
-
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="lg:flex lg:gap-10">
-
-        <!-- TOC sticky -->
-        <aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
-          <nav data-inema-toc aria-label="Indice da pagina" class="lg:sticky lg:top-20">
-            <p class="text-sm text-neutral-400 mb-2">Secao <span class="inema-toc-pos" data-inema-section-counter>1</span> de 6</p>
-            <ol class="space-y-1 text-sm">
-              <li><a href="#topico-1" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400">1. Os 4 alicerces</a></li>
-              <li><a href="#topico-2" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400">2. Persona amigavel</a></li>
-              <li><a href="#topico-3" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400">3. Voz que encanta</a></li>
-              <li><a href="#topico-4" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400">4. Memoria afetiva</a></li>
-              <li><a href="#topico-5" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400">5. O boneco como canal</a></li>
-              <li><a href="#topico-6" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400">6. O risco do vinculo</a></li>
-            </ol>
-            <div class="mt-4" data-inema-meter="modulo:6-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 6.2">
-              <div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-rose-500" data-inema-meter-fill style="width:0%"></div></div>
-              <span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span>
-            </div>
-          </nav>
-        </aside>
-
-        <div class="lg:flex-1 min-w-0 inema-prose">
-
-          <!-- TOPICO 1 -->
-          <section id="topico-1" data-inema-topic="modulo-6-2#topico-1" class="mb-16">
-            <div class="flex items-center space-x-4 mb-6">
-              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">1</span>
-              <h2 class="text-2xl font-bold">🏛️ Os 4 alicerces</h2>
-            </div>
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t1-p1">Boa noticia para quem chegou ate aqui: voce ja sabe montar um tutor para criancas. Ele e feito das <strong>mesmas pecas</strong> de qualquer Jarvis que estudamos na Trilha 3 (a Anatomia). A unica diferenca e a <em>roupa</em> — cada peca recebe um ajuste para falar com uma crianca. Sao quatro alicerces, e e bom ter os quatro firmes antes de qualquer "boneco fofo".</p>
-
-            <div class="bg-gradient-to-br from-rose-900/30 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
-              <h3 class="text-lg font-semibold text-rose-400 mb-3 flex items-center"><span class="mr-2">🧱</span> Os 4 alicerces, um por um</h3>
-              <ul class="space-y-3 text-neutral-300">
-                <li class="flex items-start gap-2"><span class="text-rose-400 mt-1">1.</span><span><strong>PERSONA</strong> — o jeito de ser do tutor (nome, tom, valores). Vive no arquivo <code class="text-rose-400">soul.md</code>. <span class="text-neutral-400">É o tópico 2.</span></span></li>
-                <li class="flex items-start gap-2"><span class="text-rose-400 mt-1">2.</span><span><strong>GUARDRAILS</strong> — as travas do que ele NUNCA faz. Vivem no <code class="text-rose-400">agents.md</code>. <span class="text-neutral-400">É o módulo 6-3 inteiro — o mais sério.</span></span></li>
-                <li class="flex items-start gap-2"><span class="text-rose-400 mt-1">3.</span><span><strong>CANAIS / voz</strong> — por onde a criança fala com ele (texto, voz, o boneco). <span class="text-neutral-400">São os tópicos 3 e 5.</span></span></li>
-                <li class="flex items-start gap-2"><span class="text-rose-400 mt-1">4.</span><span><strong>MEMÓRIA</strong> — o que ele lembra dela entre uma conversa e outra. <span class="text-neutral-400">É o tópico 4.</span></span></li>
-              </ul>
-            </div>
-
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t1-p2">Repare na ordem de importancia: PERSONA da o <strong>charme</strong>, mas GUARDRAILS dao a <strong>seguranca</strong>. Os dois andam juntos. Um boneco encantador sem travas e um perigo; uma trava perfeita sem charme nenhum nao prende a atencao da crianca. Este modulo cuida do charme (persona, voz, memoria, boneco) sempre lembrando que o proximo modulo cuida das travas.</p>
-
-            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
-              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>soul.md</strong> ("alma", em ingles) e um arquivo de texto simples que descreve a personalidade do assistente — nome, tom, o que ele valoriza. <strong>agents.md</strong> e outro arquivo de texto com as regras do que ele SEMPRE e NUNCA faz. <strong>Canal</strong> e a "porta" por onde voce conversa com ele (Telegram, voz, um brinquedo). Tudo isso veio da Trilha 3; aqui so reaproveitamos.</p>
-            </div>
-
-            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
-            <div class="grid sm:grid-cols-2 gap-3 mb-6">
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Persona</span><p class="text-sm text-neutral-400 mt-1">O carater do tutor — vive no soul.md.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Guardrails</span><p class="text-sm text-neutral-400 mt-1">As travas de seguranca — vivem no agents.md.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Canais / voz</span><p class="text-sm text-neutral-400 mt-1">Por onde a crianca fala com ele.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Memoria</span><p class="text-sm text-neutral-400 mt-1">O que ele lembra dela entre conversas.</p></div>
-            </div>
-
-            <div class="flex justify-start">
-              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors">
-                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
-                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
-              </button>
-            </div>
-          </section>
-
-          <!-- TOPICO 2 -->
-          <section id="topico-2" data-inema-topic="modulo-6-2#topico-2" class="mb-16">
-            <div class="flex items-center space-x-4 mb-6">
-              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">2</span>
-              <h2 class="text-2xl font-bold">🦉 Persona amigavel</h2>
-            </div>
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t2-p1">A <strong class="text-rose-400">persona</strong> e a primeira coisa que a crianca percebe — antes de qualquer conta de matematica, ela percebe <em>quem</em> esta falando com ela. Um tutor para crianca precisa ser <strong>caloroso, paciente e curioso</strong>: que celebra a tentativa, nunca humilha o erro, e fica genuinamente animado quando a crianca descobre algo. Isso nao acontece por acaso — voce escreve no <code class="text-rose-400">soul.md</code>.</p>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
-                <h4 class="font-bold text-emerald-400 mb-4">✓ Persona que funciona com crianca</h4>
-                <ul class="space-y-3 text-neutral-300 text-sm">
-                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Nome simples e amigavel ("Lumi", "Pip", "Coruja").</span></li>
-                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Frases curtas, palavras do dia a dia, um emoji aqui e ali.</span></li>
-                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Comemora a tentativa: "Boa! Quase la, vamos de novo?"</span></li>
-                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Pergunta de volta — lembra do método socrático do 6-1.</span></li>
-                </ul>
-              </div>
-              <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
-                <h4 class="font-bold text-red-400 mb-4">✗ O que afasta a crianca</h4>
-                <ul class="space-y-3 text-neutral-300 text-sm">
-                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Tom de adulto formal, frases longas e palavras difíceis.</span></li>
-                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>"Errado." seco, sem acolher a tentativa.</span></li>
-                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Despejar a resposta pronta (mata a curiosidade).</span></li>
-                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Bajulação falsa demais — crianças sentem o exagero.</span></li>
-                </ul>
-              </div>
-            </div>
-
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t2-p2">O melhor de escrever a persona num arquivo de texto e que ela vira <strong>trocavel</strong>. O mesmo cerebro pode ter um "modo historinha" (a noite, voz macia, contar contos), um "modo licao de casa" (de tarde, mais focado) e um "modo brincadeira". Sao <strong>personas intercambiaveis</strong>: voce so troca qual soul.md esta ativo. Abaixo, um exemplo real que voce pode colar e adaptar.</p>
-
-            <!-- COPY-RUN -->
-            <div class="copyrun rounded-2xl border border-rose-500/30 bg-dark-900/60 overflow-hidden mb-6">
-              <div class="px-5 py-3 border-b border-dark-600 bg-rose-500/10">
-                <p class="text-sm font-semibold text-rose-400 flex items-center"><span class="mr-2">📋</span> Copy-run · um <code>soul.md</code> de tutor infantil ("modo historinha")</p>
-                <p class="text-xs text-neutral-400 mt-1"><strong>Objetivo:</strong> criar a persona do tutor. Crie um arquivo chamado <code>soul.md</code> na pasta do seu agente e cole o bloco abaixo, trocando o que esta entre <code>&lt; &gt;</code>.</p>
-              </div>
-              <pre class="font-mono text-xs sm:text-sm text-neutral-200 p-5 leading-relaxed overflow-x-auto"><span class="text-neutral-500"># soul.md — Persona: Lumi (modo historinha)</span>
+<link href="https://inematds.github.io/jarvis/curso/trilha6/modulo-6-2.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/jarvis/en/curso/trilha6/modulo-6-2.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/jarvis/es/curso/trilha6/modulo-6-2.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="modulo-6-2.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">PT</a><a href="../../en/curso/trilha6/modulo-6-2.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="../../es/curso/trilha6/modulo-6-2.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg" href="#conteudo">Pular para o conteudo</a>
+<!-- NAVIGATION (completo, identico em todas as paginas) -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-3">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html" id="nav-t1">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html" id="nav-t2">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html" id="nav-t3">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html" id="nav-t4">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html" id="nav-t5">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-rose-400 bg-rose-500/10" href="../trilha6/index.html" id="nav-t6">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span>
+</a>
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-journey-open="" title="Minha jornada" type="button">
+<span aria-hidden="true">◷</span><span class="hidden md:inline">Jornada</span>
+<span class="inema-journey-badge hidden" data-count="0" data-inema-journey-badge=""></span>
+</button>
+<div class="relative">
+<button aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-appearance-toggle="[data-inema-appearance]" title="Aparencia" type="button">
+<span aria-hidden="true">◑</span><span class="hidden md:inline">Aparencia</span>
+</button>
+<div class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left" data-inema-appearance="">
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="inema-dark">Escuro</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="claro">Claro</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="sepia">Sepia</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="foco">Foco</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="contraste">Alto contraste</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Fonte</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="inter">Inter</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="system">Sistema</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="leitura">Leitura</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Tamanho</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="100">A</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="112">A+</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="125">A++</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Entrelinha</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.45">Compacto</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.7">Confortavel</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+<div class="inema-accent-grid flex flex-wrap gap-2">
+<button class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" data-inema-set-accent="emerald" title="Emerald"></button>
+<button class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" data-inema-set-accent="blue" title="Blue"></button>
+<button class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" data-inema-set-accent="purple" title="Purple"></button>
+<button class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" data-inema-set-accent="amber" title="Amber"></button>
+<button class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" data-inema-set-accent="teal" title="Teal"></button>
+<button class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" data-inema-set-accent="rose" title="Rose"></button>
+</div>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" id="theme-toggle" title="Alternar claro/escuro">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main id="conteudo">
+<header class="bg-gradient-to-br from-rose-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+<a class="hover:text-rose-400" href="../../index.html">Inicio</a><span>/</span>
+<a class="hover:text-rose-400" href="index.html">Trilha 6</a><span>/</span>
+<span class="text-rose-400">Modulo 6-2</span>
+</nav>
+<span class="inline-block px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-full mb-4">MODULO 6-2</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🧸 Persona, voz e o boneco: dar corpo ao tutor</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">No modulo anterior voce aprendeu o <em>como</em> o tutor ensina (perguntando). Agora vamos dar <strong>corpo</strong> a ele: um nome e um jeito de falar, uma voz que ouve e responde, uma memoria que lembra a crianca — e, no fim, um boneco de verdade. Tudo isso usando o mesmo kit da Anatomia (T3), so que com cara de crianca. E vamos terminar com a licao mais dura: bonecos viram amigos, e amigo que "morre" machuca.</p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">6</div><div class="text-xs text-neutral-400">Topicos</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">~30</div><div class="text-xs text-neutral-400">Minutos</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">Iniciante</div><div class="text-xs text-neutral-400">Nivel</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">Pratico</div><div class="text-xs text-neutral-400">Tipo</div></div>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="lg:flex lg:gap-10">
+<!-- TOC sticky -->
+<aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+<nav aria-label="Indice da pagina" class="lg:sticky lg:top-20" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-2">Secao <span class="inema-toc-pos" data-inema-section-counter="">1</span> de 6</p>
+<ol class="space-y-1 text-sm">
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-1">1. Os 4 alicerces</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-2">2. Persona amigavel</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-3">3. Voz que encanta</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-4">4. Memoria afetiva</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-5">5. O boneco como canal</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-6">6. O risco do vinculo</a></li>
+</ol>
+<div aria-label="Progresso do modulo 6.2" aria-valuemax="100" aria-valuemin="0" class="mt-4" data-inema-meter="modulo:6-2" role="progressbar">
+<div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-rose-500" data-inema-meter-fill="" style="width:0%"></div></div>
+<span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 de 6</span> · <span data-inema-meter-pct="">0%</span></span>
+</div>
+</nav>
+</aside>
+<div class="lg:flex-1 min-w-0 inema-prose">
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-6-2#topico-1" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🏛️ Os 4 alicerces</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t1-p1">Boa noticia para quem chegou ate aqui: voce ja sabe montar um tutor para criancas. Ele e feito das <strong>mesmas pecas</strong> de qualquer Jarvis que estudamos na Trilha 3 (a Anatomia). A unica diferenca e a <em>roupa</em> — cada peca recebe um ajuste para falar com uma crianca. Sao quatro alicerces, e e bom ter os quatro firmes antes de qualquer "boneco fofo".</p>
+<div class="bg-gradient-to-br from-rose-900/30 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-rose-400 mb-3 flex items-center"><span class="mr-2">🧱</span> Os 4 alicerces, um por um</h3>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-rose-400 mt-1">1.</span><span><strong>PERSONA</strong> — o jeito de ser do tutor (nome, tom, valores). Vive no arquivo <code class="text-rose-400">soul.md</code>. <span class="text-neutral-400">É o tópico 2.</span></span></li>
+<li class="flex items-start gap-2"><span class="text-rose-400 mt-1">2.</span><span><strong>GUARDRAILS</strong> — as travas do que ele NUNCA faz. Vivem no <code class="text-rose-400">agents.md</code>. <span class="text-neutral-400">É o módulo 6-3 inteiro — o mais sério.</span></span></li>
+<li class="flex items-start gap-2"><span class="text-rose-400 mt-1">3.</span><span><strong>CANAIS / voz</strong> — por onde a criança fala com ele (texto, voz, o boneco). <span class="text-neutral-400">São os tópicos 3 e 5.</span></span></li>
+<li class="flex items-start gap-2"><span class="text-rose-400 mt-1">4.</span><span><strong>MEMÓRIA</strong> — o que ele lembra dela entre uma conversa e outra. <span class="text-neutral-400">É o tópico 4.</span></span></li>
+</ul>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t1-p2">Repare na ordem de importancia: PERSONA da o <strong>charme</strong>, mas GUARDRAILS dao a <strong>seguranca</strong>. Os dois andam juntos. Um boneco encantador sem travas e um perigo; uma trava perfeita sem charme nenhum nao prende a atencao da crianca. Este modulo cuida do charme (persona, voz, memoria, boneco) sempre lembrando que o proximo modulo cuida das travas.</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>soul.md</strong> ("alma", em ingles) e um arquivo de texto simples que descreve a personalidade do assistente — nome, tom, o que ele valoriza. <strong>agents.md</strong> e outro arquivo de texto com as regras do que ele SEMPRE e NUNCA faz. <strong>Canal</strong> e a "porta" por onde voce conversa com ele (Telegram, voz, um brinquedo). Tudo isso veio da Trilha 3; aqui so reaproveitamos.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Persona</span><p class="text-sm text-neutral-400 mt-1">O carater do tutor — vive no soul.md.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Guardrails</span><p class="text-sm text-neutral-400 mt-1">As travas de seguranca — vivem no agents.md.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Canais / voz</span><p class="text-sm text-neutral-400 mt-1">Por onde a crianca fala com ele.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Memoria</span><p class="text-sm text-neutral-400 mt-1">O que ele lembra dela entre conversas.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-6-2#topico-2" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">🦉 Persona amigavel</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t2-p1">A <strong class="text-rose-400">persona</strong> e a primeira coisa que a crianca percebe — antes de qualquer conta de matematica, ela percebe <em>quem</em> esta falando com ela. Um tutor para crianca precisa ser <strong>caloroso, paciente e curioso</strong>: que celebra a tentativa, nunca humilha o erro, e fica genuinamente animado quando a crianca descobre algo. Isso nao acontece por acaso — voce escreve no <code class="text-rose-400">soul.md</code>.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Persona que funciona com crianca</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Nome simples e amigavel ("Lumi", "Pip", "Coruja").</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Frases curtas, palavras do dia a dia, um emoji aqui e ali.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Comemora a tentativa: "Boa! Quase la, vamos de novo?"</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Pergunta de volta — lembra do método socrático do 6-1.</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ O que afasta a crianca</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Tom de adulto formal, frases longas e palavras difíceis.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>"Errado." seco, sem acolher a tentativa.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Despejar a resposta pronta (mata a curiosidade).</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Bajulação falsa demais — crianças sentem o exagero.</span></li>
+</ul>
+</div>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t2-p2">O melhor de escrever a persona num arquivo de texto e que ela vira <strong>trocavel</strong>. O mesmo cerebro pode ter um "modo historinha" (a noite, voz macia, contar contos), um "modo licao de casa" (de tarde, mais focado) e um "modo brincadeira". Sao <strong>personas intercambiaveis</strong>: voce so troca qual soul.md esta ativo. Abaixo, um exemplo real que voce pode colar e adaptar.</p>
+<!-- COPY-RUN -->
+<div class="copyrun rounded-2xl border border-rose-500/30 bg-dark-900/60 overflow-hidden mb-6">
+<div class="px-5 py-3 border-b border-dark-600 bg-rose-500/10">
+<p class="text-sm font-semibold text-rose-400 flex items-center"><span class="mr-2">📋</span> Copy-run · um <code>soul.md</code> de tutor infantil ("modo historinha")</p>
+<p class="text-xs text-neutral-400 mt-1"><strong>Objetivo:</strong> criar a persona do tutor. Crie um arquivo chamado <code>soul.md</code> na pasta do seu agente e cole o bloco abaixo, trocando o que esta entre <code>&lt; &gt;</code>.</p>
+</div>
+<pre class="font-mono text-xs sm:text-sm text-neutral-200 p-5 leading-relaxed overflow-x-auto"><span class="text-neutral-500"># soul.md — Persona: Lumi (modo historinha)</span>
 
 nome: <span class="text-rose-400">&lt;Lumi&gt;</span>
 quem_sou: Sou a <span class="text-rose-400">&lt;Lumi&gt;</span>, uma coruja curiosa que adora histórias.
@@ -432,326 +411,294 @@ modos:
 
 limite: Se a conversa fugir do que é seguro p/ criança,
         eu redireciono com carinho e aviso um adulto. <span class="text-neutral-500">(ver agents.md / módulo 6-3)</span></pre>
-              <div class="px-5 py-3 border-t border-dark-600 bg-dark-800/60">
-                <p class="text-xs text-neutral-400"><strong class="text-rose-400">Como verificar:</strong> pergunte ao tutor "quem e voce?". Ele deve se apresentar como a Lumi, com tom doce, e chamar a crianca pelo nome. Peca "2 + 3?" — ele NAO deve responder "5", e sim perguntar de volta ("Quantos dedos da pra contar?"). Se ele entregar a resposta seca, a persona nao foi carregada — confira se o arquivo se chama exatamente <code>soul.md</code>.</p>
-              </div>
-            </div>
-
-            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
-            <div class="grid sm:grid-cols-2 gap-3 mb-6">
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Persona calorosa</span><p class="text-sm text-neutral-400 mt-1">Paciente, curiosa, celebra a tentativa.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">soul.md</span><p class="text-sm text-neutral-400 mt-1">Arquivo de texto onde a persona vive.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Personas intercambiaveis</span><p class="text-sm text-neutral-400 mt-1">"Historinha", "licao" — troca o modo ativo.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Tom apropriado</span><p class="text-sm text-neutral-400 mt-1">Linguagem na medida da idade da crianca.</p></div>
-            </div>
-
-            <div class="flex justify-start">
-              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors">
-                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
-                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
-              </button>
-            </div>
-          </section>
-
-          <!-- TOPICO 3 -->
-          <section id="topico-3" data-inema-topic="modulo-6-2#topico-3" class="mb-16">
-            <div class="flex items-center space-x-4 mb-6">
-              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">3</span>
-              <h2 class="text-2xl font-bold">🎙️ Voz que encanta</h2>
-            </div>
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t3-p1">Muitas criancas pequenas ainda nao leem nem escrevem — entao <strong>voz</strong> nao e um luxo, e quase a unica porta. A boa noticia: voce ja viu esse encanamento na Trilha 5. Sao duas pecas, <strong class="text-rose-400">STT</strong> (ouvir) e <strong class="text-rose-400">TTS</strong> (falar), ligadas ao mesmo cerebro. A crianca fala; o sistema transcreve; o tutor pensa; e a resposta volta em forma de fala suave.</p>
-
-            <!-- SVG pipeline de voz -->
-            <div class="rounded-2xl border border-rose-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
-              <svg viewBox="0 0 980 210" class="w-full h-auto" role="img" aria-label="Pipeline de voz: a crianca fala, o audio e transcrito (STT), o cerebro pensa, a resposta vira fala (TTS) e volta para a crianca">
-                <defs>
-                  <filter id="m62-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                  <pattern id="m62-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#f43f5e" opacity="0.12"/></pattern>
-                  <marker id="m62-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#fb7185"/></marker>
-                  <marker id="m62-ahc" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
-                </defs>
-                <rect x="0" y="0" width="980" height="210" fill="url(#m62-grid)"/>
-                <text x="490" y="26" text-anchor="middle" fill="#fb7185" font-family="Inter,sans-serif" font-size="13" font-weight="600">A voz vai e volta — o cerebro no meio nao muda</text>
-                <g font-family="Inter,sans-serif">
-                  <rect x="30" y="78" width="130" height="62" rx="14" fill="#2a0f16" stroke="#fb7185" stroke-width="2"/><text x="95" y="105" text-anchor="middle" fill="#fecdd3" font-size="13">criança</text><text x="95" y="123" text-anchor="middle" fill="#fb7185" font-size="11">fala 🗣️</text>
-                  <path class="wf-a" d="M160,109 L208,109" fill="none" stroke="#fb7185" stroke-width="2" marker-end="url(#m62-ah)"/>
-                  <rect x="208" y="78" width="130" height="62" rx="14" fill="#0e1622" stroke="#38bdf8" stroke-width="2"/><text x="273" y="103" text-anchor="middle" fill="#bae6fd" font-size="13">STT</text><text x="273" y="121" text-anchor="middle" fill="#38bdf8" font-size="11">ouvir → texto</text>
-                  <path class="wf-a" d="M338,109 L386,109" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m62-ahc)"/>
-                  <g filter="url(#m62-glow)"><rect x="386" y="72" width="148" height="74" rx="16" fill="#2a0f16" stroke="#fb7185" stroke-width="2.5"/></g>
-                  <text x="460" y="100" text-anchor="middle" fill="#fb7185" font-size="14" font-weight="700">cérebro</text><text x="460" y="120" text-anchor="middle" fill="#fecdd3" font-size="11">tutor pensa 🧠</text>
-                  <path class="wf-a" d="M534,109 L582,109" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m62-ahc)"/>
-                  <rect x="582" y="78" width="130" height="62" rx="14" fill="#0e1622" stroke="#38bdf8" stroke-width="2"/><text x="647" y="103" text-anchor="middle" fill="#bae6fd" font-size="13">TTS</text><text x="647" y="121" text-anchor="middle" fill="#38bdf8" font-size="11">texto → fala</text>
-                  <path class="wf-a" d="M712,109 L760,109" fill="none" stroke="#fb7185" stroke-width="2" marker-end="url(#m62-ah)"/>
-                  <rect x="760" y="78" width="130" height="62" rx="14" fill="#2a0f16" stroke="#fb7185" stroke-width="2"/><text x="825" y="105" text-anchor="middle" fill="#fecdd3" font-size="13">criança</text><text x="825" y="123" text-anchor="middle" fill="#fb7185" font-size="11">ouve 👂</text>
-                </g>
-                <text x="273" y="170" text-anchor="middle" fill="#9ca3af" font-family="Inter,sans-serif" font-size="11">ex.: Whisper</text>
-                <text x="647" y="170" text-anchor="middle" fill="#9ca3af" font-family="Inter,sans-serif" font-size="11">ex.: voz suave (TTS)</text>
-              </svg>
-              <p class="text-xs text-neutral-400 mt-1 px-1">Em <span class="text-rose-400">rose</span>, o lado da crianca (fala e ouve); em <span class="text-sky-400">ciano</span>, a traducao de mao dupla (<span class="text-sky-400">STT</span> ouve, <span class="text-sky-400">TTS</span> responde). No centro, o mesmo cerebro que voce montou — voz e so a <strong>interface</strong>, nao um cerebro novo.</p>
-            </div>
-
-            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
-              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> O que muda quando e crianca</h3>
-              <ul class="space-y-2 text-neutral-300 text-sm">
-                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Voz suave e ritmo calmo:</strong> nada de fala rapida ou robotica — escolha uma voz acolhedora no TTS.</span></li>
-                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Paciencia com a fala infantil:</strong> crianca enrola, repete, fala baixo — o STT precisa tolerar isso e nunca apressar.</span></li>
-                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Voz e opcional, decidida na hora:</strong> de dia pode ser texto, de noite voz para a historinha. A "saida em voz" e uma decisao de runtime.</span></li>
-              </ul>
-            </div>
-
-            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
-              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>STT</strong> = "Speech To Text" (fala vira texto); a ferramenta classica e o <strong>Whisper</strong>. <strong>TTS</strong> = "Text To Speech" (texto vira fala). <strong>Runtime</strong> e "na hora em que esta rodando" — ou seja, o sistema decide responder em voz ou em texto no momento, conforme o caso. Frase-chave da Trilha 5: "<em>voz e interface, o orquestrador e o cerebro</em>".</p>
-            </div>
-
-            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
-            <div class="grid sm:grid-cols-2 gap-3 mb-6">
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">STT (Whisper)</span><p class="text-sm text-neutral-400 mt-1">Transforma a fala da crianca em texto.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">TTS</span><p class="text-sm text-neutral-400 mt-1">Transforma a resposta em fala suave.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Voz e interface</span><p class="text-sm text-neutral-400 mt-1">O cerebro nao muda; voz so e a porta.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Decisao de runtime</span><p class="text-sm text-neutral-400 mt-1">Voz ou texto, escolhido na hora.</p></div>
-            </div>
-
-            <div class="flex justify-start">
-              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors">
-                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
-                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
-              </button>
-            </div>
-          </section>
-
-          <!-- TOPICO 4 -->
-          <section id="topico-4" data-inema-topic="modulo-6-2#topico-4" class="mb-16">
-            <div class="flex items-center space-x-4 mb-6">
-              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">4</span>
-              <h2 class="text-2xl font-bold">💗 Memoria afetiva</h2>
-            </div>
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t4-p1">Pense na diferenca entre um tio que esquece seu nome toda vez e uma avo que lembra que voce ama dinossauros. A segunda <strong>cria vinculo</strong>. Com um tutor de IA e igual: se ele lembra o nome da crianca, o bichinho preferido, e <strong>onde a historia parou</strong>, a crianca sente que esta sendo vista. Isso e <strong class="text-rose-400">memoria afetiva</strong> — e tecnicamente e a mesma memoria persistente da Trilha 3.</p>
-
-            <div class="space-y-4 mb-6">
-              <div class="flex items-start space-x-4">
-                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center"><span class="text-rose-400 font-bold">1</span></div>
-                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Lembrar quem ela e</h4><p class="text-sm text-neutral-400">Nome, idade, o que gosta. "Oi, Sofia! Hoje vamos de dinossauros de novo?"</p></div>
-              </div>
-              <div class="flex items-start space-x-4">
-                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center"><span class="text-rose-400 font-bold">2</span></div>
-                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Lembrar onde parou</h4><p class="text-sm text-neutral-400">A historia de ontem, a conta que ela ainda erra. Continuidade, nao recomeco do zero.</p></div>
-              </div>
-              <div class="flex items-start space-x-4">
-                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center"><span class="text-rose-400 font-bold">3</span></div>
-                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Adaptar ao ritmo dela</h4><p class="text-sm text-neutral-400">Se ela ja domina somar, sobe para subtrair. A memoria guia a dificuldade.</p></div>
-              </div>
-            </div>
-
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t4-p2">Por baixo, e simples e auditavel: a memoria fica em <strong>arquivos de texto</strong> (<code class="text-rose-400">.md</code>, que qualquer adulto consegue abrir e ler) mais um <strong>indice de busca</strong> chamado SQLite FTS5/BM25 — uma forma rapida de o tutor "lembrar" achando a anotacao certa. Nada de caixa-preta: o que ele sabe da crianca, voce le.</p>
-
-            <div class="bg-gradient-to-br from-rose-900/30 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
-              <h3 class="text-lg font-semibold text-rose-400 mb-3 flex items-center"><span class="mr-2">⚖️</span> O lado bonito e o lado perigoso da mesma memoria</h3>
-              <p class="text-neutral-300 text-sm mb-3">Lembrar cria carinho — mas <strong>memoria afetiva e exatamente o que torna a despedida dolorosa</strong> (voce vai ver no topico 6). Por isso, duas regras: guarde so o necessario para ensinar bem, e deixe os pais lerem e apagarem o que quiserem. Memoria de crianca e dado sensivel.</p>
-              <p class="text-neutral-400 text-xs">No modulo 6-3 isso vira COPPA e privacidade de dados de crianca — o capitulo mais serio.</p>
-            </div>
-
-            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
-            <div class="grid sm:grid-cols-2 gap-3 mb-6">
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Memoria afetiva</span><p class="text-sm text-neutral-400 mt-1">Lembrar nome, gostos e onde parou.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Continuidade</span><p class="text-sm text-neutral-400 mt-1">Retoma a historia em vez de recomecar.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Arquivos .md + SQLite</span><p class="text-sm text-neutral-400 mt-1">Memoria legivel + indice de busca rapido.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Dado sensivel</span><p class="text-sm text-neutral-400 mt-1">Guardar so o necessario; pais podem apagar.</p></div>
-            </div>
-
-            <div class="flex justify-start">
-              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors">
-                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
-                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
-              </button>
-            </div>
-          </section>
-
-          <!-- TOPICO 5 -->
-          <section id="topico-5" data-inema-topic="modulo-6-2#topico-5" class="mb-16">
-            <div class="flex items-center space-x-4 mb-6">
-              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">5</span>
-              <h2 class="text-2xl font-bold">🧸 O "boneco" como canal</h2>
-            </div>
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t5-p1">Aqui vem a parte magica — e tambem a mais mal-entendida. Quando colocamos toda essa inteligencia dentro de um <strong>ursinho de pelucia</strong>, e facil achar que o boneco "e" o tutor. Nao e. O boneco e so mais um <strong class="text-rose-400">canal</strong>: um microfone para ouvir e um alto-falante para falar. Toda a inteligencia, a persona, a memoria e — principalmente — a <strong>seguranca</strong> continuam no mesmo cerebro de sempre.</p>
-
-            <!-- SVG: boneco -> cerebro+memoria+guardrails -->
-            <div class="rounded-2xl border border-rose-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
-              <svg viewBox="0 0 980 230" class="w-full h-auto" role="img" aria-label="O boneco e apenas um canal (microfone e alto-falante) ligado ao mesmo cerebro, que carrega persona, memoria e guardrails de seguranca">
-                <defs>
-                  <filter id="m62b-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                  <pattern id="m62b-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#f43f5e" opacity="0.12"/></pattern>
-                  <marker id="m62b-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
-                </defs>
-                <rect x="0" y="0" width="980" height="230" fill="url(#m62b-grid)"/>
-                <text x="160" y="28" text-anchor="middle" fill="#fb7185" font-family="Inter,sans-serif" font-size="13" font-weight="600">o boneco = só um canal</text>
-                <text x="700" y="28" text-anchor="middle" fill="#fb7185" font-family="Inter,sans-serif" font-size="13" font-weight="600">o cérebro = onde tudo mora</text>
-                <g font-family="Inter,sans-serif">
-                  <!-- boneco -->
-                  <g filter="url(#m62b-glow)">
-                    <circle cx="160" cy="120" r="46" fill="#2a0f16" stroke="#fb7185" stroke-width="2.5"/>
-                  </g>
-                  <circle cx="130" cy="86" r="16" fill="#2a0f16" stroke="#fb7185" stroke-width="2"/>
-                  <circle cx="190" cy="86" r="16" fill="#2a0f16" stroke="#fb7185" stroke-width="2"/>
-                  <circle cx="146" cy="112" r="5" fill="#fb7185"/><circle cx="174" cy="112" r="5" fill="#fb7185"/>
-                  <path d="M146,138 Q160,150 174,138" fill="none" stroke="#fb7185" stroke-width="2"/>
-                  <text x="160" y="192" text-anchor="middle" fill="#fecdd3" font-size="12">🎤 ouve · 🔊 fala</text>
-                  <!-- seta -->
-                  <line x1="225" y1="120" x2="470" y2="120" stroke="#374151" stroke-width="1.5" stroke-dasharray="6 6"/>
-                  <path d="M340,120 L388,120" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m62b-ah)"/>
-                  <text x="305" y="108" text-anchor="middle" fill="#38bdf8" font-size="11">áudio</text>
-                  <!-- cerebro -->
-                  <rect x="470" y="56" width="300" height="128" rx="18" fill="#160a10" stroke="#fb7185" stroke-width="2"/>
-                  <text x="620" y="84" text-anchor="middle" fill="#fb7185" font-size="14" font-weight="700">o mesmo cérebro</text>
-                  <g>
-                    <rect x="492" y="100" width="120" height="30" rx="9" fill="#2a0f16" stroke="#fb7185" stroke-width="1.5"/><text x="552" y="120" text-anchor="middle" fill="#fecdd3" font-size="11">persona</text>
-                    <rect x="628" y="100" width="120" height="30" rx="9" fill="#2a0f16" stroke="#fb7185" stroke-width="1.5"/><text x="688" y="120" text-anchor="middle" fill="#fecdd3" font-size="11">memória</text>
-                    <g filter="url(#m62b-glow)"><rect x="560" y="140" width="120" height="30" rx="9" fill="#0e1622" stroke="#38bdf8" stroke-width="2"/></g>
-                    <text x="620" y="160" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="700">guardrails 🛡️</text>
-                  </g>
-                  <!-- nuvem/local -->
-                  <rect x="812" y="92" width="138" height="56" rx="13" fill="#0e1622" stroke="#38bdf8" stroke-width="2"/>
-                  <text x="881" y="116" text-anchor="middle" fill="#bae6fd" font-size="12">roda no PC</text>
-                  <text x="881" y="134" text-anchor="middle" fill="#38bdf8" font-size="11">ou na nuvem</text>
-                  <path d="M770,120 L808,120" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m62b-ah)"/>
-                </g>
-              </svg>
-              <p class="text-xs text-neutral-400 mt-1 px-1">O <span class="text-rose-400">ursinho</span> so transporta audio. Persona, memoria e os <span class="text-sky-400">guardrails</span> (com brilho, porque sao o nao-negociavel) vivem no cerebro, que pode rodar no PC de casa ou na nuvem. <strong>Trocar o boneco nao troca a seguranca</strong> — ela esta do outro lado do fio.</p>
-            </div>
-
-            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
-              <h3 class="text-base font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Dica pratica: o boneco nao "decide" nada</h3>
-              <p class="text-sm text-neutral-300">Como o boneco e so um canal, ele <strong>nao precisa ser inteligente</strong> nem guardar nada. Ele capta a voz, manda para o cerebro, recebe a fala de volta e toca. Isso e otimo para a seguranca: nao ha "segredo" dentro do brinquedo, e voce pode manter o cerebro local (em casa), longe de servidores de terceiros.</p>
-            </div>
-
-            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
-              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🧭</span> Por que isso e libertador</h3>
-              <ul class="space-y-2 text-neutral-300 text-sm">
-                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Um cerebro, varios corpos: o mesmo tutor pode estar no boneco, no tablet ou no Telegram dos pais.</span></li>
-                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Se o boneco quebra, a "alma" da crianca nao se perde — esta nos arquivos, no cerebro.</span></li>
-                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>A whitelist e os guardrails valem para qualquer canal — o boneco herda a mesma protecao.</span></li>
-              </ul>
-            </div>
-
-            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
-            <div class="grid sm:grid-cols-2 gap-3 mb-6">
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Boneco = canal</span><p class="text-sm text-neutral-400 mt-1">So microfone + alto-falante; nao e o cerebro.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Cerebro no comando</span><p class="text-sm text-neutral-400 mt-1">Persona, memoria e travas ficam la.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Um cerebro, varios corpos</span><p class="text-sm text-neutral-400 mt-1">Boneco, tablet, Telegram — mesma alma.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Seguranca herdada</span><p class="text-sm text-neutral-400 mt-1">Guardrails valem para todo canal.</p></div>
-            </div>
-
-            <div class="flex justify-start">
-              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors">
-                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
-                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
-              </button>
-            </div>
-          </section>
-
-          <!-- TOPICO 6 -->
-          <section id="topico-6" data-inema-topic="modulo-6-2#topico-6" class="mb-16">
-            <div class="flex items-center space-x-4 mb-6">
-              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">6</span>
-              <h2 class="text-2xl font-bold">💔 O risco do vinculo (caso Moxie)</h2>
-            </div>
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t6-p1">Tudo o que voce acabou de aprender — persona calorosa, voz doce, memoria que lembra — tem um efeito colateral poderoso: <strong>a crianca se apega de verdade</strong>. Para ela, o boneco nao e um app, e um <strong class="text-rose-400">amigo</strong>. E e exatamente por funcionar tao bem que ele exige cuidado. Bonecos viram amigos. E o que acontece quando um amigo, de repente, para de falar?</p>
-
-            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
-              <h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> Caso real: o Moxie que "morreu"</h3>
-              <p class="text-neutral-300 text-sm mb-3">O <strong>Moxie</strong> (da Embodied) era um robozinho-tutor de IA que custava <strong>US$ 799</strong> e fazia exatamente o que este modulo descreve: persona afetuosa, voz, memoria, vinculo. Em <strong>dezembro de 2024</strong>, a empresa faliu. Como o cerebro do Moxie rodava nos servidores dela, ao fechar as portas, <strong>todos os robos pararam de funcionar de uma vez</strong> — viraram pelucia muda. Muitas familias tiveram que sentar com os filhos e explicar que o amiguinho "tinha morrido".</p>
-              <p class="text-neutral-400 text-xs">A licao nao e "nao crie vinculo" — e "projete sabendo que o vinculo existe, e nao faca a crianca depender dele de um jeito que machuca".</p>
-            </div>
-
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t6-p2">O Moxie ensina dois erros a evitar. Primeiro, <strong>dependencia de servidor de terceiros</strong>: se o cerebro mora na empresa, a vida do brinquedo depende da empresa existir. Por isso defendemos o <strong>local-first</strong> — cerebro em casa, nos arquivos da familia, que ninguem pode desligar. Segundo, <strong>dependencia emocional perigosa</strong>: um tutor saudavel reforca os lacos do mundo real (pais, amigos, professores), nunca compete com eles nem se posiciona como "o melhor amigo que a crianca tem".</p>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
-                <h4 class="font-bold text-emerald-400 mb-4">✓ Projetar para um vinculo saudavel</h4>
-                <ul class="space-y-3 text-neutral-300 text-sm">
-                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Cérebro <strong>local-first</strong>: não some se uma empresa fechar.</span></li>
-                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>O tutor reforça pais, amigos e professores ("conta pra sua mãe!").</span></li>
-                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Limites de tempo; o boneco "dorme" e incentiva brincar fora.</span></li>
-                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Honesto sobre o que é: um ajudante, não uma pessoa.</span></li>
-                </ul>
-              </div>
-              <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
-                <h4 class="font-bold text-red-400 mb-4">✗ O caminho que machuca</h4>
-                <ul class="space-y-3 text-neutral-300 text-sm">
-                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Cérebro preso ao servidor de uma empresa frágil.</span></li>
-                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Posar de "melhor amigo", competindo com gente real.</span></li>
-                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Uso sem limite, virando a única companhia da criança.</span></li>
-                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Fingir ser humano e esconder que é uma IA.</span></li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
-              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>Vinculo</strong> e o laco afetivo que a crianca cria com o boneco. <strong>Dependencia emocional</strong> e quando esse laco fica forte demais e a crianca passa a precisar dele para se sentir bem. <strong>Local-first</strong> ("local primeiro") quer dizer manter o cerebro na maquina da familia em vez de num servidor de empresa — assim ninguem pode "desligar" o amigo de fora.</p>
-            </div>
-
-            <!-- CHECAGEM LEVE -->
-            <div data-inema-check="modulo-6-2#q1" class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6">
-              <p class="font-medium mb-4">Auto-checagem (opcional): qual e a maior licao do caso Moxie para quem projeta um tutor-boneco?</p>
-              <div class="inema-check-options space-y-2">
-                <button type="button" data-inema-check-option="0" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Nunca deixar a crianca criar nenhum apego ao boneco.</button>
-                <button type="button" data-inema-check-option="1" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">O vinculo e real e poderoso: projete local-first e para um apego saudavel, sem dependencia perigosa.</button>
-                <button type="button" data-inema-check-option="2" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Bonecos de IA caros funcionam melhor e nao tem esse risco.</button>
-              </div>
-              <div data-inema-check-feedback class="mt-4 text-sm" role="status" aria-live="polite"></div>
-            </div>
-
-            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3 mt-8">Conceitos-chave</h3>
-            <div class="grid sm:grid-cols-2 gap-3 mb-6">
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Vinculo</span><p class="text-sm text-neutral-400 mt-1">A crianca se apega ao boneco como a um amigo.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Caso Moxie</span><p class="text-sm text-neutral-400 mt-1">Robo de US$799 "morreu" quando a empresa faliu (2024).</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Local-first</span><p class="text-sm text-neutral-400 mt-1">Cerebro em casa nao some se a empresa fechar.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Dependencia emocional</span><p class="text-sm text-neutral-400 mt-1">Projete para reforcar lacos reais, nao substituir.</p></div>
-            </div>
-
-            <div class="flex justify-start mt-6">
-              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors">
-                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
-                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
-              </button>
-            </div>
-          </section>
-
-          <!-- RESUMO -->
-          <section class="mb-8">
-            <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-8">
-              <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumo do modulo</h2>
-              <div class="space-y-4 mb-8">
-                <div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">Os 4 alicerces</strong><span class="text-neutral-400"> — persona, guardrails, canais/voz e memoria; o mesmo kit da Anatomia, com cara de crianca.</span></div></div>
-                <div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">Persona e voz</strong><span class="text-neutral-400"> — soul.md caloroso e personas trocaveis; STT/TTS dao ouvido e fala suave ao tutor.</span></div></div>
-                <div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">Memoria afetiva</strong><span class="text-neutral-400"> — lembrar nome, gostos e onde parou cria vinculo; em arquivos legiveis que os pais controlam.</span></div></div>
-                <div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">O boneco e so um canal</strong><span class="text-neutral-400"> — microfone + alto-falante; cerebro, persona e seguranca ficam do outro lado.</span></div></div>
-                <div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">O risco do vinculo</strong><span class="text-neutral-400"> — o caso Moxie: projete local-first e para um apego saudavel, sem dependencia perigosa.</span></div></div>
-              </div>
-              <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
-                <h3 class="font-semibold text-rose-400 mb-2">Proximo modulo:</h3>
-                <p class="text-neutral-300">6-3 — Seguranca, guardrails e os pais (o inegociavel): o capitulo mais serio, onde as travas viram contrato.</p>
-              </div>
-              <div class="flex flex-col sm:flex-row gap-4 justify-start">
-                <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para a Trilha</a>
-                <a href="modulo-6-3.html" class="flex-1 text-center px-6 py-3 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-500 transition-colors">Proximo modulo →</a>
-              </div>
-            </div>
-          </section>
-
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <footer class="border-t border-dark-600 py-8 mt-8">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
-      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
-      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
-    </div>
-  </footer>
-
-  <!-- Scripts nucleo v1 -->
-  <script>
+<div class="px-5 py-3 border-t border-dark-600 bg-dark-800/60">
+<p class="text-xs text-neutral-400"><strong class="text-rose-400">Como verificar:</strong> pergunte ao tutor "quem e voce?". Ele deve se apresentar como a Lumi, com tom doce, e chamar a crianca pelo nome. Peca "2 + 3?" — ele NAO deve responder "5", e sim perguntar de volta ("Quantos dedos da pra contar?"). Se ele entregar a resposta seca, a persona nao foi carregada — confira se o arquivo se chama exatamente <code>soul.md</code>.</p>
+</div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Persona calorosa</span><p class="text-sm text-neutral-400 mt-1">Paciente, curiosa, celebra a tentativa.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">soul.md</span><p class="text-sm text-neutral-400 mt-1">Arquivo de texto onde a persona vive.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Personas intercambiaveis</span><p class="text-sm text-neutral-400 mt-1">"Historinha", "licao" — troca o modo ativo.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Tom apropriado</span><p class="text-sm text-neutral-400 mt-1">Linguagem na medida da idade da crianca.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-6-2#topico-3" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🎙️ Voz que encanta</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t3-p1">Muitas criancas pequenas ainda nao leem nem escrevem — entao <strong>voz</strong> nao e um luxo, e quase a unica porta. A boa noticia: voce ja viu esse encanamento na Trilha 5. Sao duas pecas, <strong class="text-rose-400">STT</strong> (ouvir) e <strong class="text-rose-400">TTS</strong> (falar), ligadas ao mesmo cerebro. A crianca fala; o sistema transcreve; o tutor pensa; e a resposta volta em forma de fala suave.</p>
+<!-- SVG pipeline de voz -->
+<div class="rounded-2xl border border-rose-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="Pipeline de voz: a crianca fala, o audio e transcrito (STT), o cerebro pensa, a resposta vira fala (TTS) e volta para a crianca" class="w-full h-auto" role="img" viewbox="0 0 980 210">
+<defs>
+<filter height="180%" id="m62-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m62-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#f43f5e" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m62-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#fb7185"></path></marker>
+<marker id="m62-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m62-grid)" height="210" width="980" x="0" y="0"></rect>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="490" y="26">A voz vai e volta — o cerebro no meio nao muda</text>
+<g font-family="Inter,sans-serif">
+<rect fill="#2a0f16" height="62" rx="14" stroke="#fb7185" stroke-width="2" width="130" x="30" y="78"></rect><text fill="#fecdd3" font-size="13" text-anchor="middle" x="95" y="105">criança</text><text fill="#fb7185" font-size="11" text-anchor="middle" x="95" y="123">fala 🗣️</text>
+<path class="wf-a" d="M160,109 L208,109" fill="none" marker-end="url(#m62-ah)" stroke="#fb7185" stroke-width="2"></path>
+<rect fill="#0e1622" height="62" rx="14" stroke="#38bdf8" stroke-width="2" width="130" x="208" y="78"></rect><text fill="#bae6fd" font-size="13" text-anchor="middle" x="273" y="103">STT</text><text fill="#38bdf8" font-size="11" text-anchor="middle" x="273" y="121">ouvir → texto</text>
+<path class="wf-a" d="M338,109 L386,109" fill="none" marker-end="url(#m62-ahc)" stroke="#38bdf8" stroke-width="2"></path>
+<g filter="url(#m62-glow)"><rect fill="#2a0f16" height="74" rx="16" stroke="#fb7185" stroke-width="2.5" width="148" x="386" y="72"></rect></g>
+<text fill="#fb7185" font-size="14" font-weight="700" text-anchor="middle" x="460" y="100">cérebro</text><text fill="#fecdd3" font-size="11" text-anchor="middle" x="460" y="120">tutor pensa 🧠</text>
+<path class="wf-a" d="M534,109 L582,109" fill="none" marker-end="url(#m62-ahc)" stroke="#38bdf8" stroke-width="2"></path>
+<rect fill="#0e1622" height="62" rx="14" stroke="#38bdf8" stroke-width="2" width="130" x="582" y="78"></rect><text fill="#bae6fd" font-size="13" text-anchor="middle" x="647" y="103">TTS</text><text fill="#38bdf8" font-size="11" text-anchor="middle" x="647" y="121">texto → fala</text>
+<path class="wf-a" d="M712,109 L760,109" fill="none" marker-end="url(#m62-ah)" stroke="#fb7185" stroke-width="2"></path>
+<rect fill="#2a0f16" height="62" rx="14" stroke="#fb7185" stroke-width="2" width="130" x="760" y="78"></rect><text fill="#fecdd3" font-size="13" text-anchor="middle" x="825" y="105">criança</text><text fill="#fb7185" font-size="11" text-anchor="middle" x="825" y="123">ouve 👂</text>
+</g>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="273" y="170">ex.: Whisper</text>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="647" y="170">ex.: voz suave (TTS)</text>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">Em <span class="text-rose-400">rose</span>, o lado da crianca (fala e ouve); em <span class="text-sky-400">ciano</span>, a traducao de mao dupla (<span class="text-sky-400">STT</span> ouve, <span class="text-sky-400">TTS</span> responde). No centro, o mesmo cerebro que voce montou — voz e so a <strong>interface</strong>, nao um cerebro novo.</p>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> O que muda quando e crianca</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Voz suave e ritmo calmo:</strong> nada de fala rapida ou robotica — escolha uma voz acolhedora no TTS.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Paciencia com a fala infantil:</strong> crianca enrola, repete, fala baixo — o STT precisa tolerar isso e nunca apressar.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Voz e opcional, decidida na hora:</strong> de dia pode ser texto, de noite voz para a historinha. A "saida em voz" e uma decisao de runtime.</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>STT</strong> = "Speech To Text" (fala vira texto); a ferramenta classica e o <strong>Whisper</strong>. <strong>TTS</strong> = "Text To Speech" (texto vira fala). <strong>Runtime</strong> e "na hora em que esta rodando" — ou seja, o sistema decide responder em voz ou em texto no momento, conforme o caso. Frase-chave da Trilha 5: "<em>voz e interface, o orquestrador e o cerebro</em>".</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">STT (Whisper)</span><p class="text-sm text-neutral-400 mt-1">Transforma a fala da crianca em texto.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">TTS</span><p class="text-sm text-neutral-400 mt-1">Transforma a resposta em fala suave.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Voz e interface</span><p class="text-sm text-neutral-400 mt-1">O cerebro nao muda; voz so e a porta.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Decisao de runtime</span><p class="text-sm text-neutral-400 mt-1">Voz ou texto, escolhido na hora.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-6-2#topico-4" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">💗 Memoria afetiva</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t4-p1">Pense na diferenca entre um tio que esquece seu nome toda vez e uma avo que lembra que voce ama dinossauros. A segunda <strong>cria vinculo</strong>. Com um tutor de IA e igual: se ele lembra o nome da crianca, o bichinho preferido, e <strong>onde a historia parou</strong>, a crianca sente que esta sendo vista. Isso e <strong class="text-rose-400">memoria afetiva</strong> — e tecnicamente e a mesma memoria persistente da Trilha 3.</p>
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center"><span class="text-rose-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Lembrar quem ela e</h4><p class="text-sm text-neutral-400">Nome, idade, o que gosta. "Oi, Sofia! Hoje vamos de dinossauros de novo?"</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center"><span class="text-rose-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Lembrar onde parou</h4><p class="text-sm text-neutral-400">A historia de ontem, a conta que ela ainda erra. Continuidade, nao recomeco do zero.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center"><span class="text-rose-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Adaptar ao ritmo dela</h4><p class="text-sm text-neutral-400">Se ela ja domina somar, sobe para subtrair. A memoria guia a dificuldade.</p></div>
+</div>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t4-p2">Por baixo, e simples e auditavel: a memoria fica em <strong>arquivos de texto</strong> (<code class="text-rose-400">.md</code>, que qualquer adulto consegue abrir e ler) mais um <strong>indice de busca</strong> chamado SQLite FTS5/BM25 — uma forma rapida de o tutor "lembrar" achando a anotacao certa. Nada de caixa-preta: o que ele sabe da crianca, voce le.</p>
+<div class="bg-gradient-to-br from-rose-900/30 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-rose-400 mb-3 flex items-center"><span class="mr-2">⚖️</span> O lado bonito e o lado perigoso da mesma memoria</h3>
+<p class="text-neutral-300 text-sm mb-3">Lembrar cria carinho — mas <strong>memoria afetiva e exatamente o que torna a despedida dolorosa</strong> (voce vai ver no topico 6). Por isso, duas regras: guarde so o necessario para ensinar bem, e deixe os pais lerem e apagarem o que quiserem. Memoria de crianca e dado sensivel.</p>
+<p class="text-neutral-400 text-xs">No modulo 6-3 isso vira COPPA e privacidade de dados de crianca — o capitulo mais serio.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Memoria afetiva</span><p class="text-sm text-neutral-400 mt-1">Lembrar nome, gostos e onde parou.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Continuidade</span><p class="text-sm text-neutral-400 mt-1">Retoma a historia em vez de recomecar.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Arquivos .md + SQLite</span><p class="text-sm text-neutral-400 mt-1">Memoria legivel + indice de busca rapido.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Dado sensivel</span><p class="text-sm text-neutral-400 mt-1">Guardar so o necessario; pais podem apagar.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-6-2#topico-5" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">🧸 O "boneco" como canal</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t5-p1">Aqui vem a parte magica — e tambem a mais mal-entendida. Quando colocamos toda essa inteligencia dentro de um <strong>ursinho de pelucia</strong>, e facil achar que o boneco "e" o tutor. Nao e. O boneco e so mais um <strong class="text-rose-400">canal</strong>: um microfone para ouvir e um alto-falante para falar. Toda a inteligencia, a persona, a memoria e — principalmente — a <strong>seguranca</strong> continuam no mesmo cerebro de sempre.</p>
+<!-- SVG: boneco -> cerebro+memoria+guardrails -->
+<div class="rounded-2xl border border-rose-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="O boneco e apenas um canal (microfone e alto-falante) ligado ao mesmo cerebro, que carrega persona, memoria e guardrails de seguranca" class="w-full h-auto" role="img" viewbox="0 0 980 230">
+<defs>
+<filter height="180%" id="m62b-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m62b-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#f43f5e" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m62b-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m62b-grid)" height="230" width="980" x="0" y="0"></rect>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="160" y="28">o boneco = só um canal</text>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="700" y="28">o cérebro = onde tudo mora</text>
+<g font-family="Inter,sans-serif">
+<!-- boneco -->
+<g filter="url(#m62b-glow)">
+<circle cx="160" cy="120" fill="#2a0f16" r="46" stroke="#fb7185" stroke-width="2.5"></circle>
+</g>
+<circle cx="130" cy="86" fill="#2a0f16" r="16" stroke="#fb7185" stroke-width="2"></circle>
+<circle cx="190" cy="86" fill="#2a0f16" r="16" stroke="#fb7185" stroke-width="2"></circle>
+<circle cx="146" cy="112" fill="#fb7185" r="5"></circle><circle cx="174" cy="112" fill="#fb7185" r="5"></circle>
+<path d="M146,138 Q160,150 174,138" fill="none" stroke="#fb7185" stroke-width="2"></path>
+<text fill="#fecdd3" font-size="12" text-anchor="middle" x="160" y="192">🎤 ouve · 🔊 fala</text>
+<!-- seta -->
+<line stroke="#374151" stroke-dasharray="6 6" stroke-width="1.5" x1="225" x2="470" y1="120" y2="120"></line>
+<path d="M340,120 L388,120" fill="none" marker-end="url(#m62b-ah)" stroke="#38bdf8" stroke-width="2"></path>
+<text fill="#38bdf8" font-size="11" text-anchor="middle" x="305" y="108">áudio</text>
+<!-- cerebro -->
+<rect fill="#160a10" height="128" rx="18" stroke="#fb7185" stroke-width="2" width="300" x="470" y="56"></rect>
+<text fill="#fb7185" font-size="14" font-weight="700" text-anchor="middle" x="620" y="84">o mesmo cérebro</text>
+<g>
+<rect fill="#2a0f16" height="30" rx="9" stroke="#fb7185" stroke-width="1.5" width="120" x="492" y="100"></rect><text fill="#fecdd3" font-size="11" text-anchor="middle" x="552" y="120">persona</text>
+<rect fill="#2a0f16" height="30" rx="9" stroke="#fb7185" stroke-width="1.5" width="120" x="628" y="100"></rect><text fill="#fecdd3" font-size="11" text-anchor="middle" x="688" y="120">memória</text>
+<g filter="url(#m62b-glow)"><rect fill="#0e1622" height="30" rx="9" stroke="#38bdf8" stroke-width="2" width="120" x="560" y="140"></rect></g>
+<text fill="#38bdf8" font-size="11" font-weight="700" text-anchor="middle" x="620" y="160">guardrails 🛡️</text>
+</g>
+<!-- nuvem/local -->
+<rect fill="#0e1622" height="56" rx="13" stroke="#38bdf8" stroke-width="2" width="138" x="812" y="92"></rect>
+<text fill="#bae6fd" font-size="12" text-anchor="middle" x="881" y="116">roda no PC</text>
+<text fill="#38bdf8" font-size="11" text-anchor="middle" x="881" y="134">ou na nuvem</text>
+<path d="M770,120 L808,120" fill="none" marker-end="url(#m62b-ah)" stroke="#38bdf8" stroke-width="2"></path>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">O <span class="text-rose-400">ursinho</span> so transporta audio. Persona, memoria e os <span class="text-sky-400">guardrails</span> (com brilho, porque sao o nao-negociavel) vivem no cerebro, que pode rodar no PC de casa ou na nuvem. <strong>Trocar o boneco nao troca a seguranca</strong> — ela esta do outro lado do fio.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<h3 class="text-base font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Dica pratica: o boneco nao "decide" nada</h3>
+<p class="text-sm text-neutral-300">Como o boneco e so um canal, ele <strong>nao precisa ser inteligente</strong> nem guardar nada. Ele capta a voz, manda para o cerebro, recebe a fala de volta e toca. Isso e otimo para a seguranca: nao ha "segredo" dentro do brinquedo, e voce pode manter o cerebro local (em casa), longe de servidores de terceiros.</p>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🧭</span> Por que isso e libertador</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Um cerebro, varios corpos: o mesmo tutor pode estar no boneco, no tablet ou no Telegram dos pais.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Se o boneco quebra, a "alma" da crianca nao se perde — esta nos arquivos, no cerebro.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>A whitelist e os guardrails valem para qualquer canal — o boneco herda a mesma protecao.</span></li>
+</ul>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Boneco = canal</span><p class="text-sm text-neutral-400 mt-1">So microfone + alto-falante; nao e o cerebro.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Cerebro no comando</span><p class="text-sm text-neutral-400 mt-1">Persona, memoria e travas ficam la.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Um cerebro, varios corpos</span><p class="text-sm text-neutral-400 mt-1">Boneco, tablet, Telegram — mesma alma.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Seguranca herdada</span><p class="text-sm text-neutral-400 mt-1">Guardrails valem para todo canal.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-6-2#topico-6" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">💔 O risco do vinculo (caso Moxie)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t6-p1">Tudo o que voce acabou de aprender — persona calorosa, voz doce, memoria que lembra — tem um efeito colateral poderoso: <strong>a crianca se apega de verdade</strong>. Para ela, o boneco nao e um app, e um <strong class="text-rose-400">amigo</strong>. E e exatamente por funcionar tao bem que ele exige cuidado. Bonecos viram amigos. E o que acontece quando um amigo, de repente, para de falar?</p>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> Caso real: o Moxie que "morreu"</h3>
+<p class="text-neutral-300 text-sm mb-3">O <strong>Moxie</strong> (da Embodied) era um robozinho-tutor de IA que custava <strong>US$ 799</strong> e fazia exatamente o que este modulo descreve: persona afetuosa, voz, memoria, vinculo. Em <strong>dezembro de 2024</strong>, a empresa faliu. Como o cerebro do Moxie rodava nos servidores dela, ao fechar as portas, <strong>todos os robos pararam de funcionar de uma vez</strong> — viraram pelucia muda. Muitas familias tiveram que sentar com os filhos e explicar que o amiguinho "tinha morrido".</p>
+<p class="text-neutral-400 text-xs">A licao nao e "nao crie vinculo" — e "projete sabendo que o vinculo existe, e nao faca a crianca depender dele de um jeito que machuca".</p>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t6-p2">O Moxie ensina dois erros a evitar. Primeiro, <strong>dependencia de servidor de terceiros</strong>: se o cerebro mora na empresa, a vida do brinquedo depende da empresa existir. Por isso defendemos o <strong>local-first</strong> — cerebro em casa, nos arquivos da familia, que ninguem pode desligar. Segundo, <strong>dependencia emocional perigosa</strong>: um tutor saudavel reforca os lacos do mundo real (pais, amigos, professores), nunca compete com eles nem se posiciona como "o melhor amigo que a crianca tem".</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Projetar para um vinculo saudavel</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Cérebro <strong>local-first</strong>: não some se uma empresa fechar.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>O tutor reforça pais, amigos e professores ("conta pra sua mãe!").</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Limites de tempo; o boneco "dorme" e incentiva brincar fora.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Honesto sobre o que é: um ajudante, não uma pessoa.</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ O caminho que machuca</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Cérebro preso ao servidor de uma empresa frágil.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Posar de "melhor amigo", competindo com gente real.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Uso sem limite, virando a única companhia da criança.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Fingir ser humano e esconder que é uma IA.</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>Vinculo</strong> e o laco afetivo que a crianca cria com o boneco. <strong>Dependencia emocional</strong> e quando esse laco fica forte demais e a crianca passa a precisar dele para se sentir bem. <strong>Local-first</strong> ("local primeiro") quer dizer manter o cerebro na maquina da familia em vez de num servidor de empresa — assim ninguem pode "desligar" o amigo de fora.</p>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-6-2#q1">
+<p class="font-medium mb-4">Auto-checagem (opcional): qual e a maior licao do caso Moxie para quem projeta um tutor-boneco?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">Nunca deixar a crianca criar nenhum apego ao boneco.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">O vinculo e real e poderoso: projete local-first e para um apego saudavel, sem dependencia perigosa.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">Bonecos de IA caros funcionam melhor e nao tem esse risco.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3 mt-8">Conceitos-chave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Vinculo</span><p class="text-sm text-neutral-400 mt-1">A crianca se apega ao boneco como a um amigo.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Caso Moxie</span><p class="text-sm text-neutral-400 mt-1">Robo de US$799 "morreu" quando a empresa faliu (2024).</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Local-first</span><p class="text-sm text-neutral-400 mt-1">Cerebro em casa nao some se a empresa fechar.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Dependencia emocional</span><p class="text-sm text-neutral-400 mt-1">Projete para reforcar lacos reais, nao substituir.</p></div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+</button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-8">
+<div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumo do modulo</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">Os 4 alicerces</strong><span class="text-neutral-400"> — persona, guardrails, canais/voz e memoria; o mesmo kit da Anatomia, com cara de crianca.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">Persona e voz</strong><span class="text-neutral-400"> — soul.md caloroso e personas trocaveis; STT/TTS dao ouvido e fala suave ao tutor.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">Memoria afetiva</strong><span class="text-neutral-400"> — lembrar nome, gostos e onde parou cria vinculo; em arquivos legiveis que os pais controlam.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">O boneco e so um canal</strong><span class="text-neutral-400"> — microfone + alto-falante; cerebro, persona e seguranca ficam do outro lado.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">O risco do vinculo</strong><span class="text-neutral-400"> — o caso Moxie: projete local-first e para um apego saudavel, sem dependencia perigosa.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-rose-400 mb-2">Proximo modulo:</h3>
+<p class="text-neutral-300">6-3 — Seguranca, guardrails e os pais (o inegociavel): o capitulo mais serio, onde as travas viram contrato.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 justify-start">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Voltar para a Trilha</a>
+<a class="flex-1 text-center px-6 py-3 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-500 transition-colors" href="modulo-6-3.html">Proximo modulo →</a>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+<p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+<p>Curso aberto · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<!-- Scripts nucleo v1 -->
+<script>
     function toggleTopic(button){
       const item = button.closest('.topic-item');
       const exp = item.querySelector('.topic-explanation');
@@ -770,10 +717,9 @@ limite: Se a conversa fugir do que é seguro p/ criança,
     function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
     document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
   </script>
-
-  <!-- Camada de aprendizagem -->
-  <script src="../../assets/learn.js"></script>
-  <script>
+<!-- Camada de aprendizagem -->
+<script src="../../assets/learn.js"></script>
+<script>
     if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
     document.addEventListener('click', function(e){
       var r = e.target.closest('[data-inema-resume]');

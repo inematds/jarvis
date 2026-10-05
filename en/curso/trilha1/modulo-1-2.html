@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="jarvis" name="inema-course"/>
+<title>Module 1.2 — The brain of the operation: what an LLM is | Jarvis · INEMA.CLUB</title>
+<meta content="Demystify LLMs without jargon: what they are, how they predict the next word, context as working memory, tokens, local model vs. cloud, and how to work around the limits." name="description"/>
+<!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .bg-emerald-900\/30 { background-color: rgba(5,150,105,0.10); }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Vermelho de alerta ===== */
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+<link href="https://inematds.github.io/jarvis/curso/trilha1/modulo-1-2.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/jarvis/en/curso/trilha1/modulo-1-2.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/jarvis/es/curso/trilha1/modulo-1-2.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha1/modulo-1-2.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-1-2.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha1/modulo-1-2.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg" href="#conteudo">Skip to content</a>
+<!-- NAVIGATION (completo, identico em todas as paginas) -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-3">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10" href="../trilha1/index.html" id="nav-t1">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentals</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html" id="nav-t2">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Overview</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html" id="nav-t3">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomy</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html" id="nav-t4">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Build</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html" id="nav-t5">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Cell phone</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html" id="nav-t6">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Children</span>
+</a>
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-journey-open="" title="My journey" type="button">
+<span aria-hidden="true">◷</span><span class="hidden md:inline">Journey</span>
+<span class="inema-journey-badge hidden" data-count="0" data-inema-journey-badge=""></span>
+</button>
+<div class="relative">
+<button aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-appearance-toggle="[data-inema-appearance]" title="Appearance" type="button">
+<span aria-hidden="true">◑</span><span class="hidden md:inline">Appearance</span>
+</button>
+<div class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left" data-inema-appearance="">
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Theme</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="inema-dark">Dark</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="claro">Clear</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="sepia">Sepia</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="foco">Focus</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="contraste">High contrast</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Source</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="inter">Inter</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="system">System</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="leitura">Reading</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Size</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="100">A</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="112">A+</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="125">A++</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Subtext</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.45">Compact</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.7">Comfortable</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Accent</p>
+<div class="inema-accent-grid flex flex-wrap gap-2">
+<button class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" data-inema-set-accent="emerald" title="Emerald"></button>
+<button class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" data-inema-set-accent="blue" title="Blue"></button>
+<button class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" data-inema-set-accent="purple" title="Purple"></button>
+<button class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" data-inema-set-accent="amber" title="Amber"></button>
+<button class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" data-inema-set-accent="teal" title="Teal"></button>
+<button class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" data-inema-set-accent="rose" title="Rose"></button>
+</div>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" id="theme-toggle" title="Toggle light/dark">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main id="conteudo">
+<header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+<a class="hover:text-emerald-400" href="../../index.html">Start</a><span>/</span>
+<a class="hover:text-emerald-400" href="index.html">Learning path 1</a><span>/</span>
+<span class="text-emerald-400">Module 1.2</span>
+</nav>
+<span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">MODULE 1-2</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🧠 The brain of the thing: what an LLM is (without jargon)</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">Behind every Jarvis, a brain is at work: the LLM. But what is that, exactly? In this module, you’ll demystify the “model” without any math—you’ll understand how it predicts the next word, why it has a short memory, what tokens are, and the difference between running in the cloud or on your machine. By the end, you’ll know exactly what it can (and can’t) do.</p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">6</div><div class="text-xs text-neutral-400">Topics</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">~35</div><div class="text-xs text-neutral-400">Minutes</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Basic</div><div class="text-xs text-neutral-400">Level</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Theory</div><div class="text-xs text-neutral-400">Type</div></div>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="lg:flex lg:gap-10">
+<!-- TOC sticky -->
+<aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+<nav aria-label="Page index" class="lg:sticky lg:top-20" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-2">Section <span class="inema-toc-pos" data-inema-section-counter="">1</span> out of 6</p>
+<ol class="space-y-1 text-sm">
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400" href="#topico-1">1. What an LLM is</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400" href="#topico-2">2. How it "thinks"</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400" href="#topico-3">3. Context = memory</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400" href="#topico-4">4. Tokens</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400" href="#topico-5">5. Local vs. cloud</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400" href="#topico-6">6. Limits and safeguards</a></li>
+</ol>
+<div aria-label="Module 1.2 progress" aria-valuemax="100" aria-valuemin="0" class="mt-4" data-inema-meter="modulo:1-2" role="progressbar">
+<div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-emerald-500" data-inema-meter-fill="" style="width:0%"></div></div>
+<span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 of 6</span> · <span data-inema-meter-pct="">0%</span></span>
+</div>
+</nav>
+</aside>
+<div class="lg:flex-1 min-w-0 inema-prose">
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-1-2#topico-1" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">📖 What is an LLM</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t1-p1">When you talk to ChatGPT, Claude, or Gemini, you’re talking to a <strong class="text-emerald-400">LLM</strong>. The acronym comes from the English <em>Large Language Model</em> — in Portuguese, “Large Language Model.” Breaking it down word by word: it’s a <strong>program</strong> (model) that handles <strong>text</strong> (language) and was trained on a gigantic amount of material (large). This program is the <strong>brain</strong> of your Jarvis — the part that thinks, writes, and responds.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t1-p2">The central idea is almost ridiculously simple: the LLM was trained to <strong class="text-emerald-400">predict the next word</strong>. You type "The sky is..." and it calculates which word is likely to come next—"blue," "clear," "cloudy." But it does this millions of times per second, word after word, and the result looks like reasoning, conversation, even creativity. It learned these patterns by reading practically the entire internet, books, and code.</p>
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-3 flex items-center"><span class="mr-2">🧠</span> The LLM in one sentence</h3>
+<p class="text-neutral-300 mb-4">An LLM is a <strong>giant, very well-trained autocomplete</strong>. The same feature that suggests the next word on your phone’s keyboard, taken to a level where it writes entire texts, summarizes documents, and answers questions — because it learned the patterns of human language by reading a mountain of text.</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Large</strong> (large): trained on a huge amount of text, with billions of “internal adjustments.”</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Language</strong> (language): its raw material is text—text goes in, text comes out.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Model</strong> (model): a program that learned patterns, not a database of memorized answers.</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> <strong>LLM</strong> = “Large Language Model,” the type of AI program that runs behind products like ChatGPT and Claude. <strong>Model</strong>, in AI jargon, is simply the trained “brain” — the software file that receives text and returns text. Whenever you read “model” in this course, think “the AI brain.”</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">LLM</span><p class="text-sm text-neutral-400 mt-1">Large Language Model — the AI brain that thinks in text.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Predict the next word</span><p class="text-sm text-neutral-400 mt-1">The basic mechanism: it chooses, word by word, what comes next.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Training</span><p class="text-sm text-neutral-400 mt-1">Learned language patterns by reading a huge amount of text.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Model = brain</span><p class="text-sm text-neutral-400 mt-1">In Jarvis, the LLM is the piece that reasons; the others provide hands and memory.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-1-2#topico-2" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">🔮 How it “thinks”</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t2-p1">Here’s the part that most confuses beginners: the LLM <strong>doesn't query a database</strong> e <strong>doesn't do a Google search</strong> before answering. It doesn't have a "fact table" where it looks up the right answer. What it does is <strong class="text-emerald-400">statistical forecast</strong>: based on what you wrote, it estimates the most likely continuation, based on patterns it learned during training.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t2-p2">This explains the two sides of an LLM. On one hand, it is <strong>creative and flexible</strong>: because it isn't copying memorized responses, it can write a new poem, adapt a text to your tone, and combine ideas in original ways. On the other hand, it sometimes <strong class="text-emerald-400">gets it wrong with complete confidence</strong> — makes up a fact, cites a book that doesn’t exist, gives the wrong date—and says it in the same confident tone it uses when it’s right. This confident mistake has a name: <strong>hallucination</strong>.</p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Prediction, not a photographic memory</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>It isn't search:</strong> it doesn't "look for" the answer; it <em>generates</em> word for word.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>It isn't a database:</strong> there isn't a spreadsheet of stored facts—there are learned patterns.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>It’s probability:</strong> "which word usually comes here?" repeated thousands of times.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>That’s why it varies:</strong> the same question can produce slightly different answers each time.</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> Warning: hallucination</h3>
+<p class="text-neutral-300 text-sm">Since its goal is always to give "the most plausible continuation," sometimes the plausible continuation simply isn't true. It may make up a phone number, a scientific paper, or a quote—and present it with certainty. So, for any fact that matters (date, amount, name, law), <strong class="text-red-400">check against a source</strong>. In the next tracks, tools and memory will greatly reduce this risk.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> <strong>Hallucination</strong> and it’s when an LLM responds with something that seems right and sounds convincing, but is false. It’s not a lie in the human sense—it’s a side effect of always trying to predict "what usually comes next here," even when it doesn’t really know the answer.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Statistical prediction</span><p class="text-sm text-neutral-400 mt-1">It estimates the most likely continuation; it doesn't look up stored facts.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Hallucination</span><p class="text-sm text-neutral-400 mt-1">Confident mistake: something that sounds right but is made up.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Creativity</span><p class="text-sm text-neutral-400 mt-1">Because it doesn’t memorize answers, it generates new, adaptable text.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Check what matters</span><p class="text-sm text-neutral-400 mt-1">For sensitive facts, verify with a trusted source.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-1-2#topico-3" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🧩 Context = working memory</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t3-p1">If the LLM doesn’t have a database, how does it “remember” what you said at the start of the conversation? The answer is <strong class="text-emerald-400">context</strong>. Everything the model is “seeing right now” — your message, earlier replies in the conversation, the instructions you gave, a file you pasted — lives on a kind of workbench called <strong>context window</strong>. And that’s the only place it gets information from when answering.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t3-p2">The best analogy is the <strong class="text-emerald-400">Computer RAM</strong>: it's short-term memory, fast, but <strong>limited</strong>. Everything in the window is clear to the model. What leaves it (because the conversation got too long, or because you closed and reopened it) simply <strong>disappears</strong> — how to wipe the board. That’s why ChatGPT “forgets” you between conversations: each new conversation starts with an empty table.</p>
+<div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="The LLM as the brain of an operating system: the context window is RAM, tools are peripherals, and everything communicates with the LLM at the center" class="w-full h-auto" role="img" viewbox="0 0 980 230">
+<defs>
+<filter height="180%" id="m12-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m12-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#10b981" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m12-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#34d399"></path></marker>
+<marker id="m12-ah2" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m12-grid)" height="230" width="980" x="0" y="0"></rect>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="490" y="26">The LLM as “kernel”: the brain at the center of a small operating system</text>
+<!-- LLM central -->
+<g filter="url(#m12-glow)" font-family="Inter,sans-serif">
+<rect fill="#0e2018" height="74" rx="16" stroke="#34d399" stroke-width="2.5" width="180" x="400" y="88"></rect>
+<text fill="#34d399" font-size="16" font-weight="700" text-anchor="middle" x="490" y="120">LLM</text>
+<text fill="#a7f3d0" font-size="12" text-anchor="middle" x="490" y="142">the brain that thinks</text>
+</g>
+<!-- Contexto = RAM (cima) -->
+<g font-family="Inter,sans-serif">
+<rect fill="#0e1622" height="44" rx="12" stroke="#38bdf8" stroke-width="2" width="190" x="395" y="18"></rect>
+<text fill="#38bdf8" font-size="13" font-weight="600" text-anchor="middle" x="490" y="38">context window</text>
+<text fill="#7dd3fc" font-size="11" text-anchor="middle" x="490" y="54">= working memory (RAM)</text>
+<path d="M490,62 L490,86" fill="none" marker-end="url(#m12-ah2)" stroke="#38bdf8" stroke-width="2"></path>
+</g>
+<!-- Ferramentas (esquerda) -->
+<g font-family="Inter,sans-serif">
+<rect class="wf-a" fill="#1f2937" height="54" rx="12" stroke="#9ca3af" stroke-width="2" width="200" x="60" y="98"></rect>
+<text fill="#e5e7eb" font-size="13" font-weight="600" text-anchor="middle" x="160" y="120">tools</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="160" y="138">= peripherals (web, files)</text>
+<path d="M260,125 L396,125" fill="none" marker-end="url(#m12-ah)" stroke="#34d399" stroke-dasharray="5 5" stroke-width="2"></path>
+</g>
+<!-- Voce (direita) -->
+<g font-family="Inter,sans-serif">
+<rect fill="#1f2937" height="54" rx="12" stroke="#9ca3af" stroke-width="2" width="200" x="720" y="98"></rect>
+<text fill="#e5e7eb" font-size="13" font-weight="600" text-anchor="middle" x="820" y="120">you</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="820" y="138">sends text, receives text</text>
+<path d="M720,125 L584,125" fill="none" marker-end="url(#m12-ah)" stroke="#34d399" stroke-width="2"></path>
+</g>
+<text fill="#6b7280" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="490" y="208">Everything that enters the window is visible to the LLM. What leaves it, it forgets.</text>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">At the center, the <span class="text-emerald-400">LLM</span> and the brain. On top, the <span class="text-sky-400">context window</span> is working memory (like RAM): fast, but limited. This metaphor — LLM at the center, context as RAM, tools as peripherals — guides the entire course and returns strongly in module 1-3.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> <strong>Context window</strong> and the model's "field of view": everything it can take into account right now. <strong>RAM</strong> is the computer's short-term memory, which clears when powered off. The context window is exactly that for the LLM — and that's why the <strong>lasting memory</strong> (which we’ll see in Track 3) needs to be built externally, in files.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Context</span><p class="text-sm text-neutral-400 mt-1">Everything the model is "seeing now": conversation + instructions + files.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Context window</span><p class="text-sm text-neutral-400 mt-1">The limited space where this context fits.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Like RAM</span><p class="text-sm text-neutral-400 mt-1">Working memory: fast, limited, cleared when you close it.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Forgets when you leave</span><p class="text-sm text-neutral-400 mt-1">Each new conversation starts with an empty workspace.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-1-2#topico-4" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">🔤 Tokens: the model’s currency</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t4-p1">The LLM doesn’t read “words” the way you do. It breaks text into little pieces called <strong class="text-emerald-400">tokens</strong>. A token can be a whole word ("cat"), part of a word ("unbeliev" + "able"), or even just a punctuation mark. A useful rule of thumb: in Portuguese, each token is roughly equivalent to <strong>4 characters</strong>, and 100 words come to around 130 to 150 tokens. All the model's reading and writing happens in tokens.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t4-p2">Why does this matter to you? For two very practical reasons. First: the <strong>context window is measured in tokens</strong> — when someone says “this model has a context of 128 thousand tokens,” they’re describing the size of the workbench. Second: in the cloud, you <strong class="text-emerald-400">pay per token</strong> — both for the tokens that come in (your question + the context) and those that go out (the response). A token is literally the LLM’s currency.</p>
+<div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="The sentence “My Jarvis is amazing!” broken into tokens, showing that a token can be a word, part of a word, or a symbol" class="w-full h-auto" role="img" viewbox="0 0 980 170">
+<defs>
+<filter height="180%" id="m12-glow2" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m12-grid2" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#10b981" opacity="0.12" r="1.3"></circle></pattern>
+</defs>
+<rect fill="url(#m12-grid2)" height="170" width="980" x="0" y="0"></rect>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="490" y="28">How the model "sees" the sentence: My Jarvis is amazing!</text>
+<g font-family="Inter,sans-serif" font-size="14" font-weight="600">
+<g><rect fill="#0e2018" height="48" rx="11" stroke="#34d399" stroke-width="2" width="86" x="40" y="62"></rect><text fill="#a7f3d0" text-anchor="middle" x="83" y="91">My</text></g>
+<g><rect fill="#0e2018" height="48" rx="11" stroke="#34d399" stroke-width="2" width="110" x="138" y="62"></rect><text fill="#a7f3d0" text-anchor="middle" x="193" y="91">Jarvis</text></g>
+<g><rect fill="#0e2018" height="48" rx="11" stroke="#34d399" stroke-width="2" width="60" x="260" y="62"></rect><text fill="#a7f3d0" text-anchor="middle" x="290" y="91">e</text></g>
+<g filter="url(#m12-glow2)"><rect fill="#0e1622" height="48" rx="11" stroke="#38bdf8" stroke-width="2.5" width="86" x="332" y="62"></rect><text fill="#7dd3fc" text-anchor="middle" x="375" y="91">incri</text></g>
+<g filter="url(#m12-glow2)"><rect fill="#0e1622" height="48" rx="11" stroke="#38bdf8" stroke-width="2.5" width="86" x="430" y="62"></rect><text fill="#7dd3fc" text-anchor="middle" x="473" y="91">vel</text></g>
+<g><rect fill="#1f2937" height="48" rx="11" stroke="#9ca3af" stroke-width="2" width="46" x="528" y="62"></rect><text fill="#e5e7eb" text-anchor="middle" x="551" y="91">!</text></g>
+</g>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="375" y="138">“incredible” became 2 tokens</text>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" x="700" y="86">6 tokens in total —</text>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" x="700" y="106">and that's what counts.</text>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">The sentence becomes 6 <span class="text-emerald-400">tokens</span>. Notice that “incredible” splits into two (<span class="text-sky-400">incri</span> + <span class="text-sky-400">vel</span>) and even “!” is a token. In this unit, the model reads, writes, measures the context, and—in the cloud—charges you.</p>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Numbers that help put things in perspective</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>~4 characters</strong> = 1 token (in Portuguese, more or less).</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>100 words</strong> ≈ 130 to 150 tokens.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>1 book page</strong> ≈ 400 to 600 tokens.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>128 thousand token context</strong> ≈ an entire ~300-page book fitting on the “desk.”</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<h3 class="text-base font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-sm text-neutral-300">Long conversations cost more and fill the window faster—because the model reprocesses everything with each response. For independent tasks, open a <strong>new conversation</strong> makes Jarvis faster, cheaper, and less likely to get confused by old topics. “Clearing the table” is a good practice, not a waste.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Token</span><p class="text-sm text-neutral-400 mt-1">The small piece of text the model reads and writes (a word, fragment, or symbol).</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Context in tokens</span><p class="text-sm text-neutral-400 mt-1">Window size is measured in tokens, not words.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Per-token billing</span><p class="text-sm text-neutral-400 mt-1">In the cloud, you pay for input and output tokens.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Rule of thumb</span><p class="text-sm text-neutral-400 mt-1">~4 characters per token; 100 words ≈ 130-150 tokens.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-1-2#topico-5" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">☁️ Local model vs. cloud</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t5-p1">An LLM needs to run somewhere—and there are two places. In the <strong class="text-emerald-400">cloud</strong>, the model lives on a company’s server (Claude from Anthropic, GPT from OpenAI, Gemini from Google), and you talk to it over the internet. In <strong class="text-emerald-400">local</strong>, the model runs on <strong>your own machine</strong> — usually through a program called <strong>Ollama</strong>, which downloads and runs open models for free. Both do the same job: they serve as the brain. What changes is where they run, the cost, and privacy.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Cloud (Claude, GPT, Gemini)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>The world's most powerful models, always ready.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>It doesn't require powerful hardware—it even runs on a phone.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>No installation: just open and use.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>You pay per token, and your data leaves the machine.</span></li>
+</ul>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-4">✓ Local (Ollama on your machine)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Free after download: $0 per token, no meter.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Private: nothing leaves your machine; it works offline.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>You own the brain—without depending on anyone.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Requires hardware (RAM/GPU), and smaller models are weaker.</span></li>
+</ul>
+</div>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t5-p2">The choice isn’t “one is better than the other”—it’s <strong>which is best for this task</strong>. A cheap local model handles a simple summary without cost or data leakage. A powerful cloud model shines on a difficult task that requires maximum reasoning. Best of all, your Jarvis will be able to <strong class="text-emerald-400">switch brains</strong> depending on the case — something that Track 3 (module "Brains") shows in detail.</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> <strong>Ollama</strong> and a free program that installs and runs LLMs on your own machine with a simple command. It's the most common way to have a "local brain." You'll hear a lot about it in the hands-on tracks—for now, remember: <em>Ollama = run the LLM at home for free</em>.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Cloud</span><p class="text-sm text-neutral-400 mt-1">The model runs on the company’s server; it’s powerful, but you pay per use.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Local</span><p class="text-sm text-neutral-400 mt-1">The model runs on your machine; it’s free and private, but requires hardware.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Ollama</span><p class="text-sm text-neutral-400 mt-1">The program that downloads and runs open LLMs locally.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Change the brain</span><p class="text-sm text-neutral-400 mt-1">Use local or cloud models depending on the task — decide for each response.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-1-2#topico-6" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🚧 Limitations and workarounds</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m12-t6-p1">Now that you understand how the LLM works, you can clearly see three built-in limits—and, even better, how each one is handled. The good news: none of these limits is a dealbreaker. They’re exactly why a Jarvis has <strong class="text-emerald-400">tools and memory</strong> on top of the model. The LLM alone is just the brain; the rest provides what's missing.</p>
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">It hallucinates</h4><p class="text-sm text-neutral-400"><strong>Limit:</strong> makes up facts confidently. <strong class="text-emerald-400">Workaround:</strong> give it tools (web search, file reading) to check reality instead of guessing.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">It doesn't know what's new</h4><p class="text-sm text-neutral-400"><strong>Limit:</strong> its knowledge stops at the date it was trained (it doesn't know yesterday's news). <strong class="text-emerald-400">Workaround:</strong> search tools bring current information into context.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Forgets outside the context</h4><p class="text-sm text-neutral-400"><strong>Limit:</strong> what leaves the window disappears. <strong class="text-emerald-400">Workaround:</strong> persistent memory in files and search—so Jarvis "remembers" between conversations.</p></div>
+</div>
+</div>
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-3 flex items-center"><span class="mr-2">🧩</span> The brain doesn’t work alone</h3>
+<p class="text-neutral-300 text-sm mb-3">Notice the pattern: every limitation of a "pure" LLM is addressed by adding something <strong>around</strong> of it. Tools address hallucinations and freshness; memory addresses forgetting. That’s exactly why a Jarvis is <strong>more than one LLM</strong> — it’s the LLM <em>more</em> the layers that make it useful in the real world.</p>
+<p class="text-neutral-400 text-xs">In module 1-3, you see the leap from "chatbot that responds" to "agent that acts," and in Track 3 (Anatomy), each of these layers becomes its own chapter.</p>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-1-2#q1">
+<p class="font-medium mb-4">Self-check (optional): Which sentence best describes an LLM?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">A giant database that finds the right answer to every question.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">A program that predicts the next word based on patterns; creative, but it can hallucinate and forgets beyond its context.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">A real person responding on the other side of the screen.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3 mt-8">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Training cutoff</span><p class="text-sm text-neutral-400 mt-1">The model’s knowledge stops at the date it was trained.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Tools solve</span><p class="text-sm text-neutral-400 mt-1">Search and reading help prevent hallucinations and outdated information.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Persistent memory</span><p class="text-sm text-neutral-400 mt-1">Files + search give Jarvis memory across conversations.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">LLM + layers</span><p class="text-sm text-neutral-400 mt-1">A Jarvis is the brain plus the layers that make it useful.</p></div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-8">
+<div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">What is an LLM</strong><span class="text-neutral-400"> — the AI “brain,” a program that predicts the next word after reading a mountain of text.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">How it thinks</strong><span class="text-neutral-400"> — statistical prediction, not search; that’s why it’s creative and why it sometimes hallucinates.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Context and tokens</strong><span class="text-neutral-400"> — the context window is the "RAM" (limited, cleared when you exit), and everything is measured and billed in tokens.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Local vs. cloud and limits</strong><span class="text-neutral-400"> — same brain, different places; and the limits (hallucinating, going out of date, forgetting) become tools and memory.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-emerald-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">Module 1-3 — From chatbot to agent: when AI starts taking action</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Back to the Track</a>
+<a class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors" href="modulo-1-3.html">Next module →</a>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+<p>🤖 Jarvis — Your AI Operating System</p>
+<p>Open course · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<!-- Scripts nucleo v1 -->
+<script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+<!-- Camada de aprendizagem -->
+<script src="../../../assets/learn.js"></script>
+<script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-1-2#q1', {
+          answer: 1,
+          explain: {
+            0: 'Quase — mas nao. O LLM nao busca respostas num banco; ele preve a proxima palavra a partir de padroes.',
+            1: 'Isso! Previsao da proxima palavra, criativo mas sujeito a alucinacao, e com memoria limitada ao contexto.',
+            2: 'Nao — e um programa, nao uma pessoa. Soa humano porque aprendeu os padroes da nossa linguagem.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

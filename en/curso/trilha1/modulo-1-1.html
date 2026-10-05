@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="jarvis" name="inema-course"/>
+<title>Module 1.1 — What is a Jarvis | Jarvis · INEMA.CLUB</title>
+<meta content="From the fiction of Iron Man to your home: what exactly is a Jarvis—a personal AI assistant that talks, remembers, and acts. No jargon." name="description"/>
+<!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .bg-emerald-900\/30 { background-color: rgba(5,150,105,0.10); }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== red (alertas) ===== */
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+<link href="https://inematds.github.io/jarvis/curso/trilha1/modulo-1-1.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/jarvis/en/curso/trilha1/modulo-1-1.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/jarvis/es/curso/trilha1/modulo-1-1.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha1/modulo-1-1.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-1-1.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha1/modulo-1-1.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg" href="#conteudo">Skip to content</a>
+<!-- NAVIGATION (completo, identico em todas as paginas) -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-3">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10" href="../trilha1/index.html" id="nav-t1">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentals</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html" id="nav-t2">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Overview</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html" id="nav-t3">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomy</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html" id="nav-t4">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Build</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html" id="nav-t5">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Cell phone</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html" id="nav-t6">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Children</span>
+</a>
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-journey-open="" title="My journey" type="button">
+<span aria-hidden="true">◷</span><span class="hidden md:inline">Journey</span>
+<span class="inema-journey-badge hidden" data-count="0" data-inema-journey-badge=""></span>
+</button>
+<div class="relative">
+<button aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-appearance-toggle="[data-inema-appearance]" title="Appearance" type="button">
+<span aria-hidden="true">◑</span><span class="hidden md:inline">Appearance</span>
+</button>
+<div class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left" data-inema-appearance="">
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Theme</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="inema-dark">Dark</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="claro">Clear</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="sepia">Sepia</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="foco">Focus</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="contraste">High contrast</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Source</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="inter">Inter</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="system">System</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="leitura">Reading</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Size</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="100">A</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="112">A+</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="125">A++</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Subtext</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.45">Compact</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.7">Comfortable</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Accent</p>
+<div class="inema-accent-grid flex flex-wrap gap-2">
+<button class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" data-inema-set-accent="emerald" title="Emerald"></button>
+<button class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" data-inema-set-accent="blue" title="Blue"></button>
+<button class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" data-inema-set-accent="purple" title="Purple"></button>
+<button class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" data-inema-set-accent="amber" title="Amber"></button>
+<button class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" data-inema-set-accent="teal" title="Teal"></button>
+<button class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" data-inema-set-accent="rose" title="Rose"></button>
+</div>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" id="theme-toggle" title="Toggle light/dark">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main id="conteudo">
+<header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+<a class="hover:text-emerald-400" href="../../index.html">Start</a><span>/</span>
+<a class="hover:text-emerald-400" href="index.html">Learning path 1</a><span>/</span>
+<span class="text-emerald-400">Module 1.1</span>
+</nav>
+<span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">MODULE 1-1</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🤖 What is a “Jarvis” — from fiction to your home</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">In the movie, Iron Man has an invisible assistant who talks, remembers everything, and <em>does things</em> for him. This was a cinematic dream—today, it has become something you can build at home. In this first module, with no jargon at all, you’ll understand what a “Jarvis” is, why it’s different from a regular chatbot, and the path this entire course will take you on.</p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">6</div><div class="text-xs text-neutral-400">Topics</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">~30</div><div class="text-xs text-neutral-400">Minutes</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Beginner</div><div class="text-xs text-neutral-400">Level</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Theory</div><div class="text-xs text-neutral-400">Type</div></div>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="lg:flex lg:gap-10">
+<!-- TOC sticky -->
+<aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+<nav aria-label="Page index" class="lg:sticky lg:top-20" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-2">Section <span class="inema-toc-pos" data-inema-section-counter="">1</span> out of 6</p>
+<ol class="space-y-1 text-sm">
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400" href="#topico-1">1. From fiction to reality</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400" href="#topico-2">2. A chatbot isn't Jarvis</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400" href="#topico-3">3. AI OS in 1 sentence</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400" href="#topico-4">4. Why now</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400" href="#topico-5">5. What works (and what doesn’t)</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-emerald-400" href="#topico-6">6. The course map</a></li>
+</ol>
+<div aria-label="Module 1.1 progress" aria-valuemax="100" aria-valuemin="0" class="mt-4" data-inema-meter="modulo:1-1" role="progressbar">
+<div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-emerald-500" data-inema-meter-fill="" style="width:0%"></div></div>
+<span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 of 6</span> · <span data-inema-meter-pct="">0%</span></span>
+</div>
+</nav>
+</aside>
+<div class="lg:flex-1 min-w-0 inema-prose">
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-1-1#topico-1" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🎬 From fiction to reality</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m11-t1-p1">In <em>Iron Man</em>, Tony Stark has the <strong class="text-emerald-400">J.A.R.V.I.S.</strong> — a voice in the lab that understands any request, remembers everything that’s ever been said, and, more importantly, <strong>does things in the world</strong>: turns on machines, finds information, organizes your calendar, and carries out tasks on its own. For decades, this was pure fantasy. The point of this course is simple and even surprising: today, with the right tools, <strong>this assistant can be built by an ordinary person at home</strong>.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m11-t1-p2">When we say “a Jarvis” throughout the course, we’re not talking about the Marvel character or a specific product. We’re using the name as a nickname for an idea: a <strong class="text-emerald-400">personal AI assistant</strong> — something that is <em>your</em>, that talks naturally, that <em>remembers</em> of you and your context, and that can <em>act</em> instead of just answering. That’s the destination everything here points toward.</p>
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-3 flex items-center"><span class="mr-2">✨</span> The 3 promises of a Jarvis</h3>
+<p class="text-neutral-300 mb-4">Strip away the fiction and keep the essence. A real Jarvis delivers three things an ordinary program doesn’t deliver together:</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Conversation</strong> — you talk to it in everyday language, the way you would talk to a person. No memorized commands.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Remember</strong> — it remembers who you are, what you like, and what you’ve already agreed on, instead of treating you like a stranger in every conversation.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-1">•</span><span><strong>Acts</strong> — it doesn’t just give the answer; it takes action: sends the message, schedules the appointment, runs the task.</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> "AI" is just the abbreviation for <strong>artificial intelligence</strong> — programs that imitate human abilities such as conversing, writing, and reasoning. A <strong>personal AI assistant</strong> and an AI that's yours, configured for your day-to-day life, rather than a generic service that's the same for everyone. That's the course's "Jarvis."</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Jarvis</span><p class="text-sm text-neutral-400 mt-1">Nickname for a personal AI assistant that talks, remembers, and acts.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Personal assistant</span><p class="text-sm text-neutral-400 mt-1">Configured for YOU, not a generic service that’s the same for everyone.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Natural conversation</span><p class="text-sm text-neutral-400 mt-1">You speak in everyday language, without memorized commands.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Buildable today</span><p class="text-sm text-neutral-400 mt-1">It’s no longer fiction: one person can build it at home.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-1-1#topico-2" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">💬 A chatbot isn’t Jarvis</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m11-t2-p1">Here’s the most common confusion—and the most important one to clear up right away. You’ve probably used the <strong>ChatGPT</strong> or something similar. This is a <strong class="text-emerald-400">chatbot</strong>: you ask, it responds in text, and that’s it. It’s great for conversation, but it lives <em>inside the chat box</em>. Ask it about your emails and, at best, it explains how you could read your emails. It <strong>speaks</strong>; it doesn’t <strong>does</strong>.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m11-t2-p2">A Jarvis crosses this boundary. The difference is one word, and <strong class="text-emerald-400">action</strong>: it reaches into the real world. Instead of explaining how to read your email, it <em>reads</em> your email, summarizes what matters, and—if you ask—replies for you. That’s the line between “answering” and “acting.”</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Chatbot (only responds)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>"How do I send this email?" → it teaches you the steps.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>It can't see your calendar or your actual files.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Forgets you when you close the tab.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>It stays stuck in the text box—it can't touch anything outside it.</span></li>
+</ul>
+</div>
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Jarvis (acts in the world)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>"Send this email" → it actually sends it.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Read your calendar and files, and search the web for you.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Remember your context from one conversation to the next.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Runs tasks on its own — even while you sleep.</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> The difference in simple numbers</h3>
+<p class="text-neutral-300 text-sm mb-3">Think of a task like "check my appointments for tomorrow and let me know if anything conflicts." For a chatbot, this is <strong>impossible on its own</strong> — it doesn’t have access to your calendar. For a Jarvis, the next step is natural:</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>1 request from you</strong> in plain language, without you opening any app.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>2 to 4 actions</strong> behind the scenes (opening your calendar, reading, comparing, and responding to you).</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>0 clicks</strong> of your part along the way—you only receive the result.</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> <strong>Chatbot</strong> = a chat program that only returns text (e.g., ChatGPT in the chat box). <strong>Agent</strong> = an assistant that, in addition to chatting, can <em>to use tools</em> and carry out tasks in the world. Every Jarvis is an agent. The word "agent" comes back in a big way in module 1-3.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Chatbot</span><p class="text-sm text-neutral-400 mt-1">Conversation and text responses, but it lives inside the chat box.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Agent</span><p class="text-sm text-neutral-400 mt-1">Conversation AND action: it uses tools to do things in the world.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Action in the world</span><p class="text-sm text-neutral-400 mt-1">The line between “answering” and “doing.”</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Delegate</span><p class="text-sm text-neutral-400 mt-1">You stop asking for steps and start asking for results.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-1-1#topico-3" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🖥️ “AI operating system” in one sentence</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m11-t3-p1">You’ve already heard of <strong>Windows</strong>, of the <strong>Android</strong>, of the <strong>macOS</strong>. They are <strong class="text-emerald-400">operating systems</strong> (OS): the base program that organizes everything on the device — other programs, memory, and peripherals (screen, keyboard, internet). Without it, you’d just have loose pieces that don’t communicate with each other. The OS is what turns the pieces into a useful computer.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m11-t3-p2">The sentence that sums up the entire course is this: <strong class="text-emerald-400">an "AI OS" does for artificial intelligence what Windows does for a computer</strong>. Instead of organizing programs and peripherals, it organizes the four pieces that bring a Jarvis to life — the <strong>model</strong> (the thinking brain), the <strong>memory</strong> (what it remembers about you), the <strong>tools</strong> (the hands that act) and the <strong>channels</strong> (where you talk to it). On their own, these pieces do nothing. Together and well coordinated, they become an assistant that’s alive.</p>
+<!-- SVG fan-out: voce -> SO de IA (4 pecas) -> acoes -->
+<div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="You talk to Jarvis; inside it, an AI OS coordinates four pieces—model, memory, tools, and channels—and that produces actions in the world" class="w-full h-auto" role="img" viewbox="0 0 980 320">
+<defs>
+<filter height="180%" id="m11-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m11-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#10b981" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m11-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#34d399"></path></marker>
+<marker id="m11-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+<lineargradient id="m11-core" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#0e2018"></stop><stop offset="1" stop-color="#0c1a14"></stop></lineargradient>
+</defs>
+<rect fill="url(#m11-grid)" height="320" width="980" x="0" y="0"></rect>
+<!-- voce -->
+<g font-family="Inter,sans-serif">
+<rect fill="#1f2937" height="64" rx="14" stroke="#9ca3af" stroke-width="2" width="120" x="30" y="128"></rect>
+<text fill="#e5e7eb" font-size="15" text-anchor="middle" x="90" y="158">you</text>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="90" y="178">"summarize my day"</text>
+</g>
+<path d="M150,160 L210,160" fill="none" marker-end="url(#m11-ah)" stroke="#34d399" stroke-width="2.5"></path>
+<!-- SO de IA: nucleo + 4 pecas -->
+<g filter="url(#m11-glow)"><rect fill="url(#m11-core)" height="240" rx="20" stroke="#34d399" stroke-width="2.5" width="360" x="210" y="40"></rect></g>
+<text fill="#34d399" font-family="Inter,sans-serif" font-size="14" font-weight="600" text-anchor="middle" x="390" y="68">AI ONLY · the Jarvis</text>
+<g font-family="Inter,sans-serif" font-size="13">
+<g class="wf-a"><rect fill="#0c1a14" height="56" rx="12" stroke="#34d399" stroke-width="2" width="150" x="234" y="88"></rect><text fill="#a7f3d0" font-weight="600" text-anchor="middle" x="309" y="112">model</text><text fill="#6ee7b7" font-size="11" text-anchor="middle" x="309" y="130">the brain</text></g>
+<g class="wf-a"><rect fill="#0c1a14" height="56" rx="12" stroke="#34d399" stroke-width="2" width="150" x="396" y="88"></rect><text fill="#a7f3d0" font-weight="600" text-anchor="middle" x="471" y="112">memory</text><text fill="#6ee7b7" font-size="11" text-anchor="middle" x="471" y="130">what it remembers</text></g>
+<g class="wf-a"><rect fill="#0c1a14" height="56" rx="12" stroke="#38bdf8" stroke-width="2" width="150" x="234" y="176"></rect><text fill="#bae6fd" font-weight="600" text-anchor="middle" x="309" y="200">tools</text><text fill="#7dd3fc" font-size="11" text-anchor="middle" x="309" y="218">the hands</text></g>
+<g class="wf-a"><rect fill="#0c1a14" height="56" rx="12" stroke="#38bdf8" stroke-width="2" width="150" x="396" y="176"></rect><text fill="#bae6fd" font-weight="600" text-anchor="middle" x="471" y="200">channels</text><text fill="#7dd3fc" font-size="11" text-anchor="middle" x="471" y="218">how it speaks</text></g>
+</g>
+<!-- saidas (acoes) -->
+<path d="M570,110 L640,90" fill="none" marker-end="url(#m11-ahc)" stroke="#38bdf8" stroke-width="2"></path>
+<path d="M570,160 L640,160" fill="none" marker-end="url(#m11-ahc)" stroke="#38bdf8" stroke-width="2"></path>
+<path d="M570,210 L640,230" fill="none" marker-end="url(#m11-ahc)" stroke="#38bdf8" stroke-width="2"></path>
+<g font-family="Inter,sans-serif" font-size="13">
+<rect fill="#0e1622" height="44" rx="11" stroke="#38bdf8" stroke-width="1.6" width="300" x="648" y="70"></rect><text fill="#bae6fd" x="668" y="97">reads your calendar and your emails</text>
+<rect fill="#0e1622" height="44" rx="11" stroke="#38bdf8" stroke-width="1.6" width="300" x="648" y="138"></rect><text fill="#bae6fd" x="668" y="165">sends messages, schedules appointments</text>
+<rect fill="#0e1622" height="44" rx="11" stroke="#38bdf8" stroke-width="1.6" width="300" x="648" y="206"></rect><text fill="#bae6fd" x="668" y="233">runs tasks on its own on a schedule</text>
+</g>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="798" y="288">actions in the world</text>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">You speak in <span class="text-emerald-400">plain language</span>; inside Jarvis, a <span class="text-emerald-400">AI ONLY</span> coordinates four parts (model, memory, tools, and channels), and from that come <span class="text-sky-400">real-world actions</span>. Each of these pieces becomes a whole track later on—remember all four names.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> <strong>Operating system</strong> and it’s the base software of a device (Windows, Android, iOS) that organizes everything running on it. A <strong>AI ONLY</strong> is the same idea, except "everything" means the assistant's parts: the brain, memory, hands, and conversation doors. No one has to program this by hand — ready-made projects already coordinate it (you'll get to know them in Track 2).</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">AI ONLY</span><p class="text-sm text-neutral-400 mt-1">What organizes the model + memory + tools + channels.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Model</span><p class="text-sm text-neutral-400 mt-1">The brain that thinks in text (covered in modules 1-2).</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Tools and channels</span><p class="text-sm text-neutral-400 mt-1">The hands that act and the doors you use to talk to it.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Coordination</span><p class="text-sm text-neutral-400 mt-1">Loose pieces don't do anything; together they become an assistant.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-1-1#topico-4" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">⏳ Why now</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m11-t4-p1">If this is so good, why didn’t it happen before? Because three things needed to mature at the same time—and only now have they come together. Think of a car: you need the engine, the fuel <em>e</em> of the roads. If one is missing, nobody travels. With personal AI, these three “ingredients” have just become available together.</p>
+<!-- timeline -->
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Good-enough models</h4><p class="text-sm text-neutral-400">The “brain” (the AI model) got smart enough to understand complex requests and decide what to do. Until a few years ago, they made too many mistakes to trust with a real task.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Powerful personal hardware</h4><p class="text-sm text-neutral-400">Laptops and even modern phones already have enough power to run some of this at home. And where they don't, the cloud rents out computing power for pennies. The cost of entry has plummeted.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Open standards (MCP)</h4><p class="text-sm text-neutral-400">A way emerged <em>standardized</em> for connecting tools to the assistant—MCP. It’s like the “USB” for AI tools: plug it in, and it works. Before, every connection used different jargon.</p></div>
+</div>
+</div>
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-3 flex items-center"><span class="mr-2">🌊</span> The wave is just beginning</h3>
+<p class="text-neutral-300 text-sm mb-3">This convergence of the three ingredients is recent—a matter of months, not decades. That means you’re not "behind": you’re getting here early. Those who learn to build and operate a Jarvis now catch the wave on the way up, not after everyone already knows.</p>
+<p class="text-neutral-400 text-xs">The course assumes no prior knowledge. Every piece is explained from the ground up—you don’t need to be a programmer to follow along.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> <strong>MCP</strong> (Model Context Protocol) is a standard created by Anthropic in late 2024 to connect tools to any AI assistant in a consistent way. The mental image is the <strong>USB</strong>: before USB, every device had a different plug; afterward, one connector worked for everything. MCP does this for AI tools. It’s covered in detail again in Track 3.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Capable models</span><p class="text-sm text-neutral-400 mt-1">The brain got smart enough for real tasks.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Affordable hardware</span><p class="text-sm text-neutral-400 mt-1">Laptops and cheap cloud computing have lowered the cost of entry.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">MCP</span><p class="text-sm text-neutral-400 mt-1">The "USB for AI tools": plug it in, and it works.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Catch the wave early</span><p class="text-sm text-neutral-400 mt-1">The technology is just getting started—you’re not behind.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-1-1#topico-5" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">⚖️ What you can (and can't) do today</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m11-t5-p1">Before getting too excited, let’s be honest—realistic expectations are what separate people who use it well from those who give up in frustration. A Jarvis today is <strong class="text-emerald-400">powerful, but not magic</strong>. It shines with one family of tasks and still stumbles with another. Knowing the difference saves you from disappointment.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Where it already shines</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Write and review texts, drafts, emails, and summaries.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Find information and combine multiple sources for you.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Read your calendar, organize tasks, remind you of things.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Automate repeated steps (a daily summary, an alert).</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Where it still stumbles</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Very long tasks without supervision — it loses its way.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>"Hallucinates": sometimes it makes up a fact with complete confidence.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Critical decisions without a human checking at the end.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Things that happened after it was trained, without looking them up first.</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> The “hallucination” trap</h3>
+<p class="text-neutral-300 text-sm">The most dangerous mistake a Jarvis can make isn’t saying “I don’t know”—it’s <strong>make up a wrong answer with a confident tone</strong>. This is called <em>hallucination</em>. That’s why the golden rule: for anything that really matters (numbers, dates, names, money), <strong>a human checks before trusting</strong>. Jarvis is a great copilot, not a blind autopilot.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> <strong>Hallucination</strong>, in AI, is when the model generates false information that sounds true — because it "completes" the text in the most likely way, rather than consulting a source. The good news: tools (search, calendar, files) and memory reduce this a lot by giving it real facts to use. You'll see how in Track 3.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Realistic expectations</span><p class="text-sm text-neutral-400 mt-1">Powerful for text/search/scheduling; still struggles with long tasks.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Hallucination</span><p class="text-sm text-neutral-400 mt-1">Making up a false fact with an air of certainty.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Human in control</span><p class="text-sm text-neutral-400 mt-1">Check what matters before you trust.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-emerald-400 font-semibold text-sm">Copilot, not autopilot</span><p class="text-sm text-neutral-400 mt-1">Great for speeding things up, but not for making decisions alone in the dark.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-1-1#topico-6" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🗺️ The course map</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m11-t6-p1">To wrap up, here's the full journey. The course has <strong class="text-emerald-400">six tracks</strong>, and they're meant to be completed in order — each one prepares you for the next. You start by understanding (T1 and T2), then open the hood to see the parts (T3), learn to assemble them (T4), and finish by applying that knowledge in two concrete cases: the phone (T5) and children (T6).</p>
+<div class="space-y-3 mb-6">
+<div class="bg-dark-800 rounded-xl p-5 border border-emerald-500/30 flex items-start gap-3">
+<span class="text-xl flex-shrink-0">🌱</span>
+<div><h4 class="font-semibold text-emerald-400">Learning path 1 · Fundamentals <span class="text-neutral-500 font-normal">(you are here)</span></h4><p class="text-sm text-neutral-400 mt-1">Starting from scratch: what a Jarvis is, what an LLM is, and how a chatbot becomes an agent that takes action.</p></div>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600 flex items-start gap-3">
+<span class="text-xl flex-shrink-0">🗺️</span>
+<div><h4 class="font-semibold text-blue-400">Learning path 2 · The Landscape</h4><p class="text-sm text-neutral-400 mt-1">The ready-made systems that already exist, which one to choose and why—with security in mind.</p></div>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600 flex items-start gap-3">
+<span class="text-xl flex-shrink-0">🧬</span>
+<div><h4 class="font-semibold text-purple-400">Track 3 · Anatomy</h4><p class="text-sm text-neutral-400 mt-1">The 6 layers inside: channels, identity, tools, skills, agents, and brains.</p></div>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600 flex items-start gap-3">
+<span class="text-xl flex-shrink-0">🛠️</span>
+<div><h4 class="font-semibold text-amber-400">Track 4 · Build</h4><p class="text-sm text-neutral-400 mt-1">From the first building block to a robust solution: the minimum recipe and the 4-layer architecture.</p></div>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600 flex items-start gap-3">
+<span class="text-xl flex-shrink-0">📱</span>
+<div><h4 class="font-semibold text-teal-400">Track 5 · Jarvis on your phone</h4><p class="text-sm text-neutral-400 mt-1">Your assistant in your pocket, without an app store app — via Telegram/WhatsApp, with voice.</p></div>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600 flex items-start gap-3">
+<span class="text-xl flex-shrink-0">🧸</span>
+<div><h4 class="font-semibold text-rose-400">Track 6 · Jarvis for children</h4><p class="text-sm text-neutral-400 mt-1">A tutor that teaches by asking questions (the Socratic method) — and is safe, the most serious chapter.</p></div>
+</div>
+</div>
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-3 flex items-center"><span class="mr-2">🧭</span> How to get more out of it</h3>
+<p class="text-neutral-300 text-sm mb-3">Follow the steps in order, without rushing. Use the button <strong>"Mark as read"</strong> at the end of each topic — the progress bar on the side follows along, and the panel <strong>"Journey"</strong> (at the top) takes you back to where you left off. Total trip: <strong>21 modules, 126 topics, about 18 hours</strong>. You don’t have to do everything at once.</p>
+<p class="text-neutral-400 text-xs">Natural next step: module 1-2, where we open up Jarvis's "brain"—the so-called LLM—without any jargon.</p>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-1-1#q1">
+<p class="font-medium mb-4">Self-check (optional): Which sentence best sums up what a "Jarvis" is?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">A chatbot that answers questions in text, just like ChatGPT.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">A personal AI assistant that talks, remembers you, and ACTS in the world, organized by an AI OS.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">A physical robot with arms that only exists in movies.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-8">
+<div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">From fiction to reality</strong><span class="text-neutral-400"> — the movie “Jarvis” became a buildable idea: a personal AI assistant that talks, remembers, and takes action.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Chatbot ≠ Jarvis</strong><span class="text-neutral-400"> — the chatbot responds with text; Jarvis (an agent) acts in the world. The difference is action.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">AI ONLY in 1 sentence</strong><span class="text-neutral-400"> — it organizes the model + memory + tools + channels, the way Windows organizes the computer.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">Why now</strong><span class="text-neutral-400"> — capable models + accessible hardware + the MCP standard came together; this wave is just beginning.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">What it can (and can’t) do</strong><span class="text-neutral-400"> — great at text, search, and calendar; it still hallucinates and needs a human in control.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-neutral-100">The course map</strong><span class="text-neutral-400"> — 6 tracks in order, from understanding to building and applying.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-emerald-400 mb-2">Next:</h3>
+<p class="text-neutral-300">Module 1-2: The brain of the operation: what an LLM is (without the jargon)</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Back to the Track</a>
+<a class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors" href="modulo-1-2.html">Next module →</a>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+<p>🤖 Jarvis — Your AI Operating System</p>
+<p>Open course · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<!-- Scripts nucleo v1 -->
+<script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+<!-- Camada de aprendizagem -->
+<script src="../../../assets/learn.js"></script>
+<script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-1-1#q1', {
+          answer: 1,
+          explain: {
+            0: 'Quase — um chatbot SO responde texto. Um Jarvis vai alem: ele age no mundo.',
+            1: 'Isso! Conversa + memoria + acao, tudo coordenado por um SO de IA. Esse e o coracao do curso.',
+            2: 'Nao — um Jarvis e software (um assistente), nao precisa de corpo fisico nem so existe em filme.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

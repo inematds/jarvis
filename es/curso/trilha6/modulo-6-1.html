@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="jarvis" name="inema-course"/>
+<title>Módulo 6.1 — El Jarvis que enseña: el método socrático | Jarvis · INEMA.CLUB</title>
+<meta content="Cómo construir un tutor de IA que enseña haciendo preguntas: el método socrático, el ciclo pregunta-espera-valida-revela, Khanmigo, los modos de aprendizaje y el error como peldaño." name="description"/>
+<!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .bg-rose-900\/20 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .bg-rose-900\/30 { background-color: rgba(225,29,72,0.10); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5,150,105,0.08); }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+<link href="https://inematds.github.io/jarvis/curso/trilha6/modulo-6-1.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/jarvis/en/curso/trilha6/modulo-6-1.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/jarvis/es/curso/trilha6/modulo-6-1.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha6/modulo-6-1.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha6/modulo-6-1.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-6-1.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<a class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg" href="#conteudo">Saltar al contenido</a>
+<!-- NAVIGATION (completo, identico em todas as paginas) -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-3">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html" id="nav-t1">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html" id="nav-t2">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html" id="nav-t3">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomía</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html" id="nav-t4">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html" id="nav-t5">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-rose-400 bg-rose-500/10" href="../trilha6/index.html" id="nav-t6">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Niños</span>
+</a>
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-journey-open="" title="Mi recorrido" type="button">
+<span aria-hidden="true">◷</span><span class="hidden md:inline">Trayectoria</span>
+<span class="inema-journey-badge hidden" data-count="0" data-inema-journey-badge=""></span>
+</button>
+<div class="relative">
+<button aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-appearance-toggle="[data-inema-appearance]" title="Apariencia" type="button">
+<span aria-hidden="true">◑</span><span class="hidden md:inline">Apariencia</span>
+</button>
+<div class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left" data-inema-appearance="">
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="inema-dark">Oscuro</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="claro">Claro</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="sepia">Sepia</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="foco">Enfoque</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="contraste">Alto contraste</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Fuente</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="inter">Inter</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="system">Sistema</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="leitura">Lectura</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Tamaño</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="100">A</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="112">A+</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="125">A++</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Entre líneas</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.45">Compacto</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.7">Cómodo</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+<div class="inema-accent-grid flex flex-wrap gap-2">
+<button class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" data-inema-set-accent="emerald" title="Esmeralda"></button>
+<button class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" data-inema-set-accent="blue" title="Blue"></button>
+<button class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" data-inema-set-accent="purple" title="Purple"></button>
+<button class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" data-inema-set-accent="amber" title="Amber"></button>
+<button class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" data-inema-set-accent="teal" title="Verde azulado"></button>
+<button class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" data-inema-set-accent="rose" title="Rose"></button>
+</div>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" id="theme-toggle" title="Alternar entre modo claro y oscuro">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main id="conteudo">
+<header class="bg-gradient-to-br from-rose-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+<a class="hover:text-rose-400" href="../../index.html">Inicio</a><span>/</span>
+<a class="hover:text-rose-400" href="index.html">Ruta 6</a><span>/</span>
+<span class="text-rose-400">Módulo 6-1</span>
+</nav>
+<span class="inline-block px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-full mb-4">MÓDULO 6-1</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🦉 El Jarvis que enseña: el método socrático</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">Un buen tutor de IA no te da la respuesta sin más: <strong class="text-rose-400">pregunta</strong> y guía al niño hasta que él mismo llegue a la respuesta. En este módulo entenderás por qué funciona esta forma de enseñar (llamada "socrática"), cuál es el ciclo que sigue el bot, cómo Khanmigo lo demostró en la práctica y por qué el error deja de ser motivo de vergüenza y se convierte en un peldaño.</p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">6</div><div class="text-xs text-neutral-400">Temas</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">~35</div><div class="text-xs text-neutral-400">Minutos</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">Principiante</div><div class="text-xs text-neutral-400">Nivel</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">Práctico</div><div class="text-xs text-neutral-400">Tipo</div></div>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="lg:flex lg:gap-10">
+<!-- TOC sticky -->
+<aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+<nav aria-label="Índice de la página" class="lg:sticky lg:top-20" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-2">Sección <span class="inema-toc-pos" data-inema-section-counter="">1</span> de 6</p>
+<ol class="space-y-1 text-sm">
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-1">1. Por qué socrático</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-2">2. El estándar del "Profesor"</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-3">3. El ciclo socrático</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-4">4. Khanmigo en la práctica</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-5">5. Modos de aprendizaje</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-rose-400" href="#topico-6">6. El error como escalón</a></li>
+</ol>
+<div aria-label="Progreso del módulo 6-1" aria-valuemax="100" aria-valuemin="0" class="mt-4" data-inema-meter="modulo:6-1" role="progressbar">
+<div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-rose-500" data-inema-meter-fill="" style="width:0%"></div></div>
+<span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 de 6</span> · <span data-inema-meter-pct="">0%</span></span>
+</div>
+</nav>
+</aside>
+<div class="lg:flex-1 min-w-0 inema-prose">
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-6-1#topico-1" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🤔 Por qué socrático: enseñar preguntando</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m61-t1-p1">Imagina que un niño pregunta: <em>"¿cuánto es 7 veces 8?"</em>. Un chatbot común responde <strong>"56"</strong> y listo: el niño copia y sigue. Un tutor <strong class="text-rose-400">socrático</strong> hace algo diferente: en vez de dar el número, devuelve otra pregunta: <em>"¿ya sabes cuánto es 7 veces 4? ¿Y si duplicamos eso?"</em>. El niño piensa, arma el razonamiento y <strong>llega sola</strong> al 56. La respuesta fue descubierta, no recibida — y por eso se queda contigo.</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">¿Eres nuevo aquí?</strong> O <strong>método socrático</strong> tiene ese nombre por Sócrates, un filósofo de la antigua Grecia que enseñaba solo haciendo preguntas, nunca dando la respuesta servida. Aplicado a un tutor de IA, significa que el bot guía con preguntas hasta que el alumno encuentra la respuesta por su cuenta.</p>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m61-t1-p2">Esto no solo suena bonito: hay evidencia. En 2025, el <strong>MIT RAISE</strong> (la iniciativa del MIT para la IA en la educación) publicó resultados que muestran que los tutores de IA guiados con el método socrático mejoran el desempeño tanto en <strong class="text-rose-400">matemáticas</strong> cuánto cuestan las llamadas <strong>competencias digitales</strong> (saber pensar con la tecnología y sobre ella). El beneficio aparece justamente porque el niño ejercita el cerebro en vez de solo recibirlo todo hecho.</p>
+<div class="bg-gradient-to-br from-rose-900/30 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-rose-400 mb-3 flex items-center"><span class="mr-2">🎯</span> La diferencia en una frase</h3>
+<p class="text-neutral-300 text-sm mb-4">Un chatbot <strong>termina el pensamiento por ti</strong>. Un tutor socrático <strong>te devuelve el pensamiento</strong> — y solo confirma cuando ya llegaste allí.</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-rose-400 mt-1">•</span><span>El niño se convierte en protagonista: hace el esfuerzo mental y se lleva el crédito.</span></li>
+<li class="flex items-start gap-2"><span class="text-rose-400 mt-1">•</span><span>El aprendizaje perdura: lo que descubres por tu cuenta lo recuerdas mejor que lo que solo leíste.</span></li>
+<li class="flex items-start gap-2"><span class="text-rose-400 mt-1">•</span><span>Crea autonomía: el objetivo es que el niño necesite cada vez menos al tutor.</span></li>
+</ul>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Método socrático</span><p class="text-sm text-neutral-400 mt-1">Enseñar guiando con preguntas, sin dar la respuesta.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Aprendizaje activo</span><p class="text-sm text-neutral-400 mt-1">El estudiante construye la respuesta; por eso se le queda grabada.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">MIT RAISE (2025)</span><p class="text-sm text-neutral-400 mt-1">Estudio que mostró una mejora en matemáticas y competencias digitales.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Autonomía</span><p class="text-sm text-neutral-400 mt-1">La meta es que el alumno dependa cada vez menos del tutor.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-6-1#topico-2" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">👩‍🏫 El patrón del "Profesor" (Animabook)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m61-t2-p1">Existe un patrón didáctico que vale oro para inspirar a un tutor: el del "Profesor" de <strong>Animabook</strong>. La escena es sencilla. Un profesor reúne a un grupo de alumnos: <strong class="text-rose-400">Lumi, Caio y Valen</strong> — y, en vez de dar una conferencia, conversa. Hace una pregunta, los alumnos responden (y se equivocan, y debaten), y cuando aparece un término difícil, entra en escena un pequeño robot llamado <strong class="text-rose-400">PIX-Z</strong> que da la definición con la medida justa: breve, justo cuando hace falta.</p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🎭</span> Los tres papeles de la escena</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>El Profesor (guía):</strong> hace la pregunta correcta y se resiste a las ganas de «dar» la respuesta.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Los alumnos (piensan):</strong> se arriesgan, se equivocan y se corrigen entre sí — el error es parte del espectáculo.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>El PIX-Z (define):</strong> aparece solo cuando un término traba el diálogo, con la definición más breve posible.</span></li>
+</ul>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m61-t2-p2">¿Por qué esto es tan útil para construir un Jarvis-tutor? Porque tu bot puede <strong>encarnar todos esos papeles a la vez</strong>. Guía como el Profesor (primero pregunta), acepta el error como los alumnos (sin castigo) y lleva el PIX-Z dentro (define un término solo cuando el niño tropieza con él). La definición llega <strong class="text-rose-400">en el momento de necesidad</strong> — y no en un bloque gigante que nadie lee.</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<h3 class="text-base font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Consejo de diseño</h3>
+<p class="text-sm text-neutral-300">"Definición a la medida" es una regla de oro: nunca sueltes un párrafo de teoría. Di una frase solo cuando el niño demuestre que la necesita, exactamente como viste con "¿Nuevo aquí?" a lo largo de este curso. Menos texto, en el momento adecuado, enseña más.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Enseñanza mediante el diálogo</span><p class="text-sm text-neutral-400 mt-1">Conversación, no conferencia: preguntas y respuestas de ida y vuelta.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Definición a medida</span><p class="text-sm text-neutral-400 mt-1">El término solo se explica cuando dificulta la comprensión.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">El error como parte del espectáculo</span><p class="text-sm text-neutral-400 mt-1">Los alumnos se equivocan en escena y corrigen juntos.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Un bot, varios roles</span><p class="text-sm text-neutral-400 mt-1">Jarvis guía, acoge el error y define: todo a la vez.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-6-1#topico-3" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🔄 El ciclo socrático del bot</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m61-t3-p1">Todo esto se convierte en un <strong>ciclo</strong> de cuatro pasos que el bot repite con cada pregunta del niño: <strong class="text-rose-400">pregunta → espera → valida → revela</strong>. El secreto está en el orden, y sobre todo en <strong>no saltar</strong> para el «revela» demasiado pronto. Mientras un chatbot común pasa directamente de «pregunta» a «revela», el tutor socrático se contiene en los dos pasos intermedios.</p>
+<div class="rounded-2xl border border-rose-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="Ciclo socrático del bot en cuatro pasos: pregunta, espera, valida el razonamiento y solo entonces revela la respuesta" class="w-full h-auto" role="img" viewbox="0 0 980 220">
+<defs>
+<filter height="180%" id="m61-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m61-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#f43f5e" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m61-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#fb7185"></path></marker>
+<marker id="m61-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m61-grid)" height="220" width="980" x="0" y="0"></rect>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="14" font-weight="600" text-anchor="middle" x="490" y="28">El ciclo que el tutor repite con cada pregunta</text>
+<g font-family="Inter,sans-serif">
+<!-- passo 1 -->
+<rect fill="#2a0f16" height="78" rx="14" stroke="#fb7185" stroke-width="2" width="180" x="40" y="70"></rect>
+<text fill="#fb7185" font-size="15" font-weight="700" text-anchor="middle" x="130" y="100">1 · pregunta</text>
+<text fill="#fecdd3" font-size="12" text-anchor="middle" x="130" y="122">devuelve otra</text>
+<text fill="#fecdd3" font-size="12" text-anchor="middle" x="130" y="138">pregunta</text>
+<path d="M220,109 L268,109" fill="none" marker-end="url(#m61-ah)" stroke="#fb7185" stroke-width="2"></path>
+<!-- passo 2 -->
+<rect fill="#0e1622" height="78" rx="14" stroke="#38bdf8" stroke-width="2" width="180" x="270" y="70"></rect>
+<text fill="#38bdf8" font-size="15" font-weight="700" text-anchor="middle" x="360" y="100">2 · espera</text>
+<text fill="#bae6fd" font-size="12" text-anchor="middle" x="360" y="122">da tiempo para</text>
+<text fill="#bae6fd" font-size="12" text-anchor="middle" x="360" y="138">al niño pensar</text>
+<path d="M450,109 L498,109" fill="none" marker-end="url(#m61-ahc)" stroke="#38bdf8" stroke-width="2"></path>
+<!-- passo 3 -->
+<rect fill="#0e1622" height="78" rx="14" stroke="#38bdf8" stroke-width="2" width="180" x="500" y="70"></rect>
+<text fill="#38bdf8" font-size="15" font-weight="700" text-anchor="middle" x="590" y="100">3 · valida</text>
+<text fill="#bae6fd" font-size="12" text-anchor="middle" x="590" y="122">revisa el</text>
+<text fill="#bae6fd" font-size="12" text-anchor="middle" x="590" y="138">razonamiento</text>
+<path d="M680,109 L728,109" fill="none" marker-end="url(#m61-ah)" stroke="#fb7185" stroke-width="2"></path>
+<!-- passo 4 (foco) -->
+<g filter="url(#m61-glow)"><rect fill="#2a0f16" height="86" rx="15" stroke="#fb7185" stroke-width="2.5" width="186" x="730" y="66"></rect></g>
+<text fill="#fb7185" font-size="15" font-weight="700" text-anchor="middle" x="823" y="100">4 · revela</text>
+<text fill="#fecdd3" font-size="12" text-anchor="middle" x="823" y="122">solo después</text>
+<text fill="#fecdd3" font-size="12" text-anchor="middle" x="823" y="138">confirma ✓</text>
+<!-- volta -->
+<path d="M823,152 C823,195 130,195 130,150" fill="none" marker-end="url(#m61-ah)" stroke="#64748b" stroke-dasharray="6 6" stroke-width="2"></path>
+<text fill="#94a3b8" font-size="12" text-anchor="middle" x="476" y="210">repite con la siguiente pregunta</text>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">Los pasos <span class="text-rose-400">rosa</span> son los del tutor (preguntar y, al final, revelar); los <span class="text-sky-400">cian</span> son lo que más cuesta: <strong>esperar</strong> e <strong>validar el razonamiento</strong> antes de entregar la respuesta. Saltarse estos dos convierte al tutor de nuevo en un chatbot común.</p>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m61-t3-p2">Este comportamiento no ocurre por sí solo: tú lo escribes en el <strong class="text-rose-400">SOUL.md</strong> del bot. El SOUL.md (que viste en la Trilha 3) es el archivo de texto que define el alma del agente — quién es y cómo actúa. Para un tutor, ahí está la regla "explica el razonamiento, no solo la respuesta" y el famoso "nunca des la respuesta directa de entrada".</p>
+<!-- COPY-RUN -->
+<div class="bg-dark-900 rounded-xl border border-rose-500/30 overflow-hidden mb-6">
+<div class="px-5 py-3 border-b border-dark-600 bg-rose-500/10 flex items-center gap-2">
+<span class="text-rose-400">●</span><span class="font-semibold text-rose-400 text-sm">COPY-RUN · un SOUL.md de tutor socrático</span>
+</div>
+<div class="p-5 space-y-4">
+<p class="text-sm text-neutral-300"><strong class="text-rose-400">Objetivo:</strong> darle a tu bot el "alma" de un tutor que pregunta antes de responder. Crea un archivo de texto llamado <code class="text-rose-300 bg-dark-800 px-1.5 py-0.5 rounded">soul.md</code> y pega el bloque de abajo, reemplazando lo que está entre <code class="text-rose-300 bg-dark-800 px-1.5 py-0.5 rounded">&lt;...&gt;</code>.</p>
+<pre class="bg-dark-800 rounded-lg p-4 overflow-x-auto text-xs sm:text-sm font-mono text-neutral-200 leading-relaxed"><code># soul.md — Tutor socratico
+
+NOME: <nome-do-tutor>          # ex.: Coruja
+ALUNO: <nome-da-crianca>, <idade> anos
+MATERIA: <ex.: 4o="" ano="" do="" matematica="">
+
+## Como eu ensino (valores)
+- Eu PERGUNTO antes de responder. Nunca dou a resposta de primeira.
+- Eu peco o RACIOCINIO: "como voce pensou?", "por que acha isso?".
+- Eu valido o passo certo ANTES de revelar o resultado.
+- Eu uso 1 frase curta de definicao so quando um termo trava.
+- Eu falo de forma calorosa, paciente e curta (frases de crianca).
+
+## NUNCA
+- Nunca entrego a resposta pronta sem antes a crianca tentar.
+- Nunca humilho um erro. Erro e degrau, nao falha.
+- Nunca uso palavra dificil sem explicar na hora.</ex.:></idade></nome-da-crianca></nome-do-tutor></code></pre>
+<div class="bg-emerald-900/20 border border-emerald-500/30 rounded-lg p-4">
+<p class="text-sm text-neutral-300"><strong class="text-emerald-400">Cómo verificar:</strong> pídele al bot <em>"¿cuánto es 6 x 7?"</em>. Si la «esencia» funcionó, él <strong>no</strong> responde «42» directamente — devuelve algo como <em>"¿qué ya sabes de 6 x 7? Vamos por partes: ¿cuánto es 6 x 5?"</em>. Si escupe el número de inmediato, soul.md no se cargó en el system prompt.</p>
+</div>
+</div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Pregunta → espera → valida → revela</span><p class="text-sm text-neutral-400 mt-1">Los 4 pasos del ciclo, en ese orden.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Los pasos intermedios</span><p class="text-sm text-neutral-400 mt-1">Esperar y validar es lo que hace funcionar el método.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">SOUL.md</span><p class="text-sm text-neutral-400 mt-1">Archivo que define el alma del bot; ahí está la regla socrática.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">System prompt</span><p class="text-sm text-neutral-400 mt-1">Las instrucciones fijas que se inyectan al inicio de cada conversación.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-6-1#topico-4" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">📈 Khanmigo en la práctica</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m61-t4-p1">Todo esto podría ser solo teoría bonita, pero alguien ya lo probó a escala real. El <strong class="text-rose-400">Khanmigo</strong> y es el tutor de IA de la <strong>Khan Academy</strong> (la plataforma de educación gratuita de Sal Khan). Y se construyó sobre exactamente una regla: <strong>nunca dar la respuesta</strong>. Pregunta «¿cuál es la respuesta?» y Khanmigo responde «¿qué has intentado ya?». La misma lógica socrática de este módulo, aplicada a cientos de miles de estudiantes.</p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> El número que importa</h3>
+<p class="text-neutral-300 text-sm mb-3">La adopción se disparó precisamente porque el método funciona: Khanmigo pasó de cerca de <strong class="text-blue-400">68 mil</strong> para más de <strong class="text-blue-400">700 mil</strong> usuarios. Un crecimiento de más de <strong>10 veces</strong> — con la IA negándose a propósito a entregar la respuesta.</p>
+<div aria-hidden="true" class="flex items-end gap-3 mt-4">
+<div class="flex flex-col items-center">
+<div class="w-12 bg-blue-500/40 rounded-t" style="height:18px"></div>
+<span class="text-xs text-neutral-400 mt-1">68 mil</span>
+</div>
+<span class="text-blue-400 text-lg mb-4">→</span>
+<div class="flex flex-col items-center">
+<div class="w-12 bg-blue-500 rounded-t" style="height:90px"></div>
+<span class="text-xs text-neutral-400 mt-1">700 mil</span>
+</div>
+</div>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m61-t4-p2">La lección para tu proyecto es directa: el tutor socrático no es una versión «más débil» de un chatbot, sino una versión <strong class="text-rose-400">más valiosa</strong>. Los padres y las escuelas confían más en un tutor que hace pensar al niño que en uno que hace la tarea por él. Paradójicamente, negarse a dar la respuesta fácil fue lo que hizo crecer el producto.</p>
+<div class="bg-gradient-to-br from-rose-900/30 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-rose-400 mb-3 flex items-center"><span class="mr-2">🧠</span> Por qué esto convence a los adultos</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-rose-400 mt-1">•</span><span>Combate el «copia y pega»: el niño no puede simplemente copiar la respuesta del bot.</span></li>
+<li class="flex items-start gap-2"><span class="text-rose-400 mt-1">•</span><span>Se convierte en aliado del profesor, no en un atajo que sabotea la clase.</span></li>
+<li class="flex items-start gap-2"><span class="text-rose-400 mt-1">•</span><span>Muestra resultados: mejoran las notas y el razonamiento, no solo la "tarea entregada".</span></li>
+</ul>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Khanmigo</span><p class="text-sm text-neutral-400 mt-1">Tutor de IA de Khan Academy, 100% socrático.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">68 mil → 700 mil</span><p class="text-sm text-neutral-400 mt-1">Más de 10x de crecimiento al negarse a dar la respuesta.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Anticopia</span><p class="text-sm text-neutral-400 mt-1">El bot que no da la respuesta se convierte en aliado de la escuela.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Confianza de los padres</span><p class="text-sm text-neutral-400 mt-1">Rechazar la respuesta fácil es lo que hace que los adultos confíen.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-6-1#topico-5" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">🎚️ Modos de aprendizaje</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m61-t5-p1">Un niño de 5 años a la hora de dormir y ese mismo niño peleándose con las tablas de multiplicar el miércoles por la tarde necesitan <strong>tutores diferentes</strong>. La solución no es crear tres bots, sino darle al mismo bot <strong class="text-rose-400">modos</strong> intercambiables: "modo de cuento", "modo de tarea", "modo de curiosidad". Cada modo es una <strong class="text-rose-400">persona</strong> diferente, y tú alternas entre ellas sin tocar el código.</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">¿Eres nuevo aquí?</strong> Una <strong>persona</strong> y es una «forma de ser» que adopta el bot. Es como un actor que se cambia de vestuario: por debajo sigue siendo el mismo cerebro, pero cambian el tono, el vocabulario y el objetivo. Cambiar de persona = cambiar qué archivo de «alma» (soul) está activo en esa conversación.</p>
+</div>
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center"><span class="text-rose-400">📖</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Modo de cuento</h4><p class="text-sm text-neutral-400">Tranquilo, lento, narrativo. Para la hora de dormir: pregunta «¿y qué crees que va a pasar?» en vez de ponerlo a prueba.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center"><span class="text-rose-400">✏️</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Modo de tarea</h4><p class="text-sm text-neutral-400">Enfocado y socrático. Guía paso a paso, valida el razonamiento y se niega a dar la respuesta de la tarea.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center"><span class="text-rose-400">🔭</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Modo curiosidad</h4><p class="text-sm text-neutral-400">Para el «¿por qué el cielo es azul?». Explora contigo, te hace preguntas y celebra la curiosidad.</p></div>
+</div>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m61-t5-p2">El modo también ajusta el nivel a <strong>edad</strong>: la misma pregunta sobre fracciones se convierte en «la mitad de una pizza» para un pequeño y en «1/2 + 1/4» para uno mayor. Eso es lo que los educadores llaman <strong class="text-rose-400">scaffolding</strong> (andamiaje): el tutor brinda apoyo en la medida necesaria y lo va retirando a medida que el niño crece. El modo correcto coloca el andamiaje a la altura adecuada.</p>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Modo / personaje</span><p class="text-sm text-neutral-400 mt-1">Una «forma de ser» intercambiable del mismo bot.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Personas intercambiables</span><p class="text-sm text-neutral-400 mt-1">Cuento, tarea, curiosidad: sin cambiar de bot.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Ajuste por edad</span><p class="text-sm text-neutral-400 mt-1">El nivel de la explicación acompaña al niño.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Scaffolding (andamiaje)</span><p class="text-sm text-neutral-400 mt-1">Apoyo en la medida justa, que se retira a medida que el niño avanza.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-6-1#topico-6" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🪜 El error como escalón</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m61-t6-p1">El último pilar es el más delicado: qué hace el tutor cuando el niño <strong>se equivoca</strong>. Un buen tutor humano sabe que el error no es el final del camino: es un <strong class="text-rose-400">escalón</strong> de él. Nunca humilla, nunca dice «¡incorrecto!» sin más y nunca, de repente, da la respuesta correcta para «salvar» al niño. Lo recibe con calidez, encuentra lo que ya está bien en su razonamiento y lo guía desde el punto en que se trabó.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ El tutor que ayuda</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>"¡Buen intento! El comienzo está bien. Vuelve a mirar solo esta parte..."</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Encuentra el paso correcto antes de señalar el equivocado.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Da una pista más pequeña, no la respuesta completa.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Trata el error como información: «¿qué te hizo pensar eso?».</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ El tutor que hace daño</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>"Incorrecto." y nada más: el niño se bloquea.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Da la respuesta de inmediato y acaba con el intento.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Ironía o impaciencia ("¿otra vez esto?").</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Enseña al niño a tener miedo de arriesgarse.</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> El error que debes evitar en el diseño</h3>
+<p class="text-neutral-300 text-sm">Por defecto, un modelo de IA <strong>adora complacer</strong> — si el niño insiste: «¡Solo dame la respuesta!», tiende a ceder. Por eso, la regla «nunca entregues todo listo» debe estar <strong>escrita y firme</strong> en soul.md/agents.md. Sin esa restricción explícita, el tutor socrático se desmorona ante el primer «por favooor».</p>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m61-t6-p2">Tratar el error como un escalón también construye algo más grande que las matemáticas: <strong class="text-rose-400">valor para intentarlo</strong>. El niño que aprende que es seguro equivocarse se arriesga más, pregunta más y se rinde menos. Quizás ese sea el regalo más duradero de un buen tutor, y cabe entero en una regla de soul.md.</p>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-6-1#q1">
+<p class="font-medium mb-4">Autoevaluación (opcional): el niño pide "dame ya la respuesta de 9x6". ¿Qué hace un tutor socrático?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">Responde «54» de inmediato: al fin y al cabo, el niño lo pidió.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">Devuelve una pregunta que ayuda ("¿ya sabes cuánto es 9x3? ¿Y si duplicamos?") y solo confirma después de que lo intentes.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">Dice "incorrecto, piénsalo mejor" y espera en silencio.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3 mt-8">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">El error como peldaño</span><p class="text-sm text-neutral-400 mt-1">Equivocarse es parte del camino, nunca el final.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Encontrar primero lo correcto</span><p class="text-sm text-neutral-400 mt-1">Elogiar el paso correcto antes de mostrar el incorrecto.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Bloqueo explícito</span><p class="text-sm text-neutral-400 mt-1">"Nunca entregues la respuesta" tiene que estar escrito en el soul.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-rose-400 font-semibold text-sm">Valor para intentarlo</span><p class="text-sm text-neutral-400 mt-1">Equivocarse con seguridad hace que el niño se arriesgue más.</p></div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-8">
+<div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumen del módulo</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">Por qué socrático</strong><span class="text-neutral-400"> — enseñar haciendo preguntas permite que el niño descubra por sí mismo; MIT RAISE demostró una mejora real.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">El patrón «Profesor»</strong><span class="text-neutral-400"> — guiar mediante el diálogo y presentar la definición poco a poco (el PIX-Z de Animabook).</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">El ciclo del bot</strong><span class="text-neutral-400"> — pregunta → espera → valida → revela, escrito en soul.md; nunca saltes directamente a «revela».</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-neutral-100">Khanmigo, modos y error</strong><span class="text-neutral-400"> — de 68 mil a 700 mil al rechazar la respuesta; personajes por edad; y el error como peldaño, con el bloqueo en el soul.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-rose-400 mb-2">Siguiente módulo:</h3>
+<p class="text-neutral-300">6-2 — Personaje, voz y muñeco: darle cuerpo al tutor</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 justify-start">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Volver a la Trilha</a>
+<a class="flex-1 text-center px-6 py-3 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-500 transition-colors" href="modulo-6-2.html">Siguiente módulo →</a>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+<p>🤖 Jarvis — Tu sistema operativo de IA</p>
+<p>Curso abierto · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<!-- Scripts nucleo v1 -->
+<script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+<!-- Camada de aprendizagem -->
+<script src="../../../assets/learn.js"></script>
+<script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-6-1#q1', {
+          answer: 1,
+          explain: {
+            0: 'Esse e o chatbot comum — entregar a resposta na hora mata a oportunidade de a crianca pensar.',
+            1: 'Isso! Devolver uma pergunta que ajuda e so confirmar depois da tentativa e o coracao do metodo socratico.',
+            2: 'Nao — "errado" seco e silencio humilham e travam. O tutor acolhe o erro e guia com uma dica.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

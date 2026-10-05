@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="jarvis" name="inema-course"/>
+<title>Module 2.1 — How to compare AI operating systems + the category map | Jarvis · INEMA.CLUB</title>
+<meta content='The 5 criteria for comparing AI operating systems, the 4 market categories, the local vs. cloud axis, and the "less is more" thesis—to choose thoughtfully, without hype.' name="description"/>
+<!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/30 { background-color: rgba(37,99,235,0.10); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+<link href="https://inematds.github.io/jarvis/curso/trilha2/modulo-2-1.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/jarvis/en/curso/trilha2/modulo-2-1.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/jarvis/es/curso/trilha2/modulo-2-1.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha2/modulo-2-1.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-2-1.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha2/modulo-2-1.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg" href="#conteudo">Skip to content</a>
+<!-- NAVIGATION (completo, identico em todas as paginas) -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-3">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html" id="nav-t1">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentals</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10" href="../trilha2/index.html" id="nav-t2">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Overview</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html" id="nav-t3">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomy</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html" id="nav-t4">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Build</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html" id="nav-t5">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Cell phone</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html" id="nav-t6">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Children</span>
+</a>
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-journey-open="" title="My journey" type="button">
+<span aria-hidden="true">◷</span><span class="hidden md:inline">Journey</span>
+<span class="inema-journey-badge hidden" data-count="0" data-inema-journey-badge=""></span>
+</button>
+<div class="relative">
+<button aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-appearance-toggle="[data-inema-appearance]" title="Appearance" type="button">
+<span aria-hidden="true">◑</span><span class="hidden md:inline">Appearance</span>
+</button>
+<div class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left" data-inema-appearance="">
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Theme</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="inema-dark">Dark</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="claro">Clear</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="sepia">Sepia</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="foco">Focus</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="contraste">High contrast</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Source</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="inter">Inter</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="system">System</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="leitura">Reading</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Size</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="100">A</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="112">A+</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="125">A++</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Subtext</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.45">Compact</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.7">Comfortable</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Accent</p>
+<div class="inema-accent-grid flex flex-wrap gap-2">
+<button class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" data-inema-set-accent="emerald" title="Emerald"></button>
+<button class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" data-inema-set-accent="blue" title="Blue"></button>
+<button class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" data-inema-set-accent="purple" title="Purple"></button>
+<button class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" data-inema-set-accent="amber" title="Amber"></button>
+<button class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" data-inema-set-accent="teal" title="Teal"></button>
+<button class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" data-inema-set-accent="rose" title="Rose"></button>
+</div>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" id="theme-toggle" title="Toggle light/dark">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main id="conteudo">
+<header class="bg-gradient-to-br from-blue-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+<a class="hover:text-blue-400" href="../../index.html">Start</a><span>/</span>
+<a class="hover:text-blue-400" href="index.html">Learning path 2</a><span>/</span>
+<span class="text-blue-400">Module 2.1</span>
+</nav>
+<span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-4">MODULE 2-1</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🧭 How to compare AI operating systems + the category map</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">The “AI operating systems” market has turned into a noisy bazaar: dozens of projects, each promising to be your definitive Jarvis. Before diving into the names (that’s the next module), this one gives you the <strong class="text-blue-400">yardstick</strong>: the 5 criteria for judging any system, the 4 map categories, the local vs. cloud axis, and the "less is more" thesis. After this module, you'll compare them based on criteria — not hype.</p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">6</div><div class="text-xs text-neutral-400">Topics</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">~35</div><div class="text-xs text-neutral-400">Minutes</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">Beginner</div><div class="text-xs text-neutral-400">Level</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-blue-400">Theory</div><div class="text-xs text-neutral-400">Type</div></div>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="lg:flex lg:gap-10">
+<!-- TOC sticky -->
+<aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+<nav aria-label="Page index" class="lg:sticky lg:top-20" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-2">Section <span class="inema-toc-pos" data-inema-section-counter="">1</span> out of 6</p>
+<ol class="space-y-1 text-sm">
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400" href="#topico-1">1. The question everyone answers</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400" href="#topico-2">2. The 5 Criteria</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400" href="#topico-3">3. The 4 Categories</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400" href="#topico-4">4. Local vs. cloud</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400" href="#topico-5">5. Lean vs. framework</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-blue-400" href="#topico-6">6. How to read the table</a></li>
+</ol>
+<div aria-label="Module 2.1 progress" aria-valuemax="100" aria-valuemin="0" class="mt-4" data-inema-meter="modulo:2-1" role="progressbar">
+<div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-blue-500" data-inema-meter-fill="" style="width:0%"></div></div>
+<span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 of 6</span> · <span data-inema-meter-pct="">0%</span></span>
+</div>
+</nav>
+</aside>
+<div class="lg:flex-1 min-w-0 inema-prose">
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-2-1#topico-1" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">❓ The question everyone answers</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m21-t1-p1">It seems like a new “AI operating system” is born every week. OpenClaw, GravityClaw, Hermes, Intelecto, AIOS, MemGPT, Operator… the list goes on. From the outside, it looks like a mess of unrelated projects. But they have something in common — and that's exactly what makes sense of the map. They all respond to <strong class="text-blue-400">a single question</strong>: “how do I run MY AI—agent, memory, and personality—without being held hostage by a closed chatbot from a company?”</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m21-t1-p2">When you use ChatGPT or Claude on the website, the memory, rules, and limits belong to the company. You <em>rents</em> intelligence. This course’s family of projects wants the opposite: for YOU to be the owner—for the agent to run wherever you tell it, remember whatever you want, and follow the personality you write. Each system answers this question with different choices; comparing them is precisely how you understand those choices.</p>
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🧭</span> The master question, in one sentence</h3>
+<p class="text-neutral-300 mb-4">"How do I run my personal AI (agent + memory + personality) without relying on a closed chatbot?" — every AI OS is a <strong>answer to that question</strong>. The differences lie in <em>how</em> each one responds.</p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-1">•</span><span><strong>Agent:</strong> what takes action (sends messages, reads the calendar, runs tasks), not just responds.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-1">•</span><span><strong>Memory:</strong> what it remembers about you between conversations.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-1">•</span><span><strong>Personality:</strong> the tone, values, and rules you write.</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> “AI OS” (AI operating system) is the nickname for software that organizes a model + memory + tools + channels so your assistant can “live” — just as Windows organizes programs and peripherals. It’s not a real operating system that you install in place of Windows; it’s a <em>layer</em> that turns AI into your assistant. "Closed chatbot" = a service where the company controls everything (memory, rules, data).</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">The master question</span><p class="text-sm text-neutral-400 mt-1">Run your own AI without being tied to a closed chatbot.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">AI ONLY</span><p class="text-sm text-neutral-400 mt-1">Layer that brings together model + memory + tools + channels.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Rent vs. own</span><p class="text-sm text-neutral-400 mt-1">With a chatbot, you rent; here, you own it.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Same goal, different choices</span><p class="text-sm text-neutral-400 mt-1">Compare = understand each project’s choices.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-2-1#topico-2" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">📏 The 5 criteria</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m21-t2-p1">If they all answer the same question, how do you choose? With a measure of <strong class="text-blue-400">5 criteria</strong>. They are the five questions you ask any system before adopting it. Memorize them: we’ll use exactly these five in the next module to judge OpenClaw, GravityClaw, Hermes, and Intelecto side by side.</p>
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">🔒 Privacy — where does my data go?</h4><p class="text-sm text-neutral-400">Does the brain run on your machine (locally) or on a company’s server (in the cloud)? Can everything you type leave your home, or not? For sensitive data, this is the first filter.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">💸 Cost — how much does this hit your wallet?</h4><p class="text-sm text-neutral-400">Fixed or free cost (local) versus per-token charges (cloud). An agent running 24/7 in the cloud can cost from US$ 500 to US$ 5.000 per month; locally, after the hardware, it's ~US$ 0 per use.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">🔍 Control / auditability — can I read the code?</h4><p class="text-sm text-neutral-400">Do you understand and know how to review what the system does, or is it a black box with 100 thousand lines that no one reads? Code you can audit is code you can trust.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">4</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">🛠️ Effort — clone something ready-made or build it brick by brick?</h4><p class="text-sm text-neutral-400">Some systems are ready to download and run; others you build piece by piece, understanding each one. More effort generally buys you more understanding and control.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">5</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">⚡ Power — how many integrations does it reach?</h4><p class="text-sm text-neutral-400">How many tools, channels, and services does the system connect? More power = more things it can do for you—but, as we’ll see, more power also expands the risk surface.</p></div>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> The trade-off rule of thumb</h3>
+<p class="text-neutral-300 text-sm mb-3">These five criteria almost never all align. Moving up the <strong>power</strong> usually takes down the <strong>control</strong> (more integrations = more code to audit). Maximize <strong>privacy</strong> (local) often costs <strong>effort</strong> and it’s power. Comparing means seeing <em>which axis each project chose to sacrifice</em>.</p>
+<p class="text-neutral-400 text-xs">There is no absolute "best"—there's the best for what <strong>you</strong> values.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> "Auditability" is the ability to inspect and understand what a system does internally — read the code, view the logs, check every action. A "token" is a piece of text that cloud models charge for (each word becomes one or more tokens). An "integration" is any external service connected to the agent (Gmail, calendar, GitHub).</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Privacy</span><p class="text-sm text-neutral-400 mt-1">Local (doesn't leave your device) vs. cloud (data is transmitted).</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Cost</span><p class="text-sm text-neutral-400 mt-1">Fixed/free vs. per token.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Auditability</span><p class="text-sm text-neutral-400 mt-1">Can you read and trust the code?</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Effort × Power</span><p class="text-sm text-neutral-400 mt-1">Clone vs. build; and how many integrations it reaches.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-2-1#topico-3" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🗺️ The 4 categories</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m21-t3-p1">With the yardstick in hand, you can sort out the mess. All the projects you'll hear about fall into <strong class="text-blue-400">4 major categories</strong>. Knowing a system’s category already tells you a lot before you read a single line about it: what it’s for, what kind of person uses it, and which of the 5 criteria it tends to prioritize.</p>
+<div class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="Map of the 4 categories of AI systems: research/kernel, local and voice assistants, dedicated hardware, and agent frameworks—the last one is where most people build" class="w-full h-auto" role="img" viewbox="0 0 980 280">
+<defs>
+<filter height="180%" id="m21-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m21-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#3b82f6" opacity="0.12" r="1.3"></circle></pattern>
+<lineargradient id="m21-focus" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#0e1622"></stop><stop offset="1" stop-color="#13233a"></stop></lineargradient>
+</defs>
+<rect fill="url(#m21-grid)" height="280" width="980" x="0" y="0"></rect>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="490" y="30">THE 4 CATEGORIES OF PERSONAL AI SYSTEMS</text>
+<g font-family="Inter,sans-serif">
+<!-- a -->
+<rect fill="#0e1622" height="170" rx="14" stroke="#60a5fa" stroke-width="2" width="210" x="40" y="62"></rect>
+<text fill="#60a5fa" font-size="14" font-weight="700" text-anchor="middle" x="145" y="92">a · Research / kernel</text>
+<text fill="#cbd5e1" font-size="12" text-anchor="middle" x="145" y="120">AIOS · MemGPT</text>
+<text fill="#94a3b8" font-size="11" text-anchor="middle" x="145" y="150">the theoretical foundation:</text>
+<text fill="#94a3b8" font-size="11" text-anchor="middle" x="145" y="168">“what would an OS be like”</text>
+<text fill="#94a3b8" font-size="11" text-anchor="middle" x="145" y="186">for AI agents?”</text>
+<text fill="#38bdf8" font-size="11" text-anchor="middle" x="145" y="214">papers, prototypes</text>
+<!-- b -->
+<rect fill="#0e1622" height="170" rx="14" stroke="#60a5fa" stroke-width="2" width="210" x="270" y="62"></rect>
+<text fill="#60a5fa" font-size="14" font-weight="700" text-anchor="middle" x="375" y="92">b · Local assistants</text>
+<text fill="#cbd5e1" font-size="12" text-anchor="middle" x="375" y="110">Leon · OVOS · Jan</text>
+<text fill="#cbd5e1" font-size="12" text-anchor="middle" x="375" y="128">Home Assistant</text>
+<text fill="#94a3b8" font-size="11" text-anchor="middle" x="375" y="156">privacy-focused</text>
+<text fill="#94a3b8" font-size="11" text-anchor="middle" x="375" y="174">and voice, running</text>
+<text fill="#94a3b8" font-size="11" text-anchor="middle" x="375" y="192">in your home</text>
+<text fill="#38bdf8" font-size="11" text-anchor="middle" x="375" y="214">local-first</text>
+<!-- c -->
+<rect fill="#0e1622" height="170" opacity="0.6" rx="14" stroke="#60a5fa" stroke-width="2" width="210" x="500" y="62"></rect>
+<text fill="#60a5fa" font-size="14" font-weight="700" text-anchor="middle" x="605" y="92">c · Dedicated hardware</text>
+<text fill="#cbd5e1" font-size="12" text-anchor="middle" x="605" y="110">Rabbit R1 · Humane</text>
+<text fill="#94a3b8" font-size="11" text-anchor="middle" x="605" y="138">one device only</text>
+<text fill="#94a3b8" font-size="11" text-anchor="middle" x="605" y="156">for the AI</text>
+<text fill="#f87171" font-size="11" text-anchor="middle" x="605" y="186">poor reception:</text>
+<text fill="#f87171" font-size="11" text-anchor="middle" x="605" y="204">the problem rarely</text>
+<text fill="#f87171" font-size="11" text-anchor="middle" x="605" y="220">and the hardware</text>
+<!-- d (foco) -->
+<g filter="url(#m21-glow)"><rect fill="url(#m21-focus)" height="182" rx="15" stroke="#38bdf8" stroke-width="2.5" width="222" x="730" y="56"></rect></g>
+<text fill="#38bdf8" font-size="14" font-weight="700" text-anchor="middle" x="841" y="88">d · Agent frameworks</text>
+<text fill="#e2e8f0" font-size="12" text-anchor="middle" x="841" y="108">LangGraph · CrewAI</text>
+<text fill="#e2e8f0" font-size="12" text-anchor="middle" x="841" y="126">MCP</text>
+<text fill="#bae6fd" font-size="11" text-anchor="middle" x="841" y="156">the pieces to assemble</text>
+<text fill="#bae6fd" font-size="11" text-anchor="middle" x="841" y="174">your own agent</text>
+<text fill="#38bdf8" font-size="12" font-weight="600" text-anchor="middle" x="841" y="206">← MOST people</text>
+<text fill="#38bdf8" font-size="12" font-weight="600" text-anchor="middle" x="841" y="224">of this course builds</text>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">The first three categories provide <span class="text-blue-400">context</span>; the fourth (highlighted, with <span class="text-blue-400">cyan</span>) and where the OpenClaw/GravityClaw/Intelecto/Hermes family lives—you build your Jarvis from standardized parts instead of buying a ready-made box.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<h4 class="font-semibold text-blue-400 mb-1">a · Research / kernel</h4>
+<p class="text-sm text-neutral-400">AIOS, MemGPT/Letta. They’re the theory—papers and prototypes that ask, “What would a real operating system for AI agents look like?” You rarely use them directly, but their ideas spill over into everything else.</p>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<h4 class="font-semibold text-blue-400 mb-1">b · Local assistants / voice</h4>
+<p class="text-sm text-neutral-400">Leon, OVOS, Jan, Home Assistant Assist. Ready-made assistants focused on privacy and voice, running in your home. Great if you want something “that already works” without much programming.</p>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<h4 class="font-semibold text-red-400 mb-1">c · Dedicated hardware</h4>
+<p class="text-sm text-neutral-400">Rabbit R1, Humane AI Pin. Physical devices just for AI. A lukewarm to poor reception—the market lesson is that the problem is rarely the hardware; it’s the software and the purpose.</p>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-5">
+<h4 class="font-semibold text-blue-400 mb-1">d · Agent frameworks ← ours</h4>
+<p class="text-sm text-neutral-400">LangGraph, CrewAI, MCP (the “Model Context Protocol”—an open standard from Anthropic for plugging tools into an agent; you'll see it in detail in the following tracks). These are the building blocks you use to create your own agent. This is where the course family lives—you build your own Jarvis instead of buying a closed box.</p>
+</div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Research / kernel</span><p class="text-sm text-neutral-400 mt-1">The theory that inspires the rest (AIOS, MemGPT).</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Local assistant</span><p class="text-sm text-neutral-400 mt-1">Ready, private, voice-based (Leon, Jan, Home Assistant).</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Dedicated hardware</span><p class="text-sm text-neutral-400 mt-1">Device designed only for AI; poor reception (R1, Humane).</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Agent framework</span><p class="text-sm text-neutral-400 mt-1">The pieces for building your own — where the course lives.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-2-1#topico-4" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">⚖️ Local vs. cloud — the master axis</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m21-t4-p1">Of the 5 criteria, one outweighs the others: <strong class="text-blue-400">where the brain runs</strong>. "Local" means the model thinks on YOUR machine; "cloud" means it thinks on a company's server (Anthropic, OpenAI). This one choice brings privacy, cost, and control along with it — which is why we call it the master axis.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-4">🏠 LOCAL — privacy and cost</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Data never leaves home.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>~US$ 0 per use after the hardware.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Works offline without depending on a service.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Requires decent hardware; may be slower.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Local models tend to be less powerful.</span></li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-bold text-neutral-100 mb-4">☁️ CLOUD — power and convenience</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>State-of-the-art, more capable models.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>No hardware setup; runs on any device.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Fast, always up to date.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Your data is sent to the company.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Per-token billing; can get expensive with heavy use.</span></li>
+</ul>
+</div>
+</div>
+<div class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="The master axis of local versus cloud: more privacy and lower cost on the left, more power and convenience on the right; good systems let you slide between the two by message" class="w-full h-auto" role="img" viewbox="0 0 980 200">
+<defs>
+<lineargradient id="m21-axis" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#3b82f6"></stop><stop offset="1" stop-color="#38bdf8"></stop>
+</lineargradient>
+<marker id="m21-dot" markerheight="10" markerwidth="10" refx="5" refy="5"><circle cx="5" cy="5" fill="#38bdf8" r="4"></circle></marker>
+</defs>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="490" y="30">THE MASTER AXIS · a slider, not a switch</text>
+<line stroke="url(#m21-axis)" stroke-linecap="round" stroke-width="6" x1="90" x2="890" y1="105" y2="105"></line>
+<g font-family="Inter,sans-serif">
+<circle cx="90" cy="105" fill="#0e1622" r="10" stroke="#3b82f6" stroke-width="3"></circle>
+<text fill="#60a5fa" font-size="14" font-weight="700" text-anchor="middle" x="90" y="72">🏠 LOCAL</text>
+<text fill="#94a3b8" font-size="11" text-anchor="middle" x="90" y="140">+ privacy</text>
+<text fill="#94a3b8" font-size="11" text-anchor="middle" x="90" y="156">+ zero cost</text>
+<circle cx="890" cy="105" fill="#0e1622" r="10" stroke="#38bdf8" stroke-width="3"></circle>
+<text fill="#38bdf8" font-size="14" font-weight="700" text-anchor="middle" x="890" y="72">☁️ CLOUD</text>
+<text fill="#94a3b8" font-size="11" text-anchor="middle" x="890" y="140">+ power</text>
+<text fill="#94a3b8" font-size="11" text-anchor="middle" x="890" y="156">+ convenience</text>
+<g class="wf-a"><circle cx="360" cy="105" fill="#38bdf8" r="7"></circle><text fill="#bae6fd" font-size="11" text-anchor="middle" x="360" y="180">private task → local</text></g>
+<g class="wf-a"><circle cx="640" cy="105" fill="#38bdf8" r="7"></circle><text fill="#bae6fd" font-size="11" text-anchor="middle" x="640" y="180">difficult task → cloud</text></g>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">The best systems treat local↔cloud as a <span class="text-blue-400">slider</span>, not a switch: you choose <strong>per message</strong> — sends the sensitive task to the local model and the complicated task to the cloud.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<h3 class="text-base font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-sm text-neutral-300">When comparing, don't ask "is this system local OR cloud?" Ask "does it let me <strong>choose</strong> between the two, and how easily?". Systems like Intelecto and GravityClaw let you switch the brain with a configuration file (the <code class="text-blue-400">.env</code>)—local for everyday use, cloud for tasks that need muscle.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Local</span><p class="text-sm text-neutral-400 mt-1">Brain on your machine; private and inexpensive.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Cloud</span><p class="text-sm text-neutral-400 mt-1">Brain on the server; powerful and convenient.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Master axis</span><p class="text-sm text-neutral-400 mt-1">The choice that affects privacy, cost, and control.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Choice per message</span><p class="text-sm text-neutral-400 mt-1">Switch between local and cloud on a case-by-case basis.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-2-1#topico-5" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">🪶 Lean vs. framework — "less is more"</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m21-t5-p1">The second comparison axis has less to do with where it runs and more with <strong class="text-blue-400">how much code is underneath</strong>. On one side, heavyweight frameworks packed with features and tens of thousands of lines. On the other, the philosophy <strong>lean</strong> ("lean"): do the same work with as little code as possible — code you can wrap your head around.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m21-t5-p2">The extreme example of this philosophy is the <strong>Intellect</strong>: a whole personal agent in about <strong class="text-blue-400">3,000 lines of Python</strong>, without Docker, without a web dashboard. At the other extreme are projects with more than 100 thousand lines that no one finishes reading. The lean thesis is direct: <em>“code you understand is worth more than code you clone and never read”</em>. Less code isn’t laziness — it’s security and control.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-4">✓ LEAN (lightweight)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>A few thousand lines—you can read it all.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>You understand every piece; you audit what it does.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Less code = fewer places for a bug or attack to hide.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">✓</span><span>Easy to modify and make entirely your own.</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ HEAVY FRAMEWORK</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Tens of thousands of lines—no one reads them all.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Black box: you trust without auditing.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>More surface area for bugs and security failures.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Hard to adapt; you become dependent on its choices.</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> The order of magnitude</h3>
+<p class="text-neutral-300 text-sm mb-3">To feel the difference: Intelecto fits in ~<strong>3,000 lines</strong>; an OpenClaw exceeds <strong>100,000 lines</strong>. There are more than <strong>30×</strong> difference to solve, deep down, the same central question. The lean approach bets that this excess almost always costs more than it delivers.</p>
+<p class="text-neutral-400 text-xs">Caution: lean doesn't mean "weak." It means "only what's needed, and everything readable."</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> A "framework" is a ready-made set of code and structures that you build your program on — it saves work, but embeds the decisions of its creator. "Vendor lock-in" means being stuck with a tool or company to the point where leaving is expensive or difficult. Lean code reduces lock-in because you understand and control everything.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Lean</span><p class="text-sm text-neutral-400 mt-1">Minimal code; everything readable and auditable.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Framework</span><p class="text-sm text-neutral-400 mt-1">Ready-made structure; embeds decisions made by others.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">"Less is more"</span><p class="text-sm text-neutral-400 mt-1">Understand &gt; clone; smaller risk surface.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Vendor lock-in</span><p class="text-sm text-neutral-400 mt-1">Being stuck; lean frees you from that.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-2-1#topico-6" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">📋 How to read the table in the next module</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m21-t6-p1">In the next module, you'll see the systems side by side in a comparison table. Now that you have the yardstick (the 5 criteria), the maps (the 4 categories), and the two axes (local↔cloud, lean↔framework), reading that table becomes easy. This section is your <strong class="text-blue-400">reading guide</strong>: what to look at in each column and the pitfall to avoid.</p>
+<div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+<table class="w-full text-sm">
+<thead>
+<tr class="border-b border-dark-600 bg-blue-900/20">
+<th class="text-left px-4 py-3 text-blue-400 font-semibold">Table column</th>
+<th class="text-left px-4 py-3 text-blue-400 font-semibold">What she answers</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-dark-600">
+<tr><td class="px-4 py-3 text-neutral-100 font-medium">Category</td><td class="px-4 py-3 text-neutral-400">Which of the 4 boxes the system falls into (kernel, local, hardware, framework).</td></tr>
+<tr><td class="px-4 py-3 text-neutral-100 font-medium">Local / cloud</td><td class="px-4 py-3 text-neutral-400">Where the brain runs — and whether you can choose.</td></tr>
+<tr><td class="px-4 py-3 text-neutral-100 font-medium">Cost</td><td class="px-4 py-3 text-neutral-400">Fixed/free or per token; how much it costs in real-world use.</td></tr>
+<tr><td class="px-4 py-3 text-neutral-100 font-medium">Lines / auditability</td><td class="px-4 py-3 text-neutral-400">Can you read the code? Lean or a black box?</td></tr>
+<tr><td class="px-4 py-3 text-neutral-100 font-medium">Channel / security</td><td class="px-4 py-3 text-neutral-400">Is there an open port on the internet? MCP only? Is there a whitelist?</td></tr>
+<tr><td class="px-4 py-3 text-neutral-100 font-medium">Power</td><td class="px-4 py-3 text-neutral-400">How many integrations it can reach—and at what risk cost.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> The trap to avoid</h3>
+<p class="text-neutral-300 text-sm mb-3">Don't be swayed by the "power" column. A system with 700 integrations and 250 thousand stars on GitHub <em>seems</em> the winner—but it may be the most dangerous. More power and more code mean a larger attack surface: more doors, more third-party dependencies, and more places where something can go wrong. A big number doesn't mean it's good.</p>
+<p class="text-neutral-400 text-xs">In the next module, you'll see the real case: a huge system with tens of thousands of installations exposed on the internet, and hundreds of malicious extensions. Power without security is a risk.</p>
+</div>
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🧩</span> Read in 3 steps</h3>
+<ol class="space-y-2 text-neutral-300 text-sm list-decimal list-inside">
+<li>Identify the <strong>category</strong> — that already tells you what it’s for.</li>
+<li>Check the <strong>master axis</strong> (local/cloud) and whether you can choose.</li>
+<li>Check <strong>auditability + security</strong> before being impressed by power.</li>
+</ol>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Reading guide</span><p class="text-sm text-neutral-400 mt-1">What to look at in each comparison column.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">The “power” trap</span><p class="text-sm text-neutral-400 mt-1">A big number doesn't mean it's good or safe.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Attack surface</span><p class="text-sm text-neutral-400 mt-1">More code and ports = more places to fail.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-blue-400 font-semibold text-sm">Read in 3 steps</span><p class="text-sm text-neutral-400 mt-1">Category → master axis → auditability/security.</p></div>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-2-1#q1">
+<p class="font-medium mb-4">Self-check (optional): when comparing two AI operating systems, what approach does the module recommend?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">Always choose the one with the most integrations and the most stars on GitHub.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">Use the 5 criteria and the category, check local/cloud and auditability BEFORE being impressed by its capabilities.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">Always prefer the system with more code because it does more things.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-8">
+<div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">The master question</strong><span class="text-neutral-400"> — every AI OS answers the question, "how do I run my AI without being held hostage by a closed chatbot?".</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">The 5 criteria</strong><span class="text-neutral-400"> — privacy, cost, control/auditability, effort, and power. Your yardstick.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">The 4 categories</strong><span class="text-neutral-400"> — kernel, local assistants, dedicated hardware, and agent frameworks (ours).</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">The two axes</strong><span class="text-neutral-400"> — local↔cloud (the master axis, selectable per message) and lean↔framework (“less is more”).</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-neutral-100">How to read the table</strong><span class="text-neutral-400"> — category → master axis → auditability/security; watch out for the “power” trap.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-blue-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">2-2 — The family at home: OpenClaw, GravityClaw, Hermes, and Intelecto</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Back to the Track</a>
+<a class="flex-1 text-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-colors" href="modulo-2-2.html">Next module →</a>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+<p>🤖 Jarvis — Your AI Operating System</p>
+<p>Module 2-1 · Track 2 · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<!-- Scripts nucleo v1 -->
+<script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+<!-- Camada de aprendizagem -->
+<script src="../../../assets/learn.js"></script>
+<script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-2-1#q1', {
+          answer: 1,
+          explain: {
+            0: 'Cuidado — mais integracoes e mais estrelas nao garantem qualidade nem seguranca; e ate um sinal de alerta.',
+            1: 'Isso! Use a regua dos 5 criterios e a categoria, cheque local/nuvem e auditabilidade, e so depois pese o poder.',
+            2: 'Ao contrario — mais codigo costuma significar mais superficie de risco e menos auditabilidade.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

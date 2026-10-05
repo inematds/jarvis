@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="jarvis" name="inema-course"/>
+<title>Module 4.1 — From zero to your first Jarvis (the minimum recipe) | Jarvis · INEMA.CLUB</title>
+<meta content="The minimum recipe for a Jarvis and the 5 Build Levels: assemble it brick by brick (Foundation, Memory) and build WITH an AI, testing each piece before the next." name="description"/>
+<!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-900\/20 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .bg-amber-900\/30 { background-color: rgba(217,119,6,0.10); }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== code box copy-run ===== */
+    .copyrun pre { white-space: pre; overflow-x: auto; }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+<link href="https://inematds.github.io/jarvis/curso/trilha4/modulo-4-1.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/jarvis/en/curso/trilha4/modulo-4-1.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/jarvis/es/curso/trilha4/modulo-4-1.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha4/modulo-4-1.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-4-1.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha4/modulo-4-1.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg" href="#conteudo">Skip to content</a>
+<!-- NAVIGATION (completo, identico em todas as paginas) -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-3">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html" id="nav-t1">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentals</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html" id="nav-t2">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Overview</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html" id="nav-t3">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomy</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10" href="../trilha4/index.html" id="nav-t4">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Build</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html" id="nav-t5">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Cell phone</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html" id="nav-t6">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Children</span>
+</a>
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-journey-open="" title="My journey" type="button">
+<span aria-hidden="true">◷</span><span class="hidden md:inline">Journey</span>
+<span class="inema-journey-badge hidden" data-count="0" data-inema-journey-badge=""></span>
+</button>
+<div class="relative">
+<button aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-appearance-toggle="[data-inema-appearance]" title="Appearance" type="button">
+<span aria-hidden="true">◑</span><span class="hidden md:inline">Appearance</span>
+</button>
+<div class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left" data-inema-appearance="">
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Theme</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="inema-dark">Dark</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="claro">Clear</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="sepia">Sepia</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="foco">Focus</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="contraste">High contrast</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Source</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="inter">Inter</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="system">System</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="leitura">Reading</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Size</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="100">A</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="112">A+</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="125">A++</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Subtext</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.45">Compact</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.7">Comfortable</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Accent</p>
+<div class="inema-accent-grid flex flex-wrap gap-2">
+<button class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" data-inema-set-accent="emerald" title="Emerald"></button>
+<button class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" data-inema-set-accent="blue" title="Blue"></button>
+<button class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" data-inema-set-accent="purple" title="Purple"></button>
+<button class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" data-inema-set-accent="amber" title="Amber"></button>
+<button class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" data-inema-set-accent="teal" title="Teal"></button>
+<button class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" data-inema-set-accent="rose" title="Rose"></button>
+</div>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" id="theme-toggle" title="Toggle light/dark">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main id="conteudo">
+<header class="bg-gradient-to-br from-amber-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+<a class="hover:text-amber-400" href="../../index.html">Start</a><span>/</span>
+<a class="hover:text-amber-400" href="index.html">Track 4</a><span>/</span>
+<span class="text-amber-400">Module 4.1</span>
+</nav>
+<span class="inline-block px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-semibold rounded-full mb-4">MODULE 4-1</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🧱 From zero to your first Jarvis (the minimum recipe)</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">You already understand the pieces (Track 3). Now let’s put them together. This module gives you the <strong class="text-amber-400">minimum recipe</strong> — the “hello world” of a Jarvis—and the right order for stacking the building blocks: the 5 Build Levels. You’ll learn to build WITH an AI and test each piece before moving on, instead of putting everything together at once and hoping for the best.</p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-amber-400">6</div><div class="text-xs text-neutral-400">Topics</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-amber-400">~45</div><div class="text-xs text-neutral-400">Minutes</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-amber-400">Intermediate</div><div class="text-xs text-neutral-400">Level</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-amber-400">Practical</div><div class="text-xs text-neutral-400">Type</div></div>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="lg:flex lg:gap-10">
+<!-- TOC sticky -->
+<aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+<nav aria-label="Page index" class="lg:sticky lg:top-20" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-2">Section <span class="inema-toc-pos" data-inema-section-counter="">1</span> out of 6</p>
+<ol class="space-y-1 text-sm">
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-amber-400" href="#topico-1">1. The minimum recipe</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-amber-400" href="#topico-2">2. The 5 Build Levels</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-amber-400" href="#topico-3">3. Level 1: Foundation</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-amber-400" href="#topico-4">4. Level 2: Memory</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-amber-400" href="#topico-5">5. Building WITH AI</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-amber-400" href="#topico-6">6. Test every building block</a></li>
+</ol>
+<div aria-label="Module 4.1 progress" aria-valuemax="100" aria-valuemin="0" class="mt-4" data-inema-meter="modulo:4-1" role="progressbar">
+<div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-amber-500" data-inema-meter-fill="" style="width:0%"></div></div>
+<span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 of 6</span> · <span data-inema-meter-pct="">0%</span></span>
+</div>
+</nav>
+</aside>
+<div class="lg:flex-1 min-w-0 inema-prose">
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-4-1#topico-1" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🧱 The minimum recipe</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m41-t1-p1">There's a temptation to start big: voice, ten integrations, sub-agents, a beautiful dashboard. That's the fastest path to giving up. Jarvis starts much smaller than you imagine. The <strong class="text-amber-400">minimum recipe</strong> has exactly five ingredients—and not one more. If even one of these pieces is in place, you already have an assistant that truly converses and can grow safely.</p>
+<div class="bg-gradient-to-br from-amber-900/30 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-3 flex items-center"><span class="mr-2">🍳</span> The 5 ingredients of Jarvis's "hello world"</h3>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-1">1.</span><span><strong>A channel</strong> — the port you use to talk to it. Use Telegram: it’s just a token, with no exposed server.</span></li>
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-1">2.</span><span><strong>A brain</strong> — a single AI model (LLM) behind it, in the cloud or locally. Just one, not three.</span></li>
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-1">3.</span><span><strong>A <code>soul.md</code></strong> — a text file that says who it is (name, tone, values).</span></li>
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-1">4.</span><span><strong>The agentic loop</strong> — the “think → act → read the result → respond” cycle we saw in Track 1.</span></li>
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-1">5.</span><span><strong>A tool</strong> — just one (e.g., web search). It gives the agent a "hand" to do something in the world.</span></li>
+</ul>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m41-t1-p2">Notice what <strong>no</strong> is on the list: voice, multiple channels, vector database, ten plugins, dashboard. All of this is legitimate—but it comes later. The principle that organizes the entire path is <strong class="text-amber-400">brick-by-brick</strong> (brick by brick): build one piece, prove it works, and only then add the next. It’s the opposite of dumping everything into one giant file and hoping it works.</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> <strong>"Brick-by-brick"</strong> (literally “brick by brick”) is the philosophy of building software in small, testable blocks, one at a time. Each block you understand and test becomes a solid foundation for the next. The opposite—pasting 100 thousand lines no one has read—was exactly the problem with the bloated systems we saw in Track 2.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Minimum recipe</span><p class="text-sm text-neutral-400 mt-1">Channel + brain + soul + loop + 1 tool. Nothing more.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Hello world</span><p class="text-sm text-neutral-400 mt-1">The smallest Jarvis that already “lives” and responds for real.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Brick-by-brick</span><p class="text-sm text-neutral-400 mt-1">Build and test one brick before stacking the next.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Agentic loop</span><p class="text-sm text-neutral-400 mt-1">The think-act-respond cycle, the heart we saw in Track 1.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-400 hover:bg-amber-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-4-1#topico-2" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">🪜 The 5 Build Levels</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m41-t2-p1">The minimum recipe says <em>what</em> goes in. The <strong class="text-amber-400">Build Levels</strong> say <em>in what order</em>. There are five steps, and the order matters: each one only makes sense if the previous one is already working. You don’t add voice to a bot that still doesn’t respond, or cron to a bot that still has no memory. Climbing one step at a time turns a daunting project into five small, rewarding tasks.</p>
+<!-- SVG: a escada dos 5 Build Levels -->
+<div class="rounded-2xl border border-amber-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="5 Build Levels staircase: Foundation, Memory, Voice, Tools/MCP, and Heartbeat, stacked like steps rising from left to right" class="w-full h-auto" role="img" viewbox="0 0 980 320">
+<defs>
+<filter height="180%" id="m41-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m41-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#f59e0b" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m41-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m41-grid)" height="320" width="980" x="0" y="0"></rect>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600" x="40" y="34">Build from the ground up—one step at a time</text>
+<!-- degraus -->
+<g font-family="Inter,sans-serif">
+<!-- L1 -->
+<rect class="wf-a" fill="#1f1604" height="44" rx="11" stroke="#fbbf24" stroke-width="2" width="160" x="60" y="250"></rect>
+<text fill="#fbbf24" font-size="12" font-weight="700" text-anchor="middle" x="140" y="270">L1 · Foundation</text>
+<text fill="#fcd9a0" font-size="11" text-anchor="middle" x="140" y="286">bot responds</text>
+<!-- L2 -->
+<rect class="wf-a" fill="#1f1604" height="44" rx="11" stroke="#fbbf24" stroke-width="2" width="160" x="240" y="200"></rect>
+<text fill="#fbbf24" font-size="12" font-weight="700" text-anchor="middle" x="320" y="220">L2 · Memory</text>
+<text fill="#fcd9a0" font-size="11" text-anchor="middle" x="320" y="236">it remembers</text>
+<!-- L3 -->
+<rect class="wf-a" fill="#0e1622" height="44" rx="11" stroke="#38bdf8" stroke-width="2" width="160" x="420" y="150"></rect>
+<text fill="#38bdf8" font-size="12" font-weight="700" text-anchor="middle" x="500" y="170">L3 · Voice</text>
+<text fill="#a5d8f3" font-size="11" text-anchor="middle" x="500" y="186">it speaks/listens</text>
+<!-- L4 -->
+<rect class="wf-a" fill="#0e1622" height="44" rx="11" stroke="#38bdf8" stroke-width="2" width="160" x="600" y="100"></rect>
+<text fill="#38bdf8" font-size="12" font-weight="700" text-anchor="middle" x="680" y="120">L4 · Tools / MCP</text>
+<text fill="#a5d8f3" font-size="11" text-anchor="middle" x="680" y="136">it acts in the world</text>
+<!-- L5 -->
+<g filter="url(#m41-glow)"><rect fill="#1f1604" height="44" rx="11" stroke="#fbbf24" stroke-width="2.5" width="160" x="780" y="50"></rect></g>
+<text fill="#fbbf24" font-size="12" font-weight="700" text-anchor="middle" x="860" y="70">L5 · Heartbeat</text>
+<text fill="#fcd9a0" font-size="11" text-anchor="middle" x="860" y="86">acts on its own</text>
+<!-- setas entre degraus -->
+<path d="M222,260 L238,222" fill="none" marker-end="url(#m41-ah)" stroke="#38bdf8" stroke-width="2"></path>
+<path d="M402,210 L418,172" fill="none" marker-end="url(#m41-ah)" stroke="#38bdf8" stroke-width="2"></path>
+<path d="M582,160 L598,122" fill="none" marker-end="url(#m41-ah)" stroke="#38bdf8" stroke-width="2"></path>
+<path d="M762,110 L778,72" fill="none" marker-end="url(#m41-ah)" stroke="#38bdf8" stroke-width="2"></path>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">Each step is safe to take only when the one below is already working. In <span class="text-amber-400">amber</span>, the levels you’re building now (Foundation and Memory, in this module); in <span class="text-sky-400">cyan</span>, the ones you’ll see in Tracks 3 and 5 (voice, tools), which complete the cadence (heartbeat).</p>
+</div>
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Foundation—it responds</h4><p class="text-sm text-neutral-400">A Telegram bot connected to a model. You send "hi," it replies. That alone proves channel + brain + loop.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Memory — it remembers</h4><p class="text-sm text-neutral-400">Add the <code>soul.md</code> (who it is) + a conversation database. It stops treating you like a stranger with every message.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-sky-500/10 flex items-center justify-center"><span class="text-sky-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Voice — it speaks and listens</h4><p class="text-sm text-neutral-400">Audio messages come in (transcription) and go out (voice). This is Track 5 — optional, decided at runtime.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-sky-500/10 flex items-center justify-center"><span class="text-sky-400 font-bold">4</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Tools / MCP — it acts in the world</h4><p class="text-sm text-neutral-400">Connects real tools (email, calendar, GitHub) via MCP. This was the “Tools” layer of Track 3.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold">5</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Heartbeat — it acts on its own</h4><p class="text-sm text-neutral-400">Cron/routines make it act on schedule ("7 a.m. summary"), even with the laptop closed. The leap to being proactive.</p></div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<h3 class="text-base font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-sm text-neutral-300">In this module, you only put together the <strong>Levels 1 and 2</strong>. Resist jumping to voice or tools before you have a bot that responds and remembers. Most projects that die tried to climb three steps at once and stumbled.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Build Levels</span><p class="text-sm text-neutral-400 mt-1">The 5 steps: Foundation, Memory, Voice, Tools/MCP, Heartbeat.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Order matters</span><p class="text-sm text-neutral-400 mt-1">Each step assumes the previous one is working.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Scope of this module</span><p class="text-sm text-neutral-400 mt-1">Only Levels 1 and 2—a solid foundation before growing.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Small wins</span><p class="text-sm text-neutral-400 mt-1">Every step is worth celebrating; it keeps the project alive.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-400 hover:bg-amber-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-4-1#topico-3" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🏗️ Level 1: Foundation (it responds)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m41-t3-p1">The first step is the most exciting: the first time you send a message and <strong class="text-amber-400">the thing responds</strong>. Foundation has just three connected pieces — a channel (Telegram), a brain (a model), and the loop that connects the two — plus two safeguards that are in place from minute zero: the <strong>whitelist</strong> e o <strong><code>.env</code></strong>.</p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Anatomy of Level 1</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Channel:</strong> a bot created in <code>@BotFather</code> from Telegram gives you a <strong>token</strong>. No web server, no open port — the bot fetches messages by <em>long polling</em>.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Brain:</strong> one cloud model (Claude/GPT via API key) or local model (Ollama on your PC). Just one.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>Whitelist:</strong> a list with YOUR <em>chat ID</em>. Messages from anyone else are silently ignored.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong><code>.env</code>:</strong> a file where secrets are stored (token, API key). Never inside the code, never in Git.</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> A <strong><code>.env</code></strong> ("dot env") is a plain text file with pairs <code>CHAVE=valor</code> that stores <strong>secrets</strong> — passwords, tokens, API keys. The program reads these values at startup, but they remain <em>outside</em> of the code. That way, you can publish the code without leaking your keys. The <strong>whitelist</strong> ("allowlist") is the opposite of a denylist: only those on it are served; everything else is blocked by default.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Foundation done right</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Token and API key live in the <code>.env</code>.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Whitelist with your ID, enabled from the very first line.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Telegram via long polling: no open ports.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>One model, predictable behavior.</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Foundation done wrong</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Token pasted directly into the code (and pushed to Git).</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Without a whitelist: anyone who finds the bot can talk to it (using your account).</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Web server exposed just to “make things easier” — an open door to the internet.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Three models and ten resources before the first "hi" works.</span></li>
+</ul>
+</div>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m41-t3-p2">The security gaps in the red column aren't hypothetical: in Track 2, we saw that <strong>42,665 instances</strong> of a popular system were exposed on the internet, <strong>93.4% with no authentication</strong>. The whitelist is the <code>.env</code> aren't "extras" — they're part of Level 1. Security isn't added at the end; it starts with the first building block.</p>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Token (@BotFather)</span><p class="text-sm text-neutral-400 mt-1">Your Telegram bot’s “password,” generated with a command.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Long-polling</span><p class="text-sm text-neutral-400 mt-1">The bot asks "Any messages?"—no exposed server, no port.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Whitelist</span><p class="text-sm text-neutral-400 mt-1">Only your ID is served; everyone else is silently ignored.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">.env</span><p class="text-sm text-neutral-400 mt-1">Secrets file, outside the code and outside Git.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-400 hover:bg-amber-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-4-1#topico-4" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">🧠 Level 2: Memory (it remembers)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m41-t4-p1">The Level 1 bot responds—but it has amnesia. End the conversation and it forgets everything; ask your name again and it doesn't know. Level 2 fixes this with two pieces: the <strong class="text-amber-400"><code>soul.md</code></strong>, that says <em>who it is</em>, and a bank <strong>SQLite</strong>, which stores <em>what's already been said</em>. Together, they turn a generic chatbot into <strong>your</strong> assistant.</p>
+<div class="bg-gradient-to-br from-amber-900/30 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-3 flex items-center"><span class="mr-2">🪪</span> Two memories, two roles</h3>
+<p class="text-neutral-300 text-sm mb-3">Don't confuse the two. One is identity (changes slowly, written by you); the other is history (grows on its own with every conversation).</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-1">•</span><span><strong><code>soul.md</code> — the soul:</strong> an injected Markdown file <em>always</em> at the beginning (the <strong>system prompt</strong>). Name, tone, values, priorities. “Without the brain rewire, the architecture is just a folder.”</span></li>
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-1">•</span><span><strong>SQLite — the notebook:</strong> a database in <em>a single file</em> that stores every message. With an index <strong>FTS5/BM25</strong>, it searches by word ("what did we say about project X?") in milliseconds.</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> O <strong>system prompt</strong> and the "briefing" the model reads before any conversation—and where the <code>soul.md</code> goes in. <strong>SQLite</strong> and a database that fits in a single file (no server, no complicated setup)—perfect for a personal Jarvis. <strong>FTS5/BM25</strong> is SQLite's "full-text search": it finds the right message by keyword, like a turbocharged Ctrl+F. Since everything is text files plus a simple database, the memory "outlives the hype": it's just data you can read and take with you.</p>
+</div>
+<!-- COPY-RUN: soul.md minimo -->
+<div class="copyrun rounded-2xl border border-amber-500/30 bg-dark-900/60 overflow-hidden mb-6">
+<div class="flex items-center justify-between px-4 py-2 border-b border-dark-600 bg-dark-800/60">
+<span class="text-xs font-semibold text-amber-400 font-mono">📋 COPY-RUN · soul.md (the soul of your Jarvis)</span>
+<span class="text-[11px] text-neutral-500 font-mono">file: soul.md</span>
+</div>
+<div class="px-4 py-3 text-xs text-neutral-400 border-b border-dark-600">
+<strong class="text-neutral-300">Objective:</strong> give the bot an identity. Create a file <code>soul.md</code> in the project folder and paste the block below, replacing the parts <code class="text-amber-400">&lt;assim&gt;</code> with yours.
+              </div>
+<pre class="text-xs sm:text-sm font-mono text-neutral-200 p-4 leading-relaxed"><code># SOUL — quem voce e
+
+Voce e o <span class="text-amber-400">&lt;Nome-do-seu-Jarvis&gt;</span>, o assistente pessoal de <span class="text-amber-400">&lt;Seu-nome&gt;</span>.
+
+## Tom de voz
+- Direto, caloroso e sem enrolacao.
+- Responde em <span class="text-amber-400">&lt;portugues-do-Brasil&gt;</span>.
+- Quando nao sabe, diz "nao sei" em vez de inventar.
+
+## Prioridades do dono
+- <span class="text-amber-400">&lt;ex.: me ajudar a organizar o dia e escrever melhor&gt;</span>
+
+## Como agir
+- SEMPRE confirma antes de qualquer acao que mande mensagem ou apague algo.
+- NUNCA compartilha meus dados com terceiros.</code></pre>
+<div class="px-4 py-3 text-xs text-neutral-400 border-t border-dark-600">
+<strong class="text-emerald-400">How to check:</strong> ask "what's your name and how do you talk to me?". If it answers with the name and tone you wrote (instead of "I'm an AI model from company X"), the <code>soul.md</code> is being read. Done: Level 2 has an identity.
+              </div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> What changes when it remembers</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>It stops introducing itself with every message — it knows who you are.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Picks up old topics: "what happened with that email from yesterday?".</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Memory is <strong>just one file</strong> — you can read, copy, back up, and take it with you.</span></li>
+</ul>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">soul.md</span><p class="text-sm text-neutral-400 mt-1">The “character sheet” always injected into the system prompt.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">System prompt</span><p class="text-sm text-neutral-400 mt-1">The briefing the model reads before every conversation.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">SQLite</span><p class="text-sm text-neutral-400 mt-1">Database in a single file — stores the history.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">FTS5 / BM25</span><p class="text-sm text-neutral-400 mt-1">Keyword search across the history, very fast.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-400 hover:bg-amber-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-4-1#topico-5" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">🤝 Build WITH an AI</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m41-t5-p1">Here’s the turning point that makes all this accessible to a nontechnical user: <strong>you don’t need to write the code yourself</strong>. You build Jarvis <em>talking</em> with a coding AI — Claude Code, Antigravity, Cursor. Instead of typing every line, you <strong class="text-amber-400">describes</strong> what you want in a <strong>initialization prompt</strong>, and the AI generates the project brick by brick, with you in control.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m41-t5-p2">The key is to give it a prompt <strong>good</strong>: to lock in the architecture decisions from the start (Telegram only, with a whitelist and secrets in the <code>.env</code>) so the AI doesn’t “improvise” an exposed web server or add a thousand dependencies. The prompt below is your starting point—ready to paste into Claude Code.</p>
+<!-- COPY-RUN: prompt de inicializacao -->
+<div class="copyrun rounded-2xl border border-amber-500/30 bg-dark-900/60 overflow-hidden mb-6">
+<div class="flex items-center justify-between px-4 py-2 border-b border-dark-600 bg-dark-800/60">
+<span class="text-xs font-semibold text-amber-400 font-mono">📋 COPY-RUN · agent initialization prompt</span>
+<span class="text-[11px] text-neutral-500 font-mono">paste into: Claude Code / Antigravity</span>
+</div>
+<div class="px-4 py-3 text-xs text-neutral-400 border-b border-dark-600">
+<strong class="text-neutral-300">Objective:</strong> ask a programming AI to create Level 1+2 of your Jarvis, with the security decisions already built in. Open the empty project folder in Claude Code and paste this prompt. Replace the parts <code class="text-amber-400">&lt;assim&gt;</code>.
+              </div>
+<pre class="text-xs sm:text-sm font-mono text-neutral-200 p-4 leading-relaxed"><code>Voce vai me ajudar a construir meu agente de IA pessoal, tijolo por
+tijolo (brick-by-brick). Eu sou leigo: explique cada passo em
+portugues simples e nao avance sem eu confirmar.
+
+Stack e decisoes (NAO mude sem perguntar):
+- Canal: SOMENTE Telegram, via long-polling. SEM servidor web,
+  SEM portas abertas.
+- Cerebro: um unico modelo, provedor <span class="text-amber-400">&lt;anthropic | openrouter | ollama&gt;</span>.
+- Seguranca: whitelist com o meu chat ID = <span class="text-amber-400">&lt;seu-chat-id&gt;</span>.
+  Qualquer outro remetente e ignorado em silencio.
+- Segredos: token e chaves SO no arquivo .env (nunca no codigo,
+  nunca no Git). Crie um .gitignore que ignore .env.
+
+Construa nesta ordem e pare para eu testar a cada etapa:
+1. Level 1 (Foundation): bot que responde "oi" com a whitelist ativa.
+2. Level 2 (Memory): adicione soul.md (injetado no system prompt)
+   e um SQLite que guarda o historico da conversa.
+
+Comece pelo Level 1. Antes de escrever codigo, liste os arquivos
+que vai criar e me explique cada um.</code></pre>
+<div class="px-4 py-3 text-xs text-neutral-400 border-t border-dark-600">
+<strong class="text-emerald-400">How to check:</strong> the AI should respond with one <em>file list</em> and stop to ask for your confirmation—without dumping code or proposing a web server first. If it tries to open a port or put the token in the code, respond "that violates the decisions; redo it using only long-polling and .env". This back-and-forth IS brick-by-brick.
+              </div>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> The mistake to avoid</h3>
+<p class="text-neutral-300 text-sm">Ask for “a complete Jarvis with voice, calendar, email, and ten plugins” all at once. The AI will generate a bunch of code you can't understand or test — exactly the “100,000 lines nobody reads” from Track 2. Ask <strong>one Level at a time</strong>, read what it explains, and move on only when the current building block passes the test.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">AI programming</span><p class="text-sm text-neutral-400 mt-1">Claude Code, Antigravity, Cursor — they write code with you.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Initialization prompt</span><p class="text-sm text-neutral-400 mt-1">The description that locks in the stack and security before the first line.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Tied-together decisions</span><p class="text-sm text-neutral-400 mt-1">Telegram only, whitelist, secrets in .env—the AI doesn't improvise.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">You’re in control</span><p class="text-sm text-neutral-400 mt-1">Confirms each step; understands every building block it adds.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-400 hover:bg-amber-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-4-1#topico-6" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🧪 Test each building block</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m41-t6-p1">"Brick-by-brick" only works if you <strong>prove</strong> that each brick bears weight before you stack the next one. The good news: testing a Jarvis is simple and doesn't require any tools — you send a message and look at the response. The key is to have, for each Level, <strong class="text-amber-400">an acceptance test</strong>: a question whose correct answer proves that brick is standing.</p>
+<!-- SVG: o ciclo de teste por tijolo -->
+<div class="rounded-2xl border border-amber-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="Brick-by-brick cycle: build one brick, test it, stack the next one if it passes, and go back and fix it before moving on if it fails" class="w-full h-auto" role="img" viewbox="0 0 980 200">
+<defs>
+<filter height="180%" id="m41b-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m41b-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#f59e0b" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m41b-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+<marker id="m41b-ahr" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#f87171"></path></marker>
+</defs>
+<rect fill="url(#m41b-grid)" height="200" width="980" x="0" y="0"></rect>
+<g font-family="Inter,sans-serif">
+<rect fill="#1f1604" height="56" rx="12" stroke="#fbbf24" stroke-width="2" width="150" x="40" y="78"></rect><text fill="#fbbf24" font-size="13" font-weight="700" text-anchor="middle" x="115" y="105">build</text><text fill="#fcd9a0" font-size="11" text-anchor="middle" x="115" y="122">1 brick</text>
+<path d="M190,106 L268,106" fill="none" marker-end="url(#m41b-ah)" stroke="#38bdf8" stroke-width="2"></path>
+<rect fill="#0e1622" height="56" rx="12" stroke="#38bdf8" stroke-width="2" width="150" x="268" y="78"></rect><text fill="#38bdf8" font-size="13" font-weight="700" text-anchor="middle" x="343" y="105">test</text><text fill="#a5d8f3" font-size="11" text-anchor="middle" x="343" y="122">acceptance test</text>
+<path d="M418,106 L496,106" fill="none" marker-end="url(#m41b-ah)" stroke="#38bdf8" stroke-width="2"></path>
+<g filter="url(#m41b-glow)"><rect fill="#1f1604" height="60" rx="13" stroke="#fbbf24" stroke-width="2.5" width="170" x="496" y="76"></rect></g><text fill="#34d399" font-size="13" font-weight="700" text-anchor="middle" x="581" y="100">did it pass?</text><text fill="#fcd9a0" font-size="11" text-anchor="middle" x="581" y="120">decides</text>
+<!-- passou -> proximo -->
+<path d="M666,96 L760,96" fill="none" marker-end="url(#m41b-ah)" stroke="#38bdf8" stroke-width="2"></path>
+<text fill="#34d399" font-size="11" font-weight="600" text-anchor="middle" x="712" y="86">yes</text>
+<rect fill="#0e2018" height="56" rx="12" stroke="#34d399" stroke-width="2" width="180" x="760" y="68"></rect><text fill="#34d399" font-size="13" font-weight="700" text-anchor="middle" x="850" y="95">next brick</text><text fill="#a7f3d0" font-size="11" text-anchor="middle" x="850" y="112">stacks</text>
+<!-- falhou -> volta -->
+<path d="M560,136 C520,180 200,180 130,138" fill="none" marker-end="url(#m41b-ahr)" stroke="#f87171" stroke-dasharray="6 6" stroke-width="2"></path>
+<text fill="#f87171" font-size="11" font-weight="600" text-anchor="middle" x="345" y="178">no → go back and fix it before moving on</text>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">The loop that powers the course: <span class="text-amber-400">builds a brick</span>, <span class="text-sky-400">runs the acceptance test</span>, and it's just <span class="text-emerald-400">stacks the next one</span> if it passes. Did it fail? <span class="text-red-400">Go back and fix it</span> — never build on top of a cracked building block.</p>
+</div>
+<div class="bg-gradient-to-br from-amber-900/30 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-3 flex items-center"><span class="mr-2">✅</span> Acceptance tests by Level</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-1">L1</span><span><strong>Foundation:</strong> send "hi"—it replies. From another phone (outside the whitelist), send "hi"—it <em>ignores</em>. Both need to be true.</span></li>
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-1">L2</span><span><strong>Memory:</strong> say "my name is <span class="text-amber-400">&lt;Ana&gt;</span>". In a new message afterward, ask "what's my name?". It gets it right = memory works.</span></li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<h3 class="text-base font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Practical tip</h3>
+<p class="text-sm text-neutral-300">Write the test <strong>before</strong> to ask for the building block. “Level 1 is ready when the bot only responds to me” is a clear criterion—you know exactly when you’re done and when to move on. Without a criterion, every project becomes an eternal “almost done.”</p>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-4-1#q1">
+<p class="font-medium mb-4">Self-check (optional): What is the right order for building your first Jarvis?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">Everything at once: voice, tools, memory, and channel in a single file, then test it.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">Foundation (responds) → test → Memory (remembers) → test; one building block at a time, move forward only if it passes.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">Start with voice, because it's the coolest part and makes the biggest impression.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3 mt-8">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Acceptance test</span><p class="text-sm text-neutral-400 mt-1">The question whose correct answer proves the brick works.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Judgment before code</span><p class="text-sm text-neutral-400 mt-1">Define “done” before building; it prevents the endless “almost done.”</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Test the whitelist</span><p class="text-sm text-neutral-400 mt-1">Confirm that it SERVES you and BLOCKS everyone else.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Don't stack on top of a trio</span><p class="text-sm text-neutral-400 mt-1">Did one building block fail? Fix it before adding the next.</p></div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-400 hover:bg-amber-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-8">
+<div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-neutral-100">The minimum recipe</strong><span class="text-neutral-400"> — channel + brain + soul.md + agentic loop + 1 tool. Nothing more.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-neutral-100">The 5 Build Levels</strong><span class="text-neutral-400"> — Foundation → Memory → Voice → Tools/MCP → Heartbeat, in order; each step assumes the previous one.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-neutral-100">Level 1 and 2</strong><span class="text-neutral-400"> — Foundation (the bot responds, whitelist + .env) and Memory (soul.md + SQLite, it remembers).</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-neutral-100">Build WITH an AI</strong><span class="text-neutral-400"> — a startup prompt that ties together the stack and security, while the AI assembles it brick by brick.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-neutral-100">Test each building block</strong><span class="text-neutral-400"> — an acceptance test for each Level; only stack the next one if the current one passes.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-amber-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">4-2 — Architecture of a robust solution (the 4 C layers: Context · Connections · Capabilities · Cadence)</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Back to the Track</a>
+<a class="flex-1 text-center px-6 py-3 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-500 transition-colors" href="modulo-4-2.html">Next module →</a>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+<p>🤖 Jarvis — Your AI Operating System</p>
+<p>Open course · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<!-- Scripts nucleo v1 -->
+<script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+<!-- Camada de aprendizagem -->
+<script src="../../../assets/learn.js"></script>
+<script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-4-1#q1', {
+          answer: 1,
+          explain: {
+            0: 'Esse e justamente o erro: montar tudo de uma vez gera codigo que voce nao entende nem testa. E o brick-by-brick ao contrario.',
+            1: 'Isso! Um tijolo por vez, com teste de aceitacao entre eles. Foundation antes de Memory, e so avanca se passar.',
+            2: 'A voz e o Level 3 — vem depois de o bot responder (L1) e lembrar (L2). Comecar por ela e subir a escada pela metade.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

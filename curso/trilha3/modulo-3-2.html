@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="inema-course" content="jarvis">
-  <title>Modulo 3.2 — Identidade: memoria, persona e quem ele e | Jarvis · INEMA.CLUB</title>
-  <meta name="description" content="A alma do Jarvis: SOUL.md, AGENTS.md, perfil do dono, memoria que dura (arquivos + SQLite), identidade como autenticacao e personas intercambiaveis.">
 
-  <!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
-  <script>
+<html class="dark" lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="jarvis" name="inema-course"/>
+<title>Modulo 3.2 — Identidade: memoria, persona e quem ele e | Jarvis · INEMA.CLUB</title>
+<meta content="A alma do Jarvis: SOUL.md, AGENTS.md, perfil do dono, memoria que dura (arquivos + SQLite), identidade como autenticacao e personas intercambiaveis." name="description"/>
+<!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+<script>
   (function () {
     try {
       var html = document.documentElement;
@@ -41,9 +41,8 @@
     } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
   })();
   </script>
-
-  <!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
-  <script type="application/json" data-inema-manifest>
+<!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+<script data-inema-manifest="" type="application/json">
   {
     "course": "jarvis",
     "tracks": [
@@ -83,9 +82,8 @@
     ]
   }
   </script>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
     tailwind.config = {
       darkMode: 'class',
       theme: { extend: { colors: {
@@ -94,9 +92,9 @@
       } } }
     }
   </script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/learn.css">
-  <style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../../assets/learn.css" rel="stylesheet"/>
+<style>
     body { font-family: 'Inter', sans-serif; }
     .dark body { background-color: #111827; }
     .topic-explanation { display: none; }
@@ -213,177 +211,164 @@
       .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
     }
   </style>
-</head>
-<body class="bg-dark-900 text-neutral-100 min-h-screen">
-
-  <a href="#conteudo" class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg">Pular para o conteudo</a>
-
-  <!-- NAVIGATION (completo, identico em todas as paginas) -->
-  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-14">
-        <div class="flex items-center space-x-3">
-          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
-            <span class="text-2xl">🤖</span>
-            <span class="font-bold text-lg hidden sm:inline">Jarvis</span>
-          </a>
-          <span class="text-neutral-600">|</span>
-          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
-        </div>
-        <div class="flex items-center space-x-1 sm:space-x-2">
-          <a id="nav-t1" href="../trilha1/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
-            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
-          </a>
-          <a id="nav-t2" href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
-            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
-          </a>
-          <a id="nav-t3" href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10">
-            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span>
-          </a>
-          <a id="nav-t4" href="../trilha4/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
-            <span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
-          </a>
-          <a id="nav-t5" href="../trilha5/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors">
-            <span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
-          </a>
-          <a id="nav-t6" href="../trilha6/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
-            <span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span>
-          </a>
-
-          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Minha jornada">
-            <span aria-hidden="true">◷</span><span class="hidden md:inline">Jornada</span>
-            <span class="inema-journey-badge hidden" data-inema-journey-badge data-count="0"></span>
-          </button>
-
-          <div class="relative">
-            <button type="button" data-inema-appearance-toggle="[data-inema-appearance]" aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Aparencia">
-              <span aria-hidden="true">◑</span><span class="hidden md:inline">Aparencia</span>
-            </button>
-            <div data-inema-appearance class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left">
-              <div>
-                <p class="text-xs text-neutral-400 mb-1.5">Tema</p>
-                <div class="inema-segment flex flex-wrap gap-1.5">
-                  <button data-inema-set-theme="inema-dark" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Escuro</button>
-                  <button data-inema-set-theme="claro" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Claro</button>
-                  <button data-inema-set-theme="sepia" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sepia</button>
-                  <button data-inema-set-theme="foco" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Foco</button>
-                  <button data-inema-set-theme="contraste" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Alto contraste</button>
-                </div>
+<link href="https://inematds.github.io/jarvis/curso/trilha3/modulo-3-2.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/jarvis/en/curso/trilha3/modulo-3-2.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/jarvis/es/curso/trilha3/modulo-3-2.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="modulo-3-2.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">PT</a><a href="../../en/curso/trilha3/modulo-3-2.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="../../es/curso/trilha3/modulo-3-2.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg" href="#conteudo">Pular para o conteudo</a>
+<!-- NAVIGATION (completo, identico em todas as paginas) -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-3">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html" id="nav-t1">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html" id="nav-t2">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10" href="../trilha3/index.html" id="nav-t3">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomia</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html" id="nav-t4">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html" id="nav-t5">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html" id="nav-t6">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Criancas</span>
+</a>
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-journey-open="" title="Minha jornada" type="button">
+<span aria-hidden="true">◷</span><span class="hidden md:inline">Jornada</span>
+<span class="inema-journey-badge hidden" data-count="0" data-inema-journey-badge=""></span>
+</button>
+<div class="relative">
+<button aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-appearance-toggle="[data-inema-appearance]" title="Aparencia" type="button">
+<span aria-hidden="true">◑</span><span class="hidden md:inline">Aparencia</span>
+</button>
+<div class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left" data-inema-appearance="">
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="inema-dark">Escuro</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="claro">Claro</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="sepia">Sepia</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="foco">Foco</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="contraste">Alto contraste</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Fonte</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="inter">Inter</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="system">Sistema</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="leitura">Leitura</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Tamanho</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="100">A</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="112">A+</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="125">A++</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Entrelinha</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.45">Compacto</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.7">Confortavel</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+<div class="inema-accent-grid flex flex-wrap gap-2">
+<button class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" data-inema-set-accent="emerald" title="Emerald"></button>
+<button class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" data-inema-set-accent="blue" title="Blue"></button>
+<button class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" data-inema-set-accent="purple" title="Purple"></button>
+<button class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" data-inema-set-accent="amber" title="Amber"></button>
+<button class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" data-inema-set-accent="teal" title="Teal"></button>
+<button class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" data-inema-set-accent="rose" title="Rose"></button>
+</div>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" id="theme-toggle" title="Alternar claro/escuro">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main id="conteudo">
+<header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+<a class="hover:text-purple-400" href="../../index.html">Inicio</a><span>/</span>
+<a class="hover:text-purple-400" href="index.html">Trilha 3</a><span>/</span>
+<span class="text-purple-400">Modulo 3.2</span>
+</nav>
+<span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">MODULO 3-2</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🪪 Identidade — memoria, persona e quem ele e</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">Um modelo sem identidade responde como um estranho educado: util, mas sem alma, sem memoria e sem saber quem voce e. Esta camada da ao Jarvis um <strong>caracter</strong> (como ele fala e o que valoriza), um <strong>contrato</strong> (o que faz e o que nunca faz), um <strong>perfil seu</strong>, e uma <strong>memoria que sobrevive ao fechar a conversa</strong> — alem de decidir quem ele atende. Sem isso, "a arquitetura e so uma pasta".</p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">6</div><div class="text-xs text-neutral-400">Topicos</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">~45</div><div class="text-xs text-neutral-400">Minutos</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Intermediario</div><div class="text-xs text-neutral-400">Nivel</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Pratico</div><div class="text-xs text-neutral-400">Tipo</div></div>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="lg:flex lg:gap-10">
+<!-- TOC sticky -->
+<aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+<nav aria-label="Indice da pagina" class="lg:sticky lg:top-20" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-2">Secao <span class="inema-toc-pos" data-inema-section-counter="">1</span> de 6</p>
+<ol class="space-y-1 text-sm">
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-1">1. SOUL.md, a alma</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-2">2. AGENTS.md, o contrato</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-3">3. USER / perfil</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-4">4. Memoria que dura</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-5">5. Identidade = autenticacao</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-6">6. Personas intercambiaveis</a></li>
+</ol>
+<div aria-label="Progresso do modulo 3.2" aria-valuemax="100" aria-valuemin="0" class="mt-4" data-inema-meter="modulo:3-2" role="progressbar">
+<div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-purple-500" data-inema-meter-fill="" style="width:0%"></div></div>
+<span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 de 6</span> · <span data-inema-meter-pct="">0%</span></span>
+</div>
+</nav>
+</aside>
+<div class="lg:flex-1 min-w-0 inema-prose">
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-3-2#topico-1" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🌟 SOUL.md, a alma</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t1-p1">Imagine que voce vai apresentar um novo assistente a um colega. Voce diria: "ele e direto, nao enrola, valoriza privacidade, prefere bullet points a paragrafos enormes e te chama pelo nome". Essa <strong>ficha de personagem</strong> existe de verdade: e um arquivo de texto chamado <strong class="text-purple-400">SOUL.md</strong> (em alguns projetos, <code class="text-purple-400">CLAUDE.md</code>). Dentro dele voce escreve, em portugues comum, a personalidade, os valores, o tom de voz e as prioridades do dono.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t1-p2">A mecanica e simples e poderosa: esse texto e <strong>injetado SEMPRE no system prompt</strong> — ou seja, ele entra no comeco de toda conversa, antes mesmo de voce digitar. Por isso o Jarvis nunca "esquece" quem ele e. Sem esse arquivo, a arquitetura toda — canais, ferramentas, memoria — fica sem alma. Como diz o ecossistema: <em>"sem o brain rewire, a arquitetura e so uma pasta"</em>. O SOUL.md e o "religar o cerebro".</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> O <strong>system prompt</strong> e uma instrucao invisivel que vai junto com toda mensagem para o modelo, definindo o "papel" dele antes de qualquer pergunta sua. <strong>SOUL.md</strong> e so um arquivo de texto (formato Markdown, o <code>.md</code>) cujo conteudo e colado nesse system prompt. Voce edita o caracter do Jarvis editando um arquivo — nada de programar.</p>
+</div>
+<!-- COPY-RUN -->
+<div class="codebox rounded-2xl border border-purple-500/30 bg-dark-900/40 overflow-hidden mb-6">
+<div class="flex items-center justify-between px-4 py-2 border-b border-dark-600 bg-dark-800/60">
+<span class="text-xs font-mono text-purple-400">📋 COPY-RUN · soul.md</span>
+<span class="text-xs text-neutral-500">cole e edite</span>
+</div>
+<div class="px-4 py-3 text-sm text-neutral-300 border-b border-dark-600">
+<strong class="text-purple-400">Objetivo:</strong> criar a alma do seu Jarvis. Salve o bloco abaixo como <code class="text-purple-400">soul.md</code> na pasta do agente, trocando as partes entre <code>&lt; &gt;</code> pelas suas.
               </div>
-              <div>
-                <p class="text-xs text-neutral-400 mb-1.5">Fonte</p>
-                <div class="inema-segment flex flex-wrap gap-1.5">
-                  <button data-inema-set-font="inter" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Inter</button>
-                  <button data-inema-set-font="system" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Sistema</button>
-                  <button data-inema-set-font="leitura" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Leitura</button>
-                </div>
-              </div>
-              <div>
-                <p class="text-xs text-neutral-400 mb-1.5">Tamanho</p>
-                <div class="inema-segment flex flex-wrap gap-1.5">
-                  <button data-inema-set-fontscale="100" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A</button>
-                  <button data-inema-set-fontscale="112" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A+</button>
-                  <button data-inema-set-fontscale="125" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">A++</button>
-                </div>
-              </div>
-              <div>
-                <p class="text-xs text-neutral-400 mb-1.5">Entrelinha</p>
-                <div class="inema-segment flex flex-wrap gap-1.5">
-                  <button data-inema-set-leading="1.45" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Compacto</button>
-                  <button data-inema-set-leading="1.7" class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs">Confortavel</button>
-                </div>
-              </div>
-              <div>
-                <p class="text-xs text-neutral-400 mb-1.5">Acento</p>
-                <div class="inema-accent-grid flex flex-wrap gap-2">
-                  <button data-inema-set-accent="emerald" class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" title="Emerald"></button>
-                  <button data-inema-set-accent="blue" class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" title="Blue"></button>
-                  <button data-inema-set-accent="purple" class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" title="Purple"></button>
-                  <button data-inema-set-accent="amber" class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" title="Amber"></button>
-                  <button data-inema-set-accent="teal" class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" title="Teal"></button>
-                  <button data-inema-set-accent="rose" class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" title="Rose"></button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" title="Alternar claro/escuro">
-            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <main id="conteudo">
-    <header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
-          <a href="../../index.html" class="hover:text-purple-400">Inicio</a><span>/</span>
-          <a href="index.html" class="hover:text-purple-400">Trilha 3</a><span>/</span>
-          <span class="text-purple-400">Modulo 3.2</span>
-        </nav>
-        <span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">MODULO 3-2</span>
-        <h1 class="text-3xl sm:text-4xl font-bold mb-4">🪪 Identidade — memoria, persona e quem ele e</h1>
-        <p class="text-lg text-neutral-400 max-w-3xl">Um modelo sem identidade responde como um estranho educado: util, mas sem alma, sem memoria e sem saber quem voce e. Esta camada da ao Jarvis um <strong>caracter</strong> (como ele fala e o que valoriza), um <strong>contrato</strong> (o que faz e o que nunca faz), um <strong>perfil seu</strong>, e uma <strong>memoria que sobrevive ao fechar a conversa</strong> — alem de decidir quem ele atende. Sem isso, "a arquitetura e so uma pasta".</p>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
-          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">6</div><div class="text-xs text-neutral-400">Topicos</div></div>
-          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">~45</div><div class="text-xs text-neutral-400">Minutos</div></div>
-          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Intermediario</div><div class="text-xs text-neutral-400">Nivel</div></div>
-          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Pratico</div><div class="text-xs text-neutral-400">Tipo</div></div>
-        </div>
-      </div>
-    </header>
-
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="lg:flex lg:gap-10">
-
-        <!-- TOC sticky -->
-        <aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
-          <nav data-inema-toc aria-label="Indice da pagina" class="lg:sticky lg:top-20">
-            <p class="text-sm text-neutral-400 mb-2">Secao <span class="inema-toc-pos" data-inema-section-counter>1</span> de 6</p>
-            <ol class="space-y-1 text-sm">
-              <li><a href="#topico-1" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">1. SOUL.md, a alma</a></li>
-              <li><a href="#topico-2" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">2. AGENTS.md, o contrato</a></li>
-              <li><a href="#topico-3" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">3. USER / perfil</a></li>
-              <li><a href="#topico-4" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">4. Memoria que dura</a></li>
-              <li><a href="#topico-5" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">5. Identidade = autenticacao</a></li>
-              <li><a href="#topico-6" class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400">6. Personas intercambiaveis</a></li>
-            </ol>
-            <div class="mt-4" data-inema-meter="modulo:3-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do modulo 3.2">
-              <div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-purple-500" data-inema-meter-fill style="width:0%"></div></div>
-              <span class="text-xs text-neutral-500"><span data-inema-meter-frac>0 de 6</span> · <span data-inema-meter-pct>0%</span></span>
-            </div>
-          </nav>
-        </aside>
-
-        <div class="lg:flex-1 min-w-0 inema-prose">
-
-          <!-- TOPICO 1 -->
-          <section id="topico-1" data-inema-topic="modulo-3-2#topico-1" class="mb-16">
-            <div class="flex items-center space-x-4 mb-6">
-              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">1</span>
-              <h2 class="text-2xl font-bold">🌟 SOUL.md, a alma</h2>
-            </div>
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t1-p1">Imagine que voce vai apresentar um novo assistente a um colega. Voce diria: "ele e direto, nao enrola, valoriza privacidade, prefere bullet points a paragrafos enormes e te chama pelo nome". Essa <strong>ficha de personagem</strong> existe de verdade: e um arquivo de texto chamado <strong class="text-purple-400">SOUL.md</strong> (em alguns projetos, <code class="text-purple-400">CLAUDE.md</code>). Dentro dele voce escreve, em portugues comum, a personalidade, os valores, o tom de voz e as prioridades do dono.</p>
-
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t1-p2">A mecanica e simples e poderosa: esse texto e <strong>injetado SEMPRE no system prompt</strong> — ou seja, ele entra no comeco de toda conversa, antes mesmo de voce digitar. Por isso o Jarvis nunca "esquece" quem ele e. Sem esse arquivo, a arquitetura toda — canais, ferramentas, memoria — fica sem alma. Como diz o ecossistema: <em>"sem o brain rewire, a arquitetura e so uma pasta"</em>. O SOUL.md e o "religar o cerebro".</p>
-
-            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
-              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> O <strong>system prompt</strong> e uma instrucao invisivel que vai junto com toda mensagem para o modelo, definindo o "papel" dele antes de qualquer pergunta sua. <strong>SOUL.md</strong> e so um arquivo de texto (formato Markdown, o <code>.md</code>) cujo conteudo e colado nesse system prompt. Voce edita o caracter do Jarvis editando um arquivo — nada de programar.</p>
-            </div>
-
-            <!-- COPY-RUN -->
-            <div class="codebox rounded-2xl border border-purple-500/30 bg-dark-900/40 overflow-hidden mb-6">
-              <div class="flex items-center justify-between px-4 py-2 border-b border-dark-600 bg-dark-800/60">
-                <span class="text-xs font-mono text-purple-400">📋 COPY-RUN · soul.md</span>
-                <span class="text-xs text-neutral-500">cole e edite</span>
-              </div>
-              <div class="px-4 py-3 text-sm text-neutral-300 border-b border-dark-600">
-                <strong class="text-purple-400">Objetivo:</strong> criar a alma do seu Jarvis. Salve o bloco abaixo como <code class="text-purple-400">soul.md</code> na pasta do agente, trocando as partes entre <code>&lt; &gt;</code> pelas suas.
-              </div>
-              <pre class="px-4 py-4 text-xs sm:text-sm text-neutral-200 leading-relaxed"><code># SOUL.md — quem eu sou
+<pre class="px-4 py-4 text-xs sm:text-sm text-neutral-200 leading-relaxed"><code># SOUL.md — quem eu sou
 
 ## Identidade
 Meu nome e &lt;Jax&gt;. Sou o assistente pessoal de &lt;seu-nome&gt;.
@@ -401,57 +386,51 @@ Meu nome e &lt;Jax&gt;. Sou o assistente pessoal de &lt;seu-nome&gt;.
 ## Prioridades do dono
 - Economia de tempo &gt; completude. Va direto ao ponto.
 - Quando houver risco (apagar, gastar, enviar), eu confirmo antes.</code></pre>
-              <div class="px-4 py-3 text-sm text-neutral-300 border-t border-dark-600 bg-dark-800/40">
-                <strong class="text-purple-400">Como verificar:</strong> reinicie o agente e mande um "oi". Se ele responder no tom que voce descreveu (direto, te chamando pelo nome, em bullets), o SOUL.md esta sendo injetado. Se vier generico e formal, confira se o arquivo esta na pasta certa e foi carregado no system prompt.
+<div class="px-4 py-3 text-sm text-neutral-300 border-t border-dark-600 bg-dark-800/40">
+<strong class="text-purple-400">Como verificar:</strong> reinicie o agente e mande um "oi". Se ele responder no tom que voce descreveu (direto, te chamando pelo nome, em bullets), o SOUL.md esta sendo injetado. Se vier generico e formal, confira se o arquivo esta na pasta certa e foi carregado no system prompt.
               </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
-              <h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">🧬</span> O que entra num bom SOUL.md</h3>
-              <ul class="space-y-2 text-neutral-300 text-sm">
-                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Identidade:</strong> nome, papel ("assistente pessoal de X").</span></li>
-                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Tom de voz:</strong> caloroso/seco, formal/casual, idioma, tamanho das respostas.</span></li>
-                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Valores:</strong> privacidade, honestidade, "explica o raciocinio".</span></li>
-                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Prioridades do dono:</strong> rapidez x completude, quando confirmar antes de agir.</span></li>
-              </ul>
-            </div>
-
-            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
-            <div class="grid sm:grid-cols-2 gap-3 mb-6">
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">SOUL.md</span><p class="text-sm text-neutral-400 mt-1">A ficha de personagem do Jarvis: personalidade, tom e valores em texto.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">System prompt</span><p class="text-sm text-neutral-400 mt-1">A instrucao invisivel injetada no inicio de toda conversa.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Brain rewire</span><p class="text-sm text-neutral-400 mt-1">"Religar o cerebro": dar carater ao modelo via SOUL.md.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Markdown (.md)</span><p class="text-sm text-neutral-400 mt-1">Formato de texto simples, legivel por humano e por maquina.</p></div>
-            </div>
-
-            <div class="flex justify-start">
-              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
-                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
-                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
-              </button>
-            </div>
-          </section>
-
-          <!-- TOPICO 2 -->
-          <section id="topico-2" data-inema-topic="modulo-3-2#topico-2" class="mb-16">
-            <div class="flex items-center space-x-4 mb-6">
-              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">2</span>
-              <h2 class="text-2xl font-bold">📜 AGENTS.md, o contrato</h2>
-            </div>
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t2-p1">Se o SOUL.md responde "quem ele e", o <strong class="text-purple-400">AGENTS.md</strong> responde "o que ele FAZ e o que NUNCA faz". E um <strong>contrato</strong> de comportamento, escrito como duas listas claras: <strong>SEMPRE</strong> e <strong>NUNCA</strong>. A regra de ouro aqui e: <em>regras explicitas vencem esperar que o modelo adivinhe</em>. O modelo nao le sua mente — se voce nao escrever "nunca apague arquivos sem confirmar", em algum momento ele pode achar que apagar e a coisa util a fazer.</p>
-
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t2-p2">Pense no AGENTS.md como o manual do funcionario novo. Voce nao espera que ele "sinta" as regras da casa — voce as escreve. Quanto mais sensiveis as acoes que o Jarvis pode tomar (mandar e-mail, gastar dinheiro, rodar comandos), mais o contrato importa. Em muitos projetos, o <code class="text-purple-400">AGENTS.md</code>/<code class="text-purple-400">CLAUDE.md</code> tambem funciona como um <strong>roteador</strong>: e o primeiro arquivo lido no inicio da sessao, e aponta para onde estao as outras regras e memorias.</p>
-
-            <!-- COPY-RUN 2 -->
-            <div class="codebox rounded-2xl border border-purple-500/30 bg-dark-900/40 overflow-hidden mb-6">
-              <div class="flex items-center justify-between px-4 py-2 border-b border-dark-600 bg-dark-800/60">
-                <span class="text-xs font-mono text-purple-400">📋 COPY-RUN · AGENTS.md</span>
-                <span class="text-xs text-neutral-500">o contrato SEMPRE / NUNCA</span>
+</div>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">🧬</span> O que entra num bom SOUL.md</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Identidade:</strong> nome, papel ("assistente pessoal de X").</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Tom de voz:</strong> caloroso/seco, formal/casual, idioma, tamanho das respostas.</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Valores:</strong> privacidade, honestidade, "explica o raciocinio".</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Prioridades do dono:</strong> rapidez x completude, quando confirmar antes de agir.</span></li>
+</ul>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">SOUL.md</span><p class="text-sm text-neutral-400 mt-1">A ficha de personagem do Jarvis: personalidade, tom e valores em texto.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">System prompt</span><p class="text-sm text-neutral-400 mt-1">A instrucao invisivel injetada no inicio de toda conversa.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Brain rewire</span><p class="text-sm text-neutral-400 mt-1">"Religar o cerebro": dar carater ao modelo via SOUL.md.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Markdown (.md)</span><p class="text-sm text-neutral-400 mt-1">Formato de texto simples, legivel por humano e por maquina.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-3-2#topico-2" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">📜 AGENTS.md, o contrato</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t2-p1">Se o SOUL.md responde "quem ele e", o <strong class="text-purple-400">AGENTS.md</strong> responde "o que ele FAZ e o que NUNCA faz". E um <strong>contrato</strong> de comportamento, escrito como duas listas claras: <strong>SEMPRE</strong> e <strong>NUNCA</strong>. A regra de ouro aqui e: <em>regras explicitas vencem esperar que o modelo adivinhe</em>. O modelo nao le sua mente — se voce nao escrever "nunca apague arquivos sem confirmar", em algum momento ele pode achar que apagar e a coisa util a fazer.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t2-p2">Pense no AGENTS.md como o manual do funcionario novo. Voce nao espera que ele "sinta" as regras da casa — voce as escreve. Quanto mais sensiveis as acoes que o Jarvis pode tomar (mandar e-mail, gastar dinheiro, rodar comandos), mais o contrato importa. Em muitos projetos, o <code class="text-purple-400">AGENTS.md</code>/<code class="text-purple-400">CLAUDE.md</code> tambem funciona como um <strong>roteador</strong>: e o primeiro arquivo lido no inicio da sessao, e aponta para onde estao as outras regras e memorias.</p>
+<!-- COPY-RUN 2 -->
+<div class="codebox rounded-2xl border border-purple-500/30 bg-dark-900/40 overflow-hidden mb-6">
+<div class="flex items-center justify-between px-4 py-2 border-b border-dark-600 bg-dark-800/60">
+<span class="text-xs font-mono text-purple-400">📋 COPY-RUN · AGENTS.md</span>
+<span class="text-xs text-neutral-500">o contrato SEMPRE / NUNCA</span>
+</div>
+<div class="px-4 py-3 text-sm text-neutral-300 border-b border-dark-600">
+<strong class="text-purple-400">Objetivo:</strong> definir as regras inegociaveis do agente. Salve como <code class="text-purple-400">AGENTS.md</code> ao lado do soul.md.
               </div>
-              <div class="px-4 py-3 text-sm text-neutral-300 border-b border-dark-600">
-                <strong class="text-purple-400">Objetivo:</strong> definir as regras inegociaveis do agente. Salve como <code class="text-purple-400">AGENTS.md</code> ao lado do soul.md.
-              </div>
-              <pre class="px-4 py-4 text-xs sm:text-sm text-neutral-200 leading-relaxed"><code># AGENTS.md — o contrato
+<pre class="px-4 py-4 text-xs sm:text-sm text-neutral-200 leading-relaxed"><code># AGENTS.md — o contrato
 
 ## SEMPRE
 - Confirmar ANTES de qualquer acao que envie, apague ou gaste (&lt;e-mail&gt;, &lt;arquivo&gt;, &lt;dinheiro&gt;).
@@ -464,337 +443,295 @@ Meu nome e &lt;Jax&gt;. Sou o assistente pessoal de &lt;seu-nome&gt;.
 - Nunca expor &lt;secrets&gt; (chaves, senhas, tokens) na resposta.
 - Nunca inventar fato que nao esta na memoria ou nas ferramentas.
 - Nunca enviar mensagem em nome de &lt;seu-nome&gt; sem ele aprovar.</code></pre>
-              <div class="px-4 py-3 text-sm text-neutral-300 border-t border-dark-600 bg-dark-800/40">
-                <strong class="text-purple-400">Como verificar:</strong> peca ao Jarvis algo que viole uma regra, ex.: "apaga todos os meus arquivos agora". Resposta esperada: ele <em>recusa ou pede confirmacao explicita</em>, citando a regra. Se ele simplesmente obedecer, o AGENTS.md nao esta sendo lido — confira se entra no system prompt junto do soul.md.
+<div class="px-4 py-3 text-sm text-neutral-300 border-t border-dark-600 bg-dark-800/40">
+<strong class="text-purple-400">Como verificar:</strong> peca ao Jarvis algo que viole uma regra, ex.: "apaga todos os meus arquivos agora". Resposta esperada: ele <em>recusa ou pede confirmacao explicita</em>, citando a regra. Se ele simplesmente obedecer, o AGENTS.md nao esta sendo lido — confira se entra no system prompt junto do soul.md.
               </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
-                <h4 class="font-bold text-emerald-400 mb-4">✓ Regras explicitas</h4>
-                <ul class="space-y-3 text-neutral-300 text-sm">
-                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Comportamento previsivel: voce sabe o que esperar.</span></li>
-                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Acoes perigosas pedem confirmacao por padrao.</span></li>
-                  <li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Faceis de auditar: estao num arquivo que voce le.</span></li>
-                </ul>
-              </div>
-              <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
-                <h4 class="font-bold text-red-400 mb-4">✗ "Deixa o modelo adivinhar"</h4>
-                <ul class="space-y-3 text-neutral-300 text-sm">
-                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Comportamento imprevisivel, muda a cada versao do modelo.</span></li>
-                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Acao destrutiva pode acontecer "achando que ajuda".</span></li>
-                  <li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Sem registro do porque ele fez o que fez.</span></li>
-                </ul>
-              </div>
-            </div>
-
-            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
-            <div class="grid sm:grid-cols-2 gap-3 mb-6">
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">AGENTS.md</span><p class="text-sm text-neutral-400 mt-1">O contrato de comportamento: listas SEMPRE / NUNCA.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Regras explicitas</span><p class="text-sm text-neutral-400 mt-1">Escrever o limite vence esperar que o modelo infira.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Gate de confirmacao</span><p class="text-sm text-neutral-400 mt-1">Acoes que enviam/apagam/gastam pedem "ok?" antes.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Roteador</span><p class="text-sm text-neutral-400 mt-1">O 1o arquivo lido na sessao, que aponta para o resto.</p></div>
-            </div>
-
-            <div class="flex justify-start">
-              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
-                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
-                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
-              </button>
-            </div>
-          </section>
-
-          <!-- TOPICO 3 -->
-          <section id="topico-3" data-inema-topic="modulo-3-2#topico-3" class="mb-16">
-            <div class="flex items-center space-x-4 mb-6">
-              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">3</span>
-              <h2 class="text-2xl font-bold">👤 USER / perfil — quem e voce</h2>
-            </div>
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t3-p1">SOUL.md diz quem o <em>Jarvis</em> e. AGENTS.md diz o que ele <em>faz</em>. Falta a terceira pe da identidade: <strong>quem e VOCE</strong>. E o arquivo <strong class="text-purple-400">USER.md</strong> (ou um bloco "perfil do dono"). Sem ele, o Jarvis te trata como um desconhecido qualquer — precisa perguntar seu nome toda vez, nao sabe seu fuso, nao sabe que voce odeia respostas longas. Com ele, a conversa ja comeca no segundo passo, nao no zero.</p>
-
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t3-p2">O perfil reune fatos estaveis sobre voce: nome, como prefere ser chamado, idioma, fuso horario, contexto (trabalho, projetos), e preferencias (formato das respostas, nivel de detalhe). E o que transforma "responde como um estranho" em "responde como alguem que te conhece". No ecossistema, esse trio <strong>SOUL / AGENTS / USER</strong> e a base da identidade — tres arquivos de texto, nenhuma linha de codigo.</p>
-
-            <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
-              <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> O trio da identidade, lado a lado</h3>
-              <ul class="space-y-2 text-neutral-300 text-sm">
-                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>SOUL.md</strong> → quem o Jarvis e (personalidade, tom, valores).</span></li>
-                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>AGENTS.md</strong> → o que ele faz e nao faz (SEMPRE / NUNCA).</span></li>
-                <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>USER.md</strong> → quem voce e (nome, contexto, preferencias).</span></li>
-              </ul>
-              <p class="text-neutral-400 text-xs mt-3">Os tres entram no system prompt. Juntos, formam a "identidade" da camada que voce esta estudando.</p>
-            </div>
-
-            <!-- SVG: 3 camadas alimentando o LLM -->
-            <div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
-              <svg viewBox="0 0 980 240" class="w-full h-auto" role="img" aria-label="Os arquivos SOUL.md, AGENTS.md e USER.md sao injetados no system prompt, que alimenta o LLM e produz uma resposta com identidade">
-                <defs>
-                  <filter id="m32-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                  <pattern id="m32-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#a855f7" opacity="0.12"/></pattern>
-                  <marker id="m32-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#c084fc"/></marker>
-                  <marker id="m32-ahc" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
-                </defs>
-                <rect x="0" y="0" width="980" height="240" fill="url(#m32-grid)"/>
-                <text x="120" y="28" text-anchor="middle" fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600">3 arquivos de texto</text>
-                <g font-family="Inter,sans-serif">
-                  <rect x="40" y="44" width="160" height="44" rx="11" fill="#1a1230" stroke="#c084fc" stroke-width="2"/><text x="120" y="71" text-anchor="middle" fill="#e9d5ff" font-size="14">SOUL.md</text>
-                  <rect x="40" y="98" width="160" height="44" rx="11" fill="#1a1230" stroke="#c084fc" stroke-width="2"/><text x="120" y="125" text-anchor="middle" fill="#e9d5ff" font-size="14">AGENTS.md</text>
-                  <rect x="40" y="152" width="160" height="44" rx="11" fill="#1a1230" stroke="#c084fc" stroke-width="2"/><text x="120" y="179" text-anchor="middle" fill="#e9d5ff" font-size="14">USER.md</text>
-
-                  <path class="wf-a" d="M200,66 C280,66 300,118 380,118" fill="none" stroke="#c084fc" stroke-width="2" marker-end="url(#m32-ah)"/>
-                  <path class="wf-a" d="M200,120 L380,120" fill="none" stroke="#c084fc" stroke-width="2" marker-end="url(#m32-ah)"/>
-                  <path class="wf-a" d="M200,174 C280,174 300,122 380,122" fill="none" stroke="#c084fc" stroke-width="2" marker-end="url(#m32-ah)"/>
-
-                  <rect x="382" y="84" width="180" height="72" rx="13" fill="#0e1622" stroke="#38bdf8" stroke-width="2"/><text x="472" y="116" text-anchor="middle" fill="#7dd3fc" font-size="13" font-weight="600">system prompt</text><text x="472" y="136" text-anchor="middle" fill="#9ca3af" font-size="11">(injetado sempre)</text>
-
-                  <path d="M562,120 L640,120" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m32-ahc)"/>
-
-                  <g filter="url(#m32-glow)"><rect x="640" y="80" width="150" height="80" rx="16" fill="#1a1230" stroke="#c084fc" stroke-width="2.5"/></g>
-                  <text x="715" y="116" text-anchor="middle" fill="#c084fc" font-size="16" font-weight="700">LLM</text><text x="715" y="138" text-anchor="middle" fill="#e9d5ff" font-size="11">o cerebro</text>
-
-                  <path d="M790,120 L860,120" fill="none" stroke="#c084fc" stroke-width="2" marker-end="url(#m32-ah)"/>
-                  <rect x="860" y="86" width="100" height="68" rx="13" fill="#0e2018" stroke="#34d399" stroke-width="2"/><text x="910" y="116" text-anchor="middle" fill="#a7f3d0" font-size="12" font-weight="600">resposta</text><text x="910" y="134" text-anchor="middle" fill="#34d399" font-size="11">com alma ✓</text>
-                </g>
-              </svg>
-              <p class="text-xs text-neutral-400 mt-1 px-1">Os <span class="text-purple-400">tres arquivos</span> nao falam direto com o modelo: eles sao colados no <span class="text-sky-400">system prompt</span>, a instrucao invisivel que abre toda conversa. So entao o <span class="text-purple-400">LLM</span> pensa — e a resposta sai com <span class="text-emerald-400">identidade</span>, em vez de generica. Trocar o caracter do Jarvis = editar esses arquivos.</p>
-            </div>
-
-            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
-            <div class="grid sm:grid-cols-2 gap-3 mb-6">
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">USER.md / perfil</span><p class="text-sm text-neutral-400 mt-1">Fatos estaveis sobre voce: nome, fuso, contexto, preferencias.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Trio SOUL/AGENTS/USER</span><p class="text-sm text-neutral-400 mt-1">A base da identidade — tres arquivos, nenhuma linha de codigo.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">"Sair do estranho"</span><p class="text-sm text-neutral-400 mt-1">Sem perfil, ele te trata como desconhecido toda vez.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Preferencias</span><p class="text-sm text-neutral-400 mt-1">Formato e nivel de detalhe que voce gosta nas respostas.</p></div>
-            </div>
-
-            <div class="flex justify-start">
-              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
-                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
-                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
-              </button>
-            </div>
-          </section>
-
-          <!-- TOPICO 4 -->
-          <section id="topico-4" data-inema-topic="modulo-3-2#topico-4" class="mb-16">
-            <div class="flex items-center space-x-4 mb-6">
-              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">4</span>
-              <h2 class="text-2xl font-bold">🧠 Memoria que dura</h2>
-            </div>
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t4-p1">Aqui esta uma verdade que surpreende quem chega: por padrao, o Jarvis <strong>esquece tudo ao fechar a conversa</strong>. A janela de contexto (a "memoria de trabalho" do modelo, que vimos na Trilha 1) e como a RAM do computador: limitada e volatil — desliga, apaga. Para o assistente lembrar do seu aniversario, da decisao da semana passada ou de como voce gosta do cafe, precisamos de <strong class="text-purple-400">memoria persistente</strong>: algo que sobrevive ao reinicio.</p>
-
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t4-p2">A solucao do ecossistema e elegante e dura: <strong>arquivos <code>.md</code> + um indice de busca</strong>. Os fatos viram texto em arquivos legiveis (a "verdade" mora ali). Para achar o fato certo rapido, usa-se um indice. Ha duas familias de busca, e vale conhecer as duas:</p>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
-                <h4 class="font-bold text-purple-400 mb-3">🔤 Busca por palavra (FTS5/BM25)</h4>
-                <p class="text-sm text-neutral-300 mb-2">Procura os termos exatos que voce digitou. "cafe" acha notas com a palavra "cafe".</p>
-                <ul class="space-y-2 text-neutral-400 text-sm">
-                  <li class="flex items-start gap-2"><span class="text-purple-400">•</span><span>Roda dentro do <strong>SQLite</strong> (um banco que e so um arquivo).</span></li>
-                  <li class="flex items-start gap-2"><span class="text-purple-400">•</span><span>Leve, rapida, sem nuvem.</span></li>
-                </ul>
-              </div>
-              <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
-                <h4 class="font-bold text-blue-400 mb-3">🧲 Busca por significado (vetorial)</h4>
-                <p class="text-sm text-neutral-300 mb-2">Acha por sentido, nao por palavra. "bebida quente da manha" pode trazer a nota do cafe.</p>
-                <ul class="space-y-2 text-neutral-400 text-sm">
-                  <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Usa um <strong>banco vetorial</strong> (ex.: pgvector, Pinecone).</span></li>
-                  <li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Mais poderosa, um pouco mais pesada.</span></li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
-              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>FTS5</strong> e o "Full-Text Search v5" do SQLite — busca de texto embutida no banco. <strong>BM25</strong> e a formula que ordena os resultados por relevancia (quanto melhor a nota bate com sua busca, mais no topo ela aparece). Um <strong>banco vetorial</strong> guarda o "significado" de cada texto como numeros, e busca por proximidade de sentido. Voce nao precisa programar isso — os projetos ja vem com a memoria montada.</p>
-            </div>
-
-            <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
-              <h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">💾</span> Por que arquivo + indice (e nao "so um banco")</h3>
-              <p class="text-neutral-300 text-sm mb-3">Os arquivos <code>.md</code> sao a fonte da verdade: voce os le, edita e versiona com olhos humanos. O indice (SQLite/vetorial) e so um <em>atalho de busca</em> reconstruivel a partir dos arquivos. Por isso a memoria "sobrevive ao hype": no fim, e so texto.</p>
-              <p class="text-neutral-400 text-xs">Na Trilha 3, modulo 3-6 ("Cerebros"), essa memoria ganha organizacao em zonas (Projeto, Self, Conhecimento). Aqui basta entender: <strong>conversa esquece; arquivo + indice lembra</strong>.</p>
-            </div>
-
-            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
-            <div class="grid sm:grid-cols-2 gap-3 mb-6">
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Memoria persistente</span><p class="text-sm text-neutral-400 mt-1">O que sobrevive ao fechar a conversa — guardado em arquivo.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">SQLite + FTS5/BM25</span><p class="text-sm text-neutral-400 mt-1">Indice de busca por palavra, leve e local (um arquivo so).</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Banco vetorial</span><p class="text-sm text-neutral-400 mt-1">Busca por significado, nao por termo exato.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Arquivo = verdade</span><p class="text-sm text-neutral-400 mt-1">Os .md sao a fonte; o indice e atalho reconstruivel.</p></div>
-            </div>
-
-            <div class="flex justify-start">
-              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
-                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
-                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
-              </button>
-            </div>
-          </section>
-
-          <!-- TOPICO 5 -->
-          <section id="topico-5" data-inema-topic="modulo-3-2#topico-5" class="mb-16">
-            <div class="flex items-center space-x-4 mb-6">
-              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">5</span>
-              <h2 class="text-2xl font-bold">🔐 Identidade = autenticacao tambem</h2>
-            </div>
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t5-p1">Identidade nao e so personalidade — e tambem <strong>quem ele atende</strong>. Um Jarvis que responde a qualquer um que mande mensagem nao e seu assistente: e um assistente publico, exposto ao mundo. Por isso "quem ele e" inclui uma trava de seguranca: a <strong class="text-purple-400">whitelist</strong> (lista de permitidos). So o SEU ID e atendido; qualquer outro e ignorado, em silencio.</p>
-
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t5-p2">A segunda parte e onde moram os <strong>segredos</strong>. Chaves de API, tokens do Telegram, senhas — nada disso fica espalhado no codigo ou no SOUL.md. Vai tudo para um arquivo <code class="text-purple-400">.env</code> (de "environment", ambiente), que nunca e compartilhado nem versionado em publico. Pense no <code>.env</code> como o cofre: o Jarvis usa as chaves, mas elas nunca aparecem na conversa nem vazam num print.</p>
-
-            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
-              <h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> O furo classico (lição real do ecossistema)</h3>
-              <p class="text-neutral-300 text-sm mb-3">Um dos maiores sistemas pessoais de IA teve <strong>42.665 instancias expostas na internet, 93,4% sem nenhuma autenticacao</strong>. Tradução: dezenas de milhares de "assistentes pessoais" que qualquer estranho podia comandar. A causa raiz nao foi um bug exotico — foi falta da trava mais basica: whitelist + sem porta aberta.</p>
-              <p class="text-neutral-400 text-xs">Por isso canais como o Telegram (long-polling, sem servidor web exposto) + whitelist + secrets no <code>.env</code> sao o caminho seguro. Identidade e seguranca andam juntas.</p>
-            </div>
-
-            <div class="space-y-4 mb-6">
-              <div class="flex items-start space-x-4">
-                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">1</span></div>
-                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Chega uma mensagem</h4><p class="text-sm text-neutral-400">O canal recebe um texto. O primeiro passo nao e responder — e perguntar "de quem e isto?".</p></div>
-              </div>
-              <div class="flex items-start space-x-4">
-                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">2</span></div>
-                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Confere a whitelist</h4><p class="text-sm text-neutral-400">O ID esta na lista de permitidos? Se nao, a mensagem e descartada em silencio — sem nem dar pista de que existe um bot ali.</p></div>
-              </div>
-              <div class="flex items-start space-x-4">
-                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">3</span></div>
-                <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">So entao usa os secrets</h4><p class="text-sm text-neutral-400">Sendo voce, o Jarvis busca as chaves no <code>.env</code> e age. Os segredos nunca aparecem na resposta.</p></div>
-              </div>
-            </div>
-
-            <div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
-              <p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>Whitelist</strong> = lista de quem PODE (o oposto de blacklist). <strong>Secret</strong> = um dado sensivel (chave, senha, token). <strong>.env</strong> = um arquivinho de texto onde os secrets ficam guardados, fora do codigo e fora do que se publica. <strong>Autenticacao</strong> = provar "sou eu mesmo" antes de ser atendido.</p>
-            </div>
-
-            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
-            <div class="grid sm:grid-cols-2 gap-3 mb-6">
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Whitelist</span><p class="text-sm text-neutral-400 mt-1">So o seu ID e atendido; o resto e ignorado em silencio.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">.env / secrets</span><p class="text-sm text-neutral-400 mt-1">O cofre das chaves — nunca no codigo, nunca na resposta.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Autenticacao</span><p class="text-sm text-neutral-400 mt-1">"Quem ele atende" faz parte de "quem ele e".</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Single-owner</span><p class="text-sm text-neutral-400 mt-1">Um dono so — sem servidor publico exposto.</p></div>
-            </div>
-
-            <div class="flex justify-start">
-              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
-                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
-                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
-              </button>
-            </div>
-          </section>
-
-          <!-- TOPICO 6 -->
-          <section id="topico-6" data-inema-topic="modulo-3-2#topico-6" class="mb-16">
-            <div class="flex items-center space-x-4 mb-6">
-              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">6</span>
-              <h2 class="text-2xl font-bold">🎭 Personas intercambiaveis</h2>
-            </div>
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t6-p1">A ultima ideia desta camada e a mais divertida: o mesmo Jarvis pode ter <strong>varios modos</strong>. De dia, o "modo trabalho" — seco, focado, sem rodeios. A noite, o "modo historinha" — caloroso, lento, cheio de imaginacao para a crianca. E o mesmo cerebro, a mesma memoria, os mesmos canais. O que muda e a <strong class="text-purple-400">persona ativa</strong>: qual SOUL/perfil esta no system prompt naquele momento.</p>
-
-            <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t6-p2">Na pratica, voce mantem varios arquivos de alma — <code>soul-trabalho.md</code>, <code>soul-estudo.md</code>, <code>soul-historinha.md</code> — e troca qual deles e carregado. Trocar de persona = trocar de SOUL.md ativo. Isso liga diretamente a Trilha 6, onde o Jarvis vira um tutor para criancas com "modo licao de casa" e "modo historinha", e a Trilha 4, onde voce monta o mecanismo de troca.</p>
-
-            <!-- SVG 2: persona switch -->
-            <div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
-              <svg viewBox="0 0 980 210" class="w-full h-auto" role="img" aria-label="Um mesmo nucleo de Jarvis (cerebro, memoria e canais) carrega uma entre varias personas: trabalho, estudo ou historinha">
-                <defs>
-                  <filter id="m32b-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                  <pattern id="m32b-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#a855f7" opacity="0.12"/></pattern>
-                  <marker id="m32b-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
-                </defs>
-                <rect x="0" y="0" width="980" height="210" fill="url(#m32b-grid)"/>
-                <text x="160" y="28" text-anchor="middle" fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600">nucleo unico (nao muda)</text>
-                <g font-family="Inter,sans-serif">
-                  <g filter="url(#m32b-glow)"><rect x="60" y="60" width="200" height="100" rx="16" fill="#1a1230" stroke="#c084fc" stroke-width="2.5"/></g>
-                  <text x="160" y="96" text-anchor="middle" fill="#c084fc" font-size="15" font-weight="700">Jarvis</text>
-                  <text x="160" y="118" text-anchor="middle" fill="#e9d5ff" font-size="11">cerebro · memoria</text>
-                  <text x="160" y="134" text-anchor="middle" fill="#e9d5ff" font-size="11">canais (nao mudam)</text>
-
-                  <text x="430" y="40" text-anchor="middle" fill="#7dd3fc" font-size="13" font-weight="600">persona ATIVA (troca)</text>
-                  <path d="M260,90 C330,70 360,68 420,68" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#m32b-ah)"/>
-                  <path d="M260,110 L420,110" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="5 5" opacity="0.6" marker-end="url(#m32b-ah)"/>
-                  <path d="M260,130 C330,150 360,152 420,152" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="5 5" opacity="0.6" marker-end="url(#m32b-ah)"/>
-
-                  <rect x="422" y="50" width="220" height="40" rx="11" fill="#0e1622" stroke="#38bdf8" stroke-width="2.5"/><text x="532" y="75" text-anchor="middle" fill="#7dd3fc" font-size="13">soul-trabalho.md  ◀ ativo</text>
-                  <rect x="422" y="92" width="220" height="38" rx="11" fill="#0e1622" stroke="#374151" stroke-width="2" opacity="0.7"/><text x="532" y="116" text-anchor="middle" fill="#9ca3af" font-size="13">soul-estudo.md</text>
-                  <rect x="422" y="132" width="220" height="38" rx="11" fill="#0e1622" stroke="#374151" stroke-width="2" opacity="0.7"/><text x="532" y="156" text-anchor="middle" fill="#9ca3af" font-size="13">soul-historinha.md</text>
-
-                  <path d="M642,70 L720,70" fill="none" stroke="#c084fc" stroke-width="2" marker-end="url(#m32b-ah)"/>
-                  <rect x="720" y="44" width="210" height="52" rx="13" fill="#1a1230" stroke="#c084fc" stroke-width="2"/><text x="825" y="68" text-anchor="middle" fill="#e9d5ff" font-size="12">tom do momento:</text><text x="825" y="86" text-anchor="middle" fill="#c084fc" font-size="13" font-weight="600">seco e focado</text>
-                </g>
-              </svg>
-              <p class="text-xs text-neutral-400 mt-1 px-1">O <span class="text-purple-400">nucleo</span> (cerebro, memoria, canais) e sempre o mesmo. O que troca e qual <span class="text-sky-400">arquivo de alma</span> esta ativo: hoje "trabalho" (seco e focado), de noite "historinha" (caloroso). <strong>Trocar de persona = trocar de SOUL.md ativo</strong> — sem mexer em nada do resto.</p>
-            </div>
-
-            <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
-              <h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">🎚️</span> Tres modos, um so Jarvis</h3>
-              <ul class="space-y-2 text-neutral-300 text-sm">
-                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Modo trabalho:</strong> direto, bullets, zero floreio.</span></li>
-                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Modo estudo:</strong> socratico, faz perguntas, nao entrega tudo pronto.</span></li>
-                <li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Modo historinha:</strong> caloroso, imaginativo, voz suave para a crianca.</span></li>
-              </ul>
-            </div>
-
-            <!-- CHECAGEM LEVE -->
-            <div data-inema-check="modulo-3-2#q1" class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6">
-              <p class="font-medium mb-4">Auto-checagem (opcional): qual e a forma mais fiel de descrever a "identidade" do Jarvis?</p>
-              <div class="inema-check-options space-y-2">
-                <button type="button" data-inema-check-option="0" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Um modelo mais inteligente, treinado especialmente para voce.</button>
-                <button type="button" data-inema-check-option="1" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Arquivos de texto (SOUL/AGENTS/USER) injetados no system prompt + memoria persistente + quem ele atende (whitelist).</button>
-                <button type="button" data-inema-check-option="2" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Uma conta de usuario com login e senha no site do fornecedor.</button>
-              </div>
-              <div data-inema-check-feedback class="mt-4 text-sm" role="status" aria-live="polite"></div>
-            </div>
-
-            <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3 mt-8">Conceitos-chave</h3>
-            <div class="grid sm:grid-cols-2 gap-3 mb-6">
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Persona</span><p class="text-sm text-neutral-400 mt-1">Um "modo" do Jarvis, definido por um SOUL/perfil.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Persona ativa</span><p class="text-sm text-neutral-400 mt-1">Qual SOUL.md esta carregado no system prompt agora.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Nucleo unico</span><p class="text-sm text-neutral-400 mt-1">Cerebro, memoria e canais nao mudam — so a persona troca.</p></div>
-              <div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Troca = editar arquivo</span><p class="text-sm text-neutral-400 mt-1">Mudar de modo e trocar qual arquivo de alma carrega.</p></div>
-            </div>
-
-            <div class="flex justify-start">
-              <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
-                <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done" aria-hidden="true">●</span>
-                <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
-              </button>
-            </div>
-          </section>
-
-          <!-- RESUMO -->
-          <section class="mb-8">
-            <div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
-              <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumo do modulo</h2>
-              <div class="space-y-4 mb-8">
-                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">SOUL.md, a alma</strong><span class="text-neutral-400"> — personalidade, tom e valores em texto, injetados sempre no system prompt. Sem ela, "e so uma pasta".</span></div></div>
-                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">AGENTS.md, o contrato</strong><span class="text-neutral-400"> — listas SEMPRE / NUNCA; regras explicitas vencem deixar o modelo adivinhar.</span></div></div>
-                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">USER / perfil</strong><span class="text-neutral-400"> — quem voce e, para ele nao te tratar como estranho. O trio SOUL/AGENTS/USER e a base.</span></div></div>
-                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Memoria que dura</strong><span class="text-neutral-400"> — conversa esquece; arquivos .md + indice (SQLite FTS5/BM25 ou vetorial) lembram.</span></div></div>
-                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Identidade = autenticacao</strong><span class="text-neutral-400"> — whitelist de ID + secrets no .env; quem ele atende faz parte de quem ele e.</span></div></div>
-                <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Personas intercambiaveis</strong><span class="text-neutral-400"> — o mesmo nucleo troca de modo trocando o SOUL.md ativo.</span></div></div>
-              </div>
-              <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
-                <h3 class="font-semibold text-purple-400 mb-2">Proximo modulo:</h3>
-                <p class="text-neutral-300">Modulo 3-3: Ferramentas — as maos do Jarvis (tools + MCP)</p>
-              </div>
-              <div class="flex flex-col sm:flex-row gap-4">
-                <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para a Trilha</a>
-                <a href="modulo-3-3.html" class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors">Proximo modulo →</a>
-              </div>
-            </div>
-          </section>
-
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <footer class="border-t border-dark-600 py-8 mt-8">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
-      <p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
-      <p>Curso aberto · <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a> · 2026</p>
-    </div>
-  </footer>
-
-  <!-- Scripts nucleo v1 -->
-  <script>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Regras explicitas</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Comportamento previsivel: voce sabe o que esperar.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Acoes perigosas pedem confirmacao por padrao.</span></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400">✓</span><span>Faceis de auditar: estao num arquivo que voce le.</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ "Deixa o modelo adivinhar"</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Comportamento imprevisivel, muda a cada versao do modelo.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Acao destrutiva pode acontecer "achando que ajuda".</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Sem registro do porque ele fez o que fez.</span></li>
+</ul>
+</div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">AGENTS.md</span><p class="text-sm text-neutral-400 mt-1">O contrato de comportamento: listas SEMPRE / NUNCA.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Regras explicitas</span><p class="text-sm text-neutral-400 mt-1">Escrever o limite vence esperar que o modelo infira.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Gate de confirmacao</span><p class="text-sm text-neutral-400 mt-1">Acoes que enviam/apagam/gastam pedem "ok?" antes.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Roteador</span><p class="text-sm text-neutral-400 mt-1">O 1o arquivo lido na sessao, que aponta para o resto.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-3-2#topico-3" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">👤 USER / perfil — quem e voce</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t3-p1">SOUL.md diz quem o <em>Jarvis</em> e. AGENTS.md diz o que ele <em>faz</em>. Falta a terceira pe da identidade: <strong>quem e VOCE</strong>. E o arquivo <strong class="text-purple-400">USER.md</strong> (ou um bloco "perfil do dono"). Sem ele, o Jarvis te trata como um desconhecido qualquer — precisa perguntar seu nome toda vez, nao sabe seu fuso, nao sabe que voce odeia respostas longas. Com ele, a conversa ja comeca no segundo passo, nao no zero.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t3-p2">O perfil reune fatos estaveis sobre voce: nome, como prefere ser chamado, idioma, fuso horario, contexto (trabalho, projetos), e preferencias (formato das respostas, nivel de detalhe). E o que transforma "responde como um estranho" em "responde como alguem que te conhece". No ecossistema, esse trio <strong>SOUL / AGENTS / USER</strong> e a base da identidade — tres arquivos de texto, nenhuma linha de codigo.</p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> O trio da identidade, lado a lado</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>SOUL.md</strong> → quem o Jarvis e (personalidade, tom, valores).</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>AGENTS.md</strong> → o que ele faz e nao faz (SEMPRE / NUNCA).</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>USER.md</strong> → quem voce e (nome, contexto, preferencias).</span></li>
+</ul>
+<p class="text-neutral-400 text-xs mt-3">Os tres entram no system prompt. Juntos, formam a "identidade" da camada que voce esta estudando.</p>
+</div>
+<!-- SVG: 3 camadas alimentando o LLM -->
+<div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="Os arquivos SOUL.md, AGENTS.md e USER.md sao injetados no system prompt, que alimenta o LLM e produz uma resposta com identidade" class="w-full h-auto" role="img" viewbox="0 0 980 240">
+<defs>
+<filter height="180%" id="m32-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m32-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#a855f7" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m32-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#c084fc"></path></marker>
+<marker id="m32-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m32-grid)" height="240" width="980" x="0" y="0"></rect>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="120" y="28">3 arquivos de texto</text>
+<g font-family="Inter,sans-serif">
+<rect fill="#1a1230" height="44" rx="11" stroke="#c084fc" stroke-width="2" width="160" x="40" y="44"></rect><text fill="#e9d5ff" font-size="14" text-anchor="middle" x="120" y="71">SOUL.md</text>
+<rect fill="#1a1230" height="44" rx="11" stroke="#c084fc" stroke-width="2" width="160" x="40" y="98"></rect><text fill="#e9d5ff" font-size="14" text-anchor="middle" x="120" y="125">AGENTS.md</text>
+<rect fill="#1a1230" height="44" rx="11" stroke="#c084fc" stroke-width="2" width="160" x="40" y="152"></rect><text fill="#e9d5ff" font-size="14" text-anchor="middle" x="120" y="179">USER.md</text>
+<path class="wf-a" d="M200,66 C280,66 300,118 380,118" fill="none" marker-end="url(#m32-ah)" stroke="#c084fc" stroke-width="2"></path>
+<path class="wf-a" d="M200,120 L380,120" fill="none" marker-end="url(#m32-ah)" stroke="#c084fc" stroke-width="2"></path>
+<path class="wf-a" d="M200,174 C280,174 300,122 380,122" fill="none" marker-end="url(#m32-ah)" stroke="#c084fc" stroke-width="2"></path>
+<rect fill="#0e1622" height="72" rx="13" stroke="#38bdf8" stroke-width="2" width="180" x="382" y="84"></rect><text fill="#7dd3fc" font-size="13" font-weight="600" text-anchor="middle" x="472" y="116">system prompt</text><text fill="#9ca3af" font-size="11" text-anchor="middle" x="472" y="136">(injetado sempre)</text>
+<path d="M562,120 L640,120" fill="none" marker-end="url(#m32-ahc)" stroke="#38bdf8" stroke-width="2"></path>
+<g filter="url(#m32-glow)"><rect fill="#1a1230" height="80" rx="16" stroke="#c084fc" stroke-width="2.5" width="150" x="640" y="80"></rect></g>
+<text fill="#c084fc" font-size="16" font-weight="700" text-anchor="middle" x="715" y="116">LLM</text><text fill="#e9d5ff" font-size="11" text-anchor="middle" x="715" y="138">o cerebro</text>
+<path d="M790,120 L860,120" fill="none" marker-end="url(#m32-ah)" stroke="#c084fc" stroke-width="2"></path>
+<rect fill="#0e2018" height="68" rx="13" stroke="#34d399" stroke-width="2" width="100" x="860" y="86"></rect><text fill="#a7f3d0" font-size="12" font-weight="600" text-anchor="middle" x="910" y="116">resposta</text><text fill="#34d399" font-size="11" text-anchor="middle" x="910" y="134">com alma ✓</text>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">Os <span class="text-purple-400">tres arquivos</span> nao falam direto com o modelo: eles sao colados no <span class="text-sky-400">system prompt</span>, a instrucao invisivel que abre toda conversa. So entao o <span class="text-purple-400">LLM</span> pensa — e a resposta sai com <span class="text-emerald-400">identidade</span>, em vez de generica. Trocar o caracter do Jarvis = editar esses arquivos.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">USER.md / perfil</span><p class="text-sm text-neutral-400 mt-1">Fatos estaveis sobre voce: nome, fuso, contexto, preferencias.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Trio SOUL/AGENTS/USER</span><p class="text-sm text-neutral-400 mt-1">A base da identidade — tres arquivos, nenhuma linha de codigo.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">"Sair do estranho"</span><p class="text-sm text-neutral-400 mt-1">Sem perfil, ele te trata como desconhecido toda vez.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Preferencias</span><p class="text-sm text-neutral-400 mt-1">Formato e nivel de detalhe que voce gosta nas respostas.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-3-2#topico-4" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">🧠 Memoria que dura</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t4-p1">Aqui esta uma verdade que surpreende quem chega: por padrao, o Jarvis <strong>esquece tudo ao fechar a conversa</strong>. A janela de contexto (a "memoria de trabalho" do modelo, que vimos na Trilha 1) e como a RAM do computador: limitada e volatil — desliga, apaga. Para o assistente lembrar do seu aniversario, da decisao da semana passada ou de como voce gosta do cafe, precisamos de <strong class="text-purple-400">memoria persistente</strong>: algo que sobrevive ao reinicio.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t4-p2">A solucao do ecossistema e elegante e dura: <strong>arquivos <code>.md</code> + um indice de busca</strong>. Os fatos viram texto em arquivos legiveis (a "verdade" mora ali). Para achar o fato certo rapido, usa-se um indice. Ha duas familias de busca, e vale conhecer as duas:</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+<h4 class="font-bold text-purple-400 mb-3">🔤 Busca por palavra (FTS5/BM25)</h4>
+<p class="text-sm text-neutral-300 mb-2">Procura os termos exatos que voce digitou. "cafe" acha notas com a palavra "cafe".</p>
+<ul class="space-y-2 text-neutral-400 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400">•</span><span>Roda dentro do <strong>SQLite</strong> (um banco que e so um arquivo).</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">•</span><span>Leve, rapida, sem nuvem.</span></li>
+</ul>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-3">🧲 Busca por significado (vetorial)</h4>
+<p class="text-sm text-neutral-300 mb-2">Acha por sentido, nao por palavra. "bebida quente da manha" pode trazer a nota do cafe.</p>
+<ul class="space-y-2 text-neutral-400 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Usa um <strong>banco vetorial</strong> (ex.: pgvector, Pinecone).</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Mais poderosa, um pouco mais pesada.</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>FTS5</strong> e o "Full-Text Search v5" do SQLite — busca de texto embutida no banco. <strong>BM25</strong> e a formula que ordena os resultados por relevancia (quanto melhor a nota bate com sua busca, mais no topo ela aparece). Um <strong>banco vetorial</strong> guarda o "significado" de cada texto como numeros, e busca por proximidade de sentido. Voce nao precisa programar isso — os projetos ja vem com a memoria montada.</p>
+</div>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">💾</span> Por que arquivo + indice (e nao "so um banco")</h3>
+<p class="text-neutral-300 text-sm mb-3">Os arquivos <code>.md</code> sao a fonte da verdade: voce os le, edita e versiona com olhos humanos. O indice (SQLite/vetorial) e so um <em>atalho de busca</em> reconstruivel a partir dos arquivos. Por isso a memoria "sobrevive ao hype": no fim, e so texto.</p>
+<p class="text-neutral-400 text-xs">Na Trilha 3, modulo 3-6 ("Cerebros"), essa memoria ganha organizacao em zonas (Projeto, Self, Conhecimento). Aqui basta entender: <strong>conversa esquece; arquivo + indice lembra</strong>.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Memoria persistente</span><p class="text-sm text-neutral-400 mt-1">O que sobrevive ao fechar a conversa — guardado em arquivo.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">SQLite + FTS5/BM25</span><p class="text-sm text-neutral-400 mt-1">Indice de busca por palavra, leve e local (um arquivo so).</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Banco vetorial</span><p class="text-sm text-neutral-400 mt-1">Busca por significado, nao por termo exato.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Arquivo = verdade</span><p class="text-sm text-neutral-400 mt-1">Os .md sao a fonte; o indice e atalho reconstruivel.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-3-2#topico-5" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">🔐 Identidade = autenticacao tambem</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t5-p1">Identidade nao e so personalidade — e tambem <strong>quem ele atende</strong>. Um Jarvis que responde a qualquer um que mande mensagem nao e seu assistente: e um assistente publico, exposto ao mundo. Por isso "quem ele e" inclui uma trava de seguranca: a <strong class="text-purple-400">whitelist</strong> (lista de permitidos). So o SEU ID e atendido; qualquer outro e ignorado, em silencio.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t5-p2">A segunda parte e onde moram os <strong>segredos</strong>. Chaves de API, tokens do Telegram, senhas — nada disso fica espalhado no codigo ou no SOUL.md. Vai tudo para um arquivo <code class="text-purple-400">.env</code> (de "environment", ambiente), que nunca e compartilhado nem versionado em publico. Pense no <code>.env</code> como o cofre: o Jarvis usa as chaves, mas elas nunca aparecem na conversa nem vazam num print.</p>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> O furo classico (lição real do ecossistema)</h3>
+<p class="text-neutral-300 text-sm mb-3">Um dos maiores sistemas pessoais de IA teve <strong>42.665 instancias expostas na internet, 93,4% sem nenhuma autenticacao</strong>. Tradução: dezenas de milhares de "assistentes pessoais" que qualquer estranho podia comandar. A causa raiz nao foi um bug exotico — foi falta da trava mais basica: whitelist + sem porta aberta.</p>
+<p class="text-neutral-400 text-xs">Por isso canais como o Telegram (long-polling, sem servidor web exposto) + whitelist + secrets no <code>.env</code> sao o caminho seguro. Identidade e seguranca andam juntas.</p>
+</div>
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Chega uma mensagem</h4><p class="text-sm text-neutral-400">O canal recebe um texto. O primeiro passo nao e responder — e perguntar "de quem e isto?".</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Confere a whitelist</h4><p class="text-sm text-neutral-400">O ID esta na lista de permitidos? Se nao, a mensagem e descartada em silencio — sem nem dar pista de que existe um bot ali.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">So entao usa os secrets</h4><p class="text-sm text-neutral-400">Sendo voce, o Jarvis busca as chaves no <code>.env</code> e age. Os segredos nunca aparecem na resposta.</p></div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">Novo aqui?</strong> <strong>Whitelist</strong> = lista de quem PODE (o oposto de blacklist). <strong>Secret</strong> = um dado sensivel (chave, senha, token). <strong>.env</strong> = um arquivinho de texto onde os secrets ficam guardados, fora do codigo e fora do que se publica. <strong>Autenticacao</strong> = provar "sou eu mesmo" antes de ser atendido.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceitos-chave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Whitelist</span><p class="text-sm text-neutral-400 mt-1">So o seu ID e atendido; o resto e ignorado em silencio.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">.env / secrets</span><p class="text-sm text-neutral-400 mt-1">O cofre das chaves — nunca no codigo, nunca na resposta.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Autenticacao</span><p class="text-sm text-neutral-400 mt-1">"Quem ele atende" faz parte de "quem ele e".</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Single-owner</span><p class="text-sm text-neutral-400 mt-1">Um dono so — sem servidor publico exposto.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-3-2#topico-6" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🎭 Personas intercambiaveis</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t6-p1">A ultima ideia desta camada e a mais divertida: o mesmo Jarvis pode ter <strong>varios modos</strong>. De dia, o "modo trabalho" — seco, focado, sem rodeios. A noite, o "modo historinha" — caloroso, lento, cheio de imaginacao para a crianca. E o mesmo cerebro, a mesma memoria, os mesmos canais. O que muda e a <strong class="text-purple-400">persona ativa</strong>: qual SOUL/perfil esta no system prompt naquele momento.</p>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m32-t6-p2">Na pratica, voce mantem varios arquivos de alma — <code>soul-trabalho.md</code>, <code>soul-estudo.md</code>, <code>soul-historinha.md</code> — e troca qual deles e carregado. Trocar de persona = trocar de SOUL.md ativo. Isso liga diretamente a Trilha 6, onde o Jarvis vira um tutor para criancas com "modo licao de casa" e "modo historinha", e a Trilha 4, onde voce monta o mecanismo de troca.</p>
+<!-- SVG 2: persona switch -->
+<div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="Um mesmo nucleo de Jarvis (cerebro, memoria e canais) carrega uma entre varias personas: trabalho, estudo ou historinha" class="w-full h-auto" role="img" viewbox="0 0 980 210">
+<defs>
+<filter height="180%" id="m32b-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m32b-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#a855f7" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m32b-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m32b-grid)" height="210" width="980" x="0" y="0"></rect>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="160" y="28">nucleo unico (nao muda)</text>
+<g font-family="Inter,sans-serif">
+<g filter="url(#m32b-glow)"><rect fill="#1a1230" height="100" rx="16" stroke="#c084fc" stroke-width="2.5" width="200" x="60" y="60"></rect></g>
+<text fill="#c084fc" font-size="15" font-weight="700" text-anchor="middle" x="160" y="96">Jarvis</text>
+<text fill="#e9d5ff" font-size="11" text-anchor="middle" x="160" y="118">cerebro · memoria</text>
+<text fill="#e9d5ff" font-size="11" text-anchor="middle" x="160" y="134">canais (nao mudam)</text>
+<text fill="#7dd3fc" font-size="13" font-weight="600" text-anchor="middle" x="430" y="40">persona ATIVA (troca)</text>
+<path d="M260,90 C330,70 360,68 420,68" fill="none" marker-end="url(#m32b-ah)" stroke="#38bdf8" stroke-width="2"></path>
+<path d="M260,110 L420,110" fill="none" marker-end="url(#m32b-ah)" opacity="0.6" stroke="#38bdf8" stroke-dasharray="5 5" stroke-width="2"></path>
+<path d="M260,130 C330,150 360,152 420,152" fill="none" marker-end="url(#m32b-ah)" opacity="0.6" stroke="#38bdf8" stroke-dasharray="5 5" stroke-width="2"></path>
+<rect fill="#0e1622" height="40" rx="11" stroke="#38bdf8" stroke-width="2.5" width="220" x="422" y="50"></rect><text fill="#7dd3fc" font-size="13" text-anchor="middle" x="532" y="75">soul-trabalho.md  ◀ ativo</text>
+<rect fill="#0e1622" height="38" opacity="0.7" rx="11" stroke="#374151" stroke-width="2" width="220" x="422" y="92"></rect><text fill="#9ca3af" font-size="13" text-anchor="middle" x="532" y="116">soul-estudo.md</text>
+<rect fill="#0e1622" height="38" opacity="0.7" rx="11" stroke="#374151" stroke-width="2" width="220" x="422" y="132"></rect><text fill="#9ca3af" font-size="13" text-anchor="middle" x="532" y="156">soul-historinha.md</text>
+<path d="M642,70 L720,70" fill="none" marker-end="url(#m32b-ah)" stroke="#c084fc" stroke-width="2"></path>
+<rect fill="#1a1230" height="52" rx="13" stroke="#c084fc" stroke-width="2" width="210" x="720" y="44"></rect><text fill="#e9d5ff" font-size="12" text-anchor="middle" x="825" y="68">tom do momento:</text><text fill="#c084fc" font-size="13" font-weight="600" text-anchor="middle" x="825" y="86">seco e focado</text>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">O <span class="text-purple-400">nucleo</span> (cerebro, memoria, canais) e sempre o mesmo. O que troca e qual <span class="text-sky-400">arquivo de alma</span> esta ativo: hoje "trabalho" (seco e focado), de noite "historinha" (caloroso). <strong>Trocar de persona = trocar de SOUL.md ativo</strong> — sem mexer em nada do resto.</p>
+</div>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">🎚️</span> Tres modos, um so Jarvis</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Modo trabalho:</strong> direto, bullets, zero floreio.</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Modo estudo:</strong> socratico, faz perguntas, nao entrega tudo pronto.</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span><strong>Modo historinha:</strong> caloroso, imaginativo, voz suave para a crianca.</span></li>
+</ul>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-3-2#q1">
+<p class="font-medium mb-4">Auto-checagem (opcional): qual e a forma mais fiel de descrever a "identidade" do Jarvis?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">Um modelo mais inteligente, treinado especialmente para voce.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">Arquivos de texto (SOUL/AGENTS/USER) injetados no system prompt + memoria persistente + quem ele atende (whitelist).</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">Uma conta de usuario com login e senha no site do fornecedor.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3 mt-8">Conceitos-chave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Persona</span><p class="text-sm text-neutral-400 mt-1">Um "modo" do Jarvis, definido por um SOUL/perfil.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Persona ativa</span><p class="text-sm text-neutral-400 mt-1">Qual SOUL.md esta carregado no system prompt agora.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Nucleo unico</span><p class="text-sm text-neutral-400 mt-1">Cerebro, memoria e canais nao mudam — so a persona troca.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Troca = editar arquivo</span><p class="text-sm text-neutral-400 mt-1">Mudar de modo e trocar qual arquivo de alma carrega.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done">Lido ✓</span>
+</button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-8">
+<div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumo do modulo</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">SOUL.md, a alma</strong><span class="text-neutral-400"> — personalidade, tom e valores em texto, injetados sempre no system prompt. Sem ela, "e so uma pasta".</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">AGENTS.md, o contrato</strong><span class="text-neutral-400"> — listas SEMPRE / NUNCA; regras explicitas vencem deixar o modelo adivinhar.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">USER / perfil</strong><span class="text-neutral-400"> — quem voce e, para ele nao te tratar como estranho. O trio SOUL/AGENTS/USER e a base.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Memoria que dura</strong><span class="text-neutral-400"> — conversa esquece; arquivos .md + indice (SQLite FTS5/BM25 ou vetorial) lembram.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Identidade = autenticacao</strong><span class="text-neutral-400"> — whitelist de ID + secrets no .env; quem ele atende faz parte de quem ele e.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Personas intercambiaveis</strong><span class="text-neutral-400"> — o mesmo nucleo troca de modo trocando o SOUL.md ativo.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-purple-400 mb-2">Proximo modulo:</h3>
+<p class="text-neutral-300">Modulo 3-3: Ferramentas — as maos do Jarvis (tools + MCP)</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Voltar para a Trilha</a>
+<a class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors" href="modulo-3-3.html">Proximo modulo →</a>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+<p>🤖 Jarvis — Seu Sistema Operacional de IA</p>
+<p>Curso aberto · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<!-- Scripts nucleo v1 -->
+<script>
     function toggleTopic(button){
       const item = button.closest('.topic-item');
       const exp = item.querySelector('.topic-explanation');
@@ -813,10 +750,9 @@ Meu nome e &lt;Jax&gt;. Sou o assistente pessoal de &lt;seu-nome&gt;.
     function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
     document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
   </script>
-
-  <!-- Camada de aprendizagem -->
-  <script src="../../assets/learn.js"></script>
-  <script>
+<!-- Camada de aprendizagem -->
+<script src="../../assets/learn.js"></script>
+<script>
     if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
     document.addEventListener('click', function(e){
       var r = e.target.closest('[data-inema-resume]');

@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="jarvis" name="inema-course"/>
+<title>Módulo 3.5 — Agentes: el loop que trabaja solo | Jarvis · INEMA.CLUB</title>
+<meta content="Qué convierte a Jarvis en un agente: el loop autónomo, los subagentes, el sistema multiagente, la cadencia (heartbeat/cron), los límites de seguridad y el salto de reactivo a proactivo." name="description"/>
+<!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .bg-purple-900\/20 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .bg-purple-900\/30 { background-color: rgba(124,58,237,0.10); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+<link href="https://inematds.github.io/jarvis/curso/trilha3/modulo-3-5.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/jarvis/en/curso/trilha3/modulo-3-5.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/jarvis/es/curso/trilha3/modulo-3-5.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/modulo-3-5.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha3/modulo-3-5.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-3-5.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<a class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg" href="#conteudo">Saltar al contenido</a>
+<!-- NAVIGATION (completo, identico em todas as paginas) -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-3">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html" id="nav-t1">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html" id="nav-t2">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Panorama</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10" href="../trilha3/index.html" id="nav-t3">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomía</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html" id="nav-t4">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Construir</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html" id="nav-t5">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Celular</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html" id="nav-t6">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Niños</span>
+</a>
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-journey-open="" title="Mi recorrido" type="button">
+<span aria-hidden="true">◷</span><span class="hidden md:inline">Trayectoria</span>
+<span class="inema-journey-badge hidden" data-count="0" data-inema-journey-badge=""></span>
+</button>
+<div class="relative">
+<button aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-appearance-toggle="[data-inema-appearance]" title="Apariencia" type="button">
+<span aria-hidden="true">◑</span><span class="hidden md:inline">Apariencia</span>
+</button>
+<div class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left" data-inema-appearance="">
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Tema</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="inema-dark">Oscuro</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="claro">Claro</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="sepia">Sepia</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="foco">Enfoque</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="contraste">Alto contraste</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Fuente</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="inter">Inter</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="system">Sistema</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="leitura">Lectura</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Tamaño</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="100">A</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="112">A+</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="125">A++</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Entre líneas</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.45">Compacto</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.7">Cómodo</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Acento</p>
+<div class="inema-accent-grid flex flex-wrap gap-2">
+<button class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" data-inema-set-accent="emerald" title="Esmeralda"></button>
+<button class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" data-inema-set-accent="blue" title="Blue"></button>
+<button class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" data-inema-set-accent="purple" title="Purple"></button>
+<button class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" data-inema-set-accent="amber" title="Amber"></button>
+<button class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" data-inema-set-accent="teal" title="Verde azulado"></button>
+<button class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" data-inema-set-accent="rose" title="Rose"></button>
+</div>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" id="theme-toggle" title="Alternar entre modo claro y oscuro">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main id="conteudo">
+<header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+<a class="hover:text-purple-400" href="../../index.html">Inicio</a><span>/</span>
+<a class="hover:text-purple-400" href="index.html">Ruta 3</a><span>/</span>
+<span class="text-purple-400">Módulo 3.5</span>
+</nav>
+<span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">MÓDULO 3-5</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🤝 Agentes: el loop que trabaja solo</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">Hasta aquí le diste a Jarvis canales, identidad, herramientas y skills. Pero ¿qué lo convierte en un <strong>agente</strong> — y no solo un chat inteligente: es el <strong>bucle autónomo</strong>: la capacidad de pensar, actuar, leer el resultado y continuar por tu cuenta hasta terminar. En este módulo entenderás este loop, cómo delegar trabajo a subagentes, cuándo conviene tener varios agentes, cómo se activa a la hora adecuada y dónde poner los controles para que todo esto sea seguro.</p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">6</div><div class="text-xs text-neutral-400">Temas</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">~50</div><div class="text-xs text-neutral-400">Minutos</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Intermedio</div><div class="text-xs text-neutral-400">Nivel</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Anatomía</div><div class="text-xs text-neutral-400">Tipo</div></div>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="lg:flex lg:gap-10">
+<!-- TOC sticky -->
+<aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+<nav aria-label="Índice de la página" class="lg:sticky lg:top-20" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-2">Sección <span class="inema-toc-pos" data-inema-section-counter="">1</span> de 6</p>
+<ol class="space-y-1 text-sm">
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-1">1. Bucle + autonomía</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-2">2. Subagentes</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-3">3. Multiagente</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-4">4. Cadencia</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-5">5. Límites y seguridad</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-purple-400" href="#topico-6">6. Proactivo vs. reactivo</a></li>
+</ol>
+<div aria-label="Progreso del módulo 3.5" aria-valuemax="100" aria-valuemin="0" class="mt-4" data-inema-meter="modulo:3-5" role="progressbar">
+<div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-purple-500" data-inema-meter-fill="" style="width:0%"></div></div>
+<span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 de 6</span> · <span data-inema-meter-pct="">0%</span></span>
+</div>
+</nav>
+</aside>
+<div class="lg:flex-1 min-w-0 inema-prose">
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-3-5#topico-1" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🔁 Agente = loop + autonomía</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m35-t1-p1">Un chatbot común hace una sola cosa: preguntas, responde y listo. Un <strong class="text-purple-400">agente</strong> y es diferente: no se detiene en la primera respuesta. Recibe una solicitud, <strong>piensa</strong> sobre qué hacer, <strong>usa una herramienta</strong> (busca en la web, lee un archivo, envía un correo electrónico), <strong>lee el resultado</strong> de esta herramienta, y decide si ya terminó o si necesita dar un paso más. Ese ir y venir que se repite por sí solo hasta que la tarea está lista es lo que llamamos <strong class="text-purple-400">bucle agéntico</strong>.</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">¿Eres nuevo aquí?</strong> Uno <strong>agente</strong> y un modelo de IA (el «cerebro» de texto que viste en la Trilha 1) que obtuvo <strong>manos</strong> — las herramientas y el permiso para usarlas en un ciclo. «Loop» es solo la palabra para «repetir un ciclo». «Autonomía» aquí no significa que haga lo que quiera; significa que encadena varios pasos sin que tengas que escribir en cada uno.</p>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m35-t1-p2">En la Trilha 1 viste este loop por primera vez como una <em>idea</em>. Aquí se convierte en una <strong>capa de la anatomía</strong>: la pieza que transforma «modelo + herramientas» en un asistente que ejecuta. Sin el loop, tendrías que orquestar cada llamada a mano («ahora busca», «ahora resume», «ahora envía»). Con el loop, indicas el objetivo y él mismo descubre la secuencia de pasos.</p>
+<div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="El bucle agéntico: entra una solicitud, el agente piensa, llama a una herramienta, lee el resultado y decide si repite el proceso o responde; un contador limita las vueltas" class="w-full h-auto" role="img" viewbox="0 0 980 240">
+<defs>
+<filter height="180%" id="m35-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m35-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#a855f7" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m35-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#c084fc"></path></marker>
+<marker id="m35-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m35-grid)" height="240" width="980" x="0" y="0"></rect>
+<text fill="#c084fc" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="490" y="26">EL BUCLE AGÉNTICO</text>
+<g font-family="Inter,sans-serif">
+<rect fill="#1a1230" height="52" rx="13" stroke="#c084fc" stroke-width="2" width="120" x="30" y="98"></rect><text fill="#e9d5ff" font-size="13" text-anchor="middle" x="90" y="129">pedido</text>
+<path d="M150,124 L210,124" fill="none" marker-end="url(#m35-ah)" stroke="#c084fc" stroke-width="2"></path>
+<g filter="url(#m35-glow)"><rect fill="#1a1230" height="64" rx="14" stroke="#c084fc" stroke-width="2.5" width="150" x="210" y="92"></rect></g>
+<text fill="#c084fc" font-size="14" font-weight="700" text-anchor="middle" x="285" y="120">piensa</text><text fill="#e9d5ff" font-size="11" text-anchor="middle" x="285" y="138">¿qué falta?</text>
+<path d="M360,124 L430,124" fill="none" marker-end="url(#m35-ah)" stroke="#c084fc" stroke-width="2"></path>
+<rect class="wf-a" fill="#0e1622" height="64" rx="14" stroke="#38bdf8" stroke-width="2" width="160" x="430" y="92"></rect><text fill="#38bdf8" font-size="14" font-weight="700" text-anchor="middle" x="510" y="118">herramienta</text><text fill="#bae6fd" font-size="11" text-anchor="middle" x="510" y="137">buscar · leer · enviar</text>
+<path d="M590,124 L660,124" fill="none" marker-end="url(#m35-ahc)" stroke="#38bdf8" stroke-width="2"></path>
+<rect fill="#1a1230" height="64" rx="14" stroke="#c084fc" stroke-width="2" width="150" x="660" y="92"></rect><text fill="#c084fc" font-size="14" font-weight="700" text-anchor="middle" x="735" y="120">lee el resultado</text><text fill="#e9d5ff" font-size="11" text-anchor="middle" x="735" y="138">y evalúa</text>
+<path d="M735,156 C735,200 285,200 285,160" fill="none" marker-end="url(#m35-ah)" stroke="#c084fc" stroke-dasharray="6 5" stroke-width="2"></path>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="510" y="216">si todavía no terminó, vuelve a pensar (repite)</text>
+<path d="M810,124 L900,124" fill="none" marker-end="url(#m35-ah)" stroke="#34d399" stroke-width="2"></path>
+<rect fill="#0e2018" height="52" rx="13" stroke="#34d399" stroke-width="2" width="70" x="900" y="98"></rect><text fill="#34d399" font-size="12" font-weight="700" text-anchor="middle" x="935" y="123">listo</text><text fill="#a7f3d0" font-size="10" text-anchor="middle" x="935" y="139">responde</text>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">Lee el diagrama de izquierda a derecha: el <span class="text-purple-400">el agente piensa</span>, llama a una <span class="text-sky-400">herramienta</span>, lee lo que volvió y <strong>decide</strong>. Mientras le falte algo, la flecha discontinua lo lleva de vuelta a "piensa". Cuando termina, sale por la derecha en <span class="text-emerald-400">"listo"</span>. Este ciclo que se cierra solo es el corazón de cualquier agente.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Agente</span><p class="text-sm text-neutral-400 mt-1">Un LLM que puede usar herramientas en un ciclo para cumplir un objetivo.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Bucle agéntico</span><p class="text-sm text-neutral-400 mt-1">Piensa → actúa → lee el resultado → decide; repite hasta terminar.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Autonomía</span><p class="text-sm text-neutral-400 mt-1">Encadenar varios pasos por su cuenta, sin que tengas que escribir cada uno.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Delegar &gt; preguntar</span><p class="text-sm text-neutral-400 mt-1">Dices el objetivo; él descubre la secuencia.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-3-5#topico-2" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">🧑‍🚀 Subagentes: delegar y volver con menos carga</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m35-t2-p1">Toda conversación de Jarvis vive dentro de una <strong>ventana de contexto</strong> — su memoria de trabajo, limitada, como la RAM de una computadora (lo viste en la Ruta 1). Si una tarea es grande — leer 30 páginas, recorrer un repositorio entero, investigar 15 fuentes — ella <strong>atasca</strong> esta ventana con texto sin procesar, y el agente principal se vuelve lento, confuso y caro. La solución elegante es el <strong class="text-purple-400">subagente</strong>.</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">¿Eres nuevo aquí?</strong> Uno <strong>subagente</strong> y un segundo agente que crea el agente principal solo para una tarea pesada. Abre la <em>propia</em> ventana de contexto, hace el trabajo sucio (lo lee todo, lo procesa, descarta lo que sobra) y devuelve solo la <strong>respuesta limpia</strong>. El desorden queda en su cabeza; el agente principal solo recibe el resumen.</p>
+</div>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">📦</span> La analogía del pasante</h3>
+<p class="text-neutral-300 mb-4">Imagina que eres un gerente ocupado. Llega una tarea: «lee este informe de 200 páginas y dime los 3 puntos principales». No lees las 200 páginas ni llenas tu propia cabeza: mandas a un pasante a leer. Él dedica el tiempo <strong>de él</strong> con las 200 páginas y vuelve con una nota de 3 líneas. Tu escritorio sigue limpio. El subagente es exactamente ese pasante.</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span>El subagente consume el <strong>contexto propio</strong> con el material en bruto.</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span>Solo devuelve la <strong>respuesta destilada</strong> — no todo el material.</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400 mt-1">•</span><span>La sesión principal queda <strong>ligera, enfocada y económica</strong>.</span></li>
+</ul>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+<h4 class="font-bold text-purple-400 mb-4">✓ Cuándo usar un subagente</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Tarea que genera MUCHO texto intermedio (búsqueda amplia, lectura larga).</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Trabajo aislable: tiene una solicitud clara y devuelve un resultado claro.</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">✓</span><span>Quieres proteger la conversación principal para que no se vuelva un caos.</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Cuándo NO conviene</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Tarea muy breve: abrir un subagente cuesta más que resolverla directamente.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Pasos que dependen de muchas idas y vueltas contigo en el proceso.</span></li>
+<li class="flex items-start gap-2"><span class="text-red-400">✗</span><span>Cuando NECESITAS ver el material en bruto, no solo el resumen.</span></li>
+</ul>
+</div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Subagente</span><p class="text-sm text-neutral-400 mt-1">Agente auxiliar que hace el trabajo pesado y devuelve solo la respuesta.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Ventana de contexto</span><p class="text-sm text-neutral-400 mt-1">La memoria de trabajo limitada del agente (la «RAM»).</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Aislamiento de contexto</span><p class="text-sm text-neutral-400 mt-1">El desorden queda en el subagente; el principal no se contamina.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Respuesta destilada</span><p class="text-sm text-neutral-400 mt-1">Solo vuelve lo esencial: ahorro de contexto y de costos.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-3-5#topico-3" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🐝 Multiagente: un equipo de especialistas</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m35-t3-p1">Si un subagente es un pasante, el <strong class="text-purple-400">multiagente</strong> y todo un equipo. En lugar de tener un agente que haga todo, montas varios <strong>especialistas</strong> — uno que solo investiga, uno que solo escribe, uno que solo revisa — y un <strong>orquestador</strong> que distribuye las partes y reúne el resultado. Cada especialista tiene su propio contexto, su propio enfoque e incluso puede usar un cerebro diferente (un modelo barato para la búsqueda, uno potente para la redacción).</p>
+<div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="Patrón multiagente: un orquestador en el centro distribuye partes de la tarea a tres especialistas (investigación, escritura, revisión) y reúne las respuestas en un resultado final" class="w-full h-auto" role="img" viewbox="0 0 980 270">
+<defs>
+<filter height="180%" id="m35b-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m35b-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#a855f7" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m35b-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#c084fc"></path></marker>
+<marker id="m35b-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m35b-grid)" height="270" width="980" x="0" y="0"></rect>
+<text fill="#c084fc" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="490" y="26">ESTÁNDAR MULTIAGENTE</text>
+<g font-family="Inter,sans-serif">
+<g filter="url(#m35b-glow)"><rect fill="#1a1230" height="60" rx="14" stroke="#c084fc" stroke-width="2.5" width="190" x="395" y="48"></rect></g>
+<text fill="#c084fc" font-size="14" font-weight="700" text-anchor="middle" x="490" y="74">orquestador</text><text fill="#e9d5ff" font-size="11" text-anchor="middle" x="490" y="93">divide y une</text>
+<path d="M430,108 C360,150 250,150 200,160" fill="none" marker-end="url(#m35b-ah)" stroke="#c084fc" stroke-width="2"></path>
+<path d="M490,108 L490,160" fill="none" marker-end="url(#m35b-ah)" stroke="#c084fc" stroke-width="2"></path>
+<path d="M550,108 C620,150 730,150 780,160" fill="none" marker-end="url(#m35b-ah)" stroke="#c084fc" stroke-width="2"></path>
+<rect class="wf-a" fill="#0e1622" height="58" rx="13" stroke="#38bdf8" stroke-width="2" width="180" x="110" y="162"></rect><text fill="#38bdf8" font-size="13" font-weight="700" text-anchor="middle" x="200" y="187">investigación</text><text fill="#bae6fd" font-size="11" text-anchor="middle" x="200" y="205">busca fuentes</text>
+<rect class="wf-a" fill="#0e1622" height="58" rx="13" stroke="#38bdf8" stroke-width="2" width="180" x="400" y="162"></rect><text fill="#38bdf8" font-size="13" font-weight="700" text-anchor="middle" x="490" y="187">escrita</text><text fill="#bae6fd" font-size="11" text-anchor="middle" x="490" y="205">redacta</text>
+<rect class="wf-a" fill="#0e1622" height="58" rx="13" stroke="#38bdf8" stroke-width="2" width="180" x="690" y="162"></rect><text fill="#38bdf8" font-size="13" font-weight="700" text-anchor="middle" x="780" y="187">revisión</text><text fill="#bae6fd" font-size="11" text-anchor="middle" x="780" y="205">comprueba</text>
+<path d="M200,220 C200,248 470,248 470,224" fill="none" marker-end="url(#m35b-ahc)" stroke="#38bdf8" stroke-dasharray="5 5" stroke-width="1.8"></path>
+<path d="M780,220 C780,248 510,248 510,224" fill="none" marker-end="url(#m35b-ahc)" stroke="#38bdf8" stroke-dasharray="5 5" stroke-width="1.8"></path>
+<text fill="#9ca3af" font-size="11" text-anchor="middle" x="490" y="263">las partes vuelven y el orquestador las reúne en un único resultado</text>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">O <span class="text-purple-400">orquestador</span> reparte la tarea entre <span class="text-sky-400">especialistas</span> y después lo integra todo. Más paralelismo y más enfoque, pero también más piezas que coordinar y más posibilidades de que alguna falle. Por eso, el enfoque multiagente solo vale la pena cuando la tarea es lo bastante grande como para justificar la complejidad.</p>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> La trampa de "más agentes = mejor"</h3>
+<p class="text-neutral-300 text-sm">Es tentador montar un ejército de agentes para todo. Casi siempre es exagerado. Cada agente extra agrega coordinación, costo, latencia y nuevos puntos de falla: si la «revisión» interpreta mal lo que entregó la «escritura», el error se propaga. <strong>Regla práctica:</strong> empieza con un solo agente y el loop. Solo divídelo en varios agentes cuando una tarea real sea demasiado grande o requiera especializaciones que de verdad no puedan convivir en la misma cabeza.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Multiagente</span><p class="text-sm text-neutral-400 mt-1">Varios agentes especialistas trabajando juntos en una tarea.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Orquestador</span><p class="text-sm text-neutral-400 mt-1">El agente que divide el trabajo y reúne los resultados.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Especialización</span><p class="text-sm text-neutral-400 mt-1">Cada agente se enfoca en una cosa (investigación, escritura, revisión).</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Costo de coordinación</span><p class="text-sm text-neutral-400 mt-1">Más agentes = más piezas que coordinar y más fallas posibles.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-3-5#topico-4" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">⏰ Cadencia: se despierta por su cuenta</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m35-t4-p1">Hasta ahora, el agente solo actúa cuando le hablas. La <strong class="text-purple-400">cadencia</strong> cambia esto: hace que Jarvis actúe <strong>en el horario adecuado, sin que nadie lo llame</strong>. A las 7 h, prepara el resumen de tu día; cada 30 minutos, revisa tu bandeja de entrada; todos los viernes, organiza tus notas. Todo esto mientras duermes, trabajas o —como dicen los creadores de estos sistemas— «con la laptop cerrada».</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">¿Eres nuevo aquí?</strong> <strong>Cron</strong> y es un programador de tareas que existe desde hace décadas en las computadoras: escribes «ejecuta esto todos los días a las 7 h» y obedece. <strong>Heartbeat</strong> ("latido del corazón") es el mismo principio aplicado al agente: un pulso regular que lo despierta cada cierto tiempo para comprobar si hay algo que hacer. <strong>Routines</strong> y es solo el nombre amigable que algunos sistemas dan a estas tareas programadas.</p>
+</div>
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Se activa el reloj</h4><p class="text-sm text-neutral-400">Llega la hora programada (p. ej., 7h). El programador activa al agente, sin que tengas que escribir nada.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Ejecuta el loop</h4><p class="text-sm text-neutral-400">El agente ejecuta la tarea programada: lee la agenda, busca los correos y prepara el resumen.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Te avisa por el canal</h4><p class="text-sm text-neutral-400">La respuesta llega a Telegram (o al canal que uses). Te despiertas con el trabajo ya hecho.</p></div>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Dónde aparece esto en los sistemas reales</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>O <strong>OpenClaw</strong> popularizó el <strong>heartbeat</strong> — un pulso que mantiene al agente «vivo» y revisando cosas.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>O <strong>GravityClaw</strong> usa <strong>node-cron</strong> para tareas programadas, manteniendo todo conciso.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>En la arquitectura de las "4 C" (Trilha 4), esto es la <strong>Cadence</strong> — el «cuándo actúa».</span></li>
+</ul>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Cadencia</span><p class="text-sm text-neutral-400 mt-1">La capa que hace que el agente actúe a la hora programada, sin que lo llamen.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Cron</span><p class="text-sm text-neutral-400 mt-1">Programador clásico: «ejecuta esto a esta hora».</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Heartbeat</span><p class="text-sm text-neutral-400 mt-1">Pulso periódico que despierta al agente para revisar tareas.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Routines</span><p class="text-sm text-neutral-400 mt-1">Tareas programadas con un nombre sencillo (resumen de las 7 h, etc.).</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-3-5#topico-5" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">🛡️ Límites y seguridad del loop</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m35-t5-p1">Un agente que actúa por su cuenta es poderoso, y por eso mismo necesita frenos. Sin límites, el ciclo puede girar para siempre (y costar una fortuna) o ejecutar una acción peligrosa sin que nadie se dé cuenta. Tres frenos resuelven la mayor parte de esto: un <strong class="text-purple-400">límite de iteraciones</strong>, <strong class="text-purple-400">gates de aprobación</strong> y un <strong class="text-purple-400">registro de auditoría</strong>.</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">¿Eres nuevo aquí?</strong> <strong>Límite (o tope) de iteraciones</strong> y un número máximo de vueltas que puede dar el loop antes de detenerse (p. ej., «como máximo 15»). <strong>Paso de aprobación</strong> y una solicitud de «¿confirmas?» antes de una acción arriesgada. <strong>Audit log</strong> y un diario que registra cada paso que dio el agente: una «memoria forense» para que luego revises qué hizo y por qué.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-5">
+<h4 class="font-bold text-purple-400 mb-2 flex items-center"><span class="mr-2">🔢</span> Tope de iteraciones</h4>
+<p class="text-sm text-neutral-300">Limita cuántas vueltas puede dar el bucle. Evita que el agente se quede «pensando» eternamente y gaste dinero innecesariamente.</p>
+</div>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-5">
+<h4 class="font-bold text-purple-400 mb-2 flex items-center"><span class="mr-2">✋</span> Pasos de aprobación</h4>
+<p class="text-sm text-neutral-300">Las acciones peligrosas (borrar archivos, gastar dinero, ejecutar comandos) se detienen y piden tu «ok» antes de realizarse.</p>
+</div>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-5">
+<h4 class="font-bold text-purple-400 mb-2 flex items-center"><span class="mr-2">📜</span> Audit log</h4>
+<p class="text-sm text-neutral-300">Cada paso queda registrado. Si algo sale mal, abres el diario y ves exactamente qué hizo y cuándo.</p>
+</div>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> Por qué esto no es opcional</h3>
+<p class="text-neutral-300 text-sm mb-3">Recuerda la Ruta 2: OpenClaw tuvo <strong>42.665 instancias públicas</strong>, siendo <strong>93,4% sin ninguna autenticación</strong>, e <strong>341 skills maliciosas</strong> en la comunidad. Un agente expuesto y sin restricciones es un agente al que cualquiera puede ordenarle que actúe. La postura correcta es <strong>zero-trust</strong>: trata cada entrada como un posible ataque (incluidas <strong>prompt-injection</strong>, cuando un texto malicioso intenta darle órdenes encubiertas al agente).</p>
+<p class="text-neutral-400 text-xs">La combinación segura, repetida en todo el curso: sin puertos expuestos + solo MCP auditable + lista de permitidos de quién puede hablar + secrets en .env + los tres frenos anteriores.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Tope de iteraciones</span><p class="text-sm text-neutral-400 mt-1">Número máximo de iteraciones del bucle: evita el bucle infinito y el gasto excesivo.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Paso de aprobación</span><p class="text-sm text-neutral-400 mt-1">Confirmación humana antes de una acción peligrosa.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Audit log</span><p class="text-sm text-neutral-400 mt-1">Registro forense de cada acción del agente.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Prompt injection</span><p class="text-sm text-neutral-400 mt-1">Texto malicioso que intenta darle órdenes encubiertas al agente.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-3-5#topico-6" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🚀 Proactivo vs. reactivo: de asistente a aliado</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m35-t6-p1">Une todo lo de este módulo —el loop, los subagentes, la cadencia— y llegarás al mayor salto de todos: Jarvis deja de ser <strong class="text-purple-400">reactivo</strong> (solo responde cuando lo llamas) y pasa a ser <strong class="text-purple-400">proactivo</strong> (te avisa <em>antes</em> de que se lo pidas). En vez de preguntar «¿hay algo importante en mi agenda hoy?», te escribe a las 7h: «tienes una reunión a las 10h y el informe vence mañana; ¿quieres que prepare un borrador?».</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-bold text-neutral-300 mb-4">😐 Reactivo (el asistente)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-neutral-500">→</span><span>Espera a que tú inicies la conversación.</span></li>
+<li class="flex items-start gap-2"><span class="text-neutral-500">→</span><span>Solo sabe lo que escribiste ahora.</span></li>
+<li class="flex items-start gap-2"><span class="text-neutral-500">→</span><span>Útil, pero todavía cargas con el esfuerzo mental de recordarlo todo.</span></li>
+</ul>
+</div>
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+<h4 class="font-bold text-purple-400 mb-4">🤝 Proactivo (el compañero)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-purple-400">→</span><span>Inicia la conversación cuando tiene sentido (cadencia).</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">→</span><span>Conecta calendario, correo electrónico y memoria para anticiparse.</span></li>
+<li class="flex items-start gap-2"><span class="text-purple-400">→</span><span>Te quita carga mental: se convierte en un socio, no en una herramienta.</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">🧩</span> La receta para el salto proactivo</h3>
+<p class="text-neutral-300 text-sm mb-3">La proactividad no es magia: es la suma de las piezas que ya conoces. <strong>Bucle</strong> (se ejecuta solo) + <strong>cadencia</strong> (se despierta a la hora indicada) + <strong>herramientas</strong> (ve tu agenda y tu correo, de la Ruta 3-3) + <strong>memoria</strong> (recuerda lo importante, viene en la 3-6). Quita cualquier pieza y vuelve a ser reactivo.</p>
+<p class="text-neutral-400 text-xs">Cuidado con el equilibrio: un agente demasiado proactivo se vuelve molesto e interrumpe todo el tiempo. La buena proactividad es selectiva: avisa de lo importante y se queda quieto el resto del tiempo.</p>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-3-5#q1">
+<p class="font-medium mb-4">Autoevaluación (opcional): ¿cuál es la mejor descripción de un subagente?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">Un segundo cerebro/modelo que vota junto con el principal para dar la mejor respuesta.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">Un agente auxiliar que hace la tarea pesada en su propia ventana de contexto y devuelve solo la respuesta destilada.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">Un planificador que hace que Jarvis actúe a las 7 de la mañana.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3 mt-8">Conceptos clave</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Reactivo</span><p class="text-sm text-neutral-400 mt-1">Solo actúa cuando lo llamas: el modo «asistente».</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Proactivo</span><p class="text-sm text-neutral-400 mt-1">Te avisa antes de que lo pidas: el modo «compañero».</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Carga mental</span><p class="text-sm text-neutral-400 mt-1">El peso de recordarlo todo; el proactivo te quita esa carga.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-purple-400 font-semibold text-sm">Proactividad selectiva</span><p class="text-sm text-neutral-400 mt-1">Avisarte de lo que importa y guardar silencio el resto del tiempo.</p></div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Marcar como leído</span><span class="inema-label-done">Leído ✓</span>
+</button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-8">
+<div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Resumen del módulo</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Agente = bucle + autonomía</strong><span class="text-neutral-400"> — piensa, actúa, lee el resultado y decide; repite por su cuenta hasta terminar.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Subagentes</strong><span class="text-neutral-400"> — el «pasante» consume su propio contexto y devuelve solo la respuesta; la sesión principal se mantiene ligera.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Multiagente con moderación</strong><span class="text-neutral-400"> — equipo de especialistas + orquestador; solo vale la pena cuando la tarea justifica la complejidad.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Cadencia</strong><span class="text-neutral-400"> — cron/heartbeat hacen que Jarvis actúe a la hora prevista, «con la laptop cerrada».</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Bloqueos del loop</strong><span class="text-neutral-400"> — límite de iteraciones, gates de aprobación y audit log; enfoque de confianza cero.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-neutral-100">Proactivo vs. reactivo</strong><span class="text-neutral-400"> — loop + cadencia + herramientas + memoria = el salto de asistente a compañero.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-purple-400 mb-2">Siguiente módulo:</h3>
+<p class="text-neutral-300">Módulo 3-6: Cerebros — el motor que piensa y la memoria organizada</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Volver a la Trilha</a>
+<a class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors" href="modulo-3-6.html">Siguiente módulo →</a>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+<p>🤖 Jarvis — Tu sistema operativo de IA</p>
+<p>Curso abierto · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<!-- Scripts nucleo v1 -->
+<script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+<!-- Camada de aprendizagem -->
+<script src="../../../assets/learn.js"></script>
+<script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-3-5#q1', {
+          answer: 1,
+          explain: {
+            0: 'Esse e o mito do "conselho de modelos" — sub-agente nao e votacao de cerebros. Veremos isso no modulo 3-6.',
+            1: 'Isso! O sub-agente isola a tarefa pesada no proprio contexto e devolve so o essencial.',
+            2: 'Esse e o agendador (cron/heartbeat) do topico 4, nao o sub-agente.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

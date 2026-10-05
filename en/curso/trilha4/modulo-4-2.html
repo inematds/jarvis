@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="jarvis" name="inema-course"/>
+<title>Module 4.2 — Architecture of a robust solution (the 4 C layers) | Jarvis · INEMA.CLUB</title>
+<meta content="Context, Connections, Capabilities, and Cadence: the CLAWS framework that turns anatomy into a coherent architecture for a Jarvis that lasts." name="description"/>
+<!-- ANTI-FOUC: bloqueante, ANTES do Tailwind. Default dark no erro. -->
+<script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o){var r={};for(var x in o)r[x]=o[x];return r;}
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed==='object'){ for (var k in DEF) if (parsed[k]!=null) p[k]=parsed[k]; } }
+        else { var legacy = localStorage.getItem('theme'); if (legacy==='light') p.theme='claro'; else if (legacy==='dark') p.theme='inema-dark'; }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = { 'inema-dark':{dark:true,attr:null,cs:'dark'},'claro':{dark:false,attr:null,cs:'light'},'sepia':{dark:false,attr:'sepia',cs:'light'},'foco':{dark:null,attr:'foco',cs:null},'contraste':{dark:true,attr:'contraste',cs:'dark'} };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark===true) html.classList.add('dark'); else if (t.dark===false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style, scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale/100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font==='system' ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : (p.font==='leitura' ? '"Atkinson Hyperlegible","Inter",system-ui,sans-serif' : '"Inter",system-ui,sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald:[152,76,45], blue:[217,91,60], purple:[258,90,66], amber:[38,92,50], teal:[174,72,41], rose:[350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0]+''); s.setProperty('--accent-s', a[1]+'%'); s.setProperty('--accent-l', a[2]+'%');
+      s.setProperty('--accent', 'hsl('+a[0]+' '+a[1]+'% '+a[2]+'%)');
+    } catch (err) { try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme='dark'; } catch(e){} }
+  })();
+  </script>
+<!-- MANIFESTO do curso (IDENTICO em TODA pagina) -->
+<script data-inema-manifest="" type="application/json">
+  {
+    "course": "jarvis",
+    "tracks": [
+      { "n": "1", "title": "Fundamentos", "modules": [
+        { "id": "1-1", "title": "O que e um Jarvis", "topics": 6 },
+        { "id": "1-2", "title": "O que e um LLM", "topics": 6 },
+        { "id": "1-3", "title": "De chatbot a agente", "topics": 6 }
+      ]},
+      { "n": "2", "title": "O Panorama", "modules": [
+        { "id": "2-1", "title": "Como comparar SOs de IA", "topics": 6 },
+        { "id": "2-2", "title": "A familia em casa: OpenClaw, GravityClaw, Hermes, Intelecto", "topics": 6 },
+        { "id": "2-3", "title": "O mundo la fora e o caminho", "topics": 6 }
+      ]},
+      { "n": "3", "title": "Anatomia", "modules": [
+        { "id": "3-1", "title": "Canais", "topics": 6 },
+        { "id": "3-2", "title": "Identidade", "topics": 6 },
+        { "id": "3-3", "title": "Ferramentas (tools + MCP)", "topics": 6 },
+        { "id": "3-4", "title": "Skills", "topics": 6 },
+        { "id": "3-5", "title": "Agentes", "topics": 6 },
+        { "id": "3-6", "title": "Cerebros", "topics": 6 }
+      ]},
+      { "n": "4", "title": "Construir um Jarvis eficaz", "modules": [
+        { "id": "4-1", "title": "Do zero ao primeiro Jarvis", "topics": 6 },
+        { "id": "4-2", "title": "Arquitetura de uma solucao robusta", "topics": 6 },
+        { "id": "4-3", "title": "Operar, medir e evoluir", "topics": 6 }
+      ]},
+      { "n": "5", "title": "Jarvis no celular", "modules": [
+        { "id": "5-1", "title": "Onde o Jarvis mora no celular", "topics": 6 },
+        { "id": "5-2", "title": "Voz e on-device", "topics": 6 },
+        { "id": "5-3", "title": "Montando seu Jarvis de bolso", "topics": 6 }
+      ]},
+      { "n": "6", "title": "Jarvis para criancas", "modules": [
+        { "id": "6-1", "title": "O Jarvis que ensina: metodo socratico", "topics": 6 },
+        { "id": "6-2", "title": "Persona, voz e o boneco", "topics": 6 },
+        { "id": "6-3", "title": "Seguranca, guardrails e os pais", "topics": 6 }
+      ]}
+    ]
+  }
+  </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: {
+        primary: '#FACC15',
+        dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+      } } }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../../../assets/learn.css" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    [id] { scroll-margin-top: 4.5rem; }
+
+    /* ===== Light mode base ===== */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* ===== Acentos das 6 trilhas (nav usa as 6 em toda pagina) ===== */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5,150,105,0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5,150,105,0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5,150,105,0.18); }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5,150,105,0.08); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37,99,235,0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37,99,235,0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37,99,235,0.18); }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37,99,235,0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124,58,237,0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124,58,237,0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124,58,237,0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124,58,237,0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217,119,6,0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .bg-amber-900\/20 { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .bg-amber-900\/30 { background-color: rgba(217,119,6,0.10); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217,119,6,0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217,119,6,0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217,119,6,0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13,148,136,0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13,148,136,0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13,148,136,0.18); }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13,148,136,0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225,29,72,0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225,29,72,0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225,29,72,0.18); }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225,29,72,0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* ===== Remove gradientes + cores especiais ===== */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161,98,7,0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161,98,7,0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185,28,28,0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185,28,28,0.25); }
+
+    /* ===== Nav ===== */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255,255,255,0.95); }
+
+    /* ===== Dark: bordas/divisores suaves ===== */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* ===== SVG ilustrativo: conter intensidade no claro ===== */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* ===== animacao de pulso dos diagramas ===== */
+    @keyframes wf-pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+<link href="https://inematds.github.io/jarvis/curso/trilha4/modulo-4-2.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/jarvis/en/curso/trilha4/modulo-4-2.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/jarvis/es/curso/trilha4/modulo-4-2.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha4/modulo-4-2.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-4-2.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha4/modulo-4-2.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="skip sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-dark-900 focus:rounded-lg" href="#conteudo">Skip to content</a>
+<!-- NAVIGATION (completo, identico em todas as paginas) -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-3">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Jarvis</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html" id="nav-t1">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentals</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html" id="nav-t2">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Overview</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html" id="nav-t3">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Anatomy</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10" href="../trilha4/index.html" id="nav-t4">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Build</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html" id="nav-t5">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Cell phone</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html" id="nav-t6">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Children</span>
+</a>
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-journey-open="" title="My journey" type="button">
+<span aria-hidden="true">◷</span><span class="hidden md:inline">Journey</span>
+<span class="inema-journey-badge hidden" data-count="0" data-inema-journey-badge=""></span>
+</button>
+<div class="relative">
+<button aria-expanded="false" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-appearance-toggle="[data-inema-appearance]" title="Appearance" type="button">
+<span aria-hidden="true">◑</span><span class="hidden md:inline">Appearance</span>
+</button>
+<div class="inema-appearance-pop hidden absolute right-0 mt-2 w-72 p-4 rounded-xl bg-dark-800 border border-dark-600 shadow-2xl z-50 space-y-3 text-left" data-inema-appearance="">
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Theme</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="inema-dark">Dark</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="claro">Clear</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="sepia">Sepia</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="foco">Focus</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-theme="contraste">High contrast</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Source</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="inter">Inter</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="system">System</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-font="leitura">Reading</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Size</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="100">A</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="112">A+</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-fontscale="125">A++</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Subtext</p>
+<div class="inema-segment flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.45">Compact</button>
+<button class="px-2.5 py-1 rounded-md bg-dark-700 border border-dark-600 text-xs" data-inema-set-leading="1.7">Comfortable</button>
+</div>
+</div>
+<div>
+<p class="text-xs text-neutral-400 mb-1.5">Accent</p>
+<div class="inema-accent-grid flex flex-wrap gap-2">
+<button class="w-6 h-6 rounded-full bg-emerald-500 border border-dark-600" data-inema-set-accent="emerald" title="Emerald"></button>
+<button class="w-6 h-6 rounded-full bg-blue-500 border border-dark-600" data-inema-set-accent="blue" title="Blue"></button>
+<button class="w-6 h-6 rounded-full bg-purple-500 border border-dark-600" data-inema-set-accent="purple" title="Purple"></button>
+<button class="w-6 h-6 rounded-full bg-amber-500 border border-dark-600" data-inema-set-accent="amber" title="Amber"></button>
+<button class="w-6 h-6 rounded-full bg-teal-500 border border-dark-600" data-inema-set-accent="teal" title="Teal"></button>
+<button class="w-6 h-6 rounded-full bg-rose-500 border border-dark-600" data-inema-set-accent="rose" title="Rose"></button>
+</div>
+</div>
+</div>
+</div>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors" id="theme-toggle" title="Toggle light/dark">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main id="conteudo">
+<header class="bg-gradient-to-br from-amber-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="flex items-center space-x-2 text-sm text-neutral-400 mb-6">
+<a class="hover:text-amber-400" href="../../index.html">Start</a><span>/</span>
+<a class="hover:text-amber-400" href="index.html">Track 4</a><span>/</span>
+<span class="text-amber-400">Module 4.2</span>
+</nav>
+<span class="inline-block px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-semibold rounded-full mb-4">MODULE 4-2</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🏗️ Architecture of a robust solution (the 4 C layers)</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">In the previous module, you built Jarvis's "hello world." Now comes the house blueprint: a way to organize ALL the pieces you've already seen in Anatomy into four named layers in order — <strong class="text-amber-400">Context, Connections, Capabilities, and Cadence</strong>, the CLAWS framework. It’s what separates an agent that lasts from a hack that breaks during the first renovation.</p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-amber-400">6</div><div class="text-xs text-neutral-400">Topics</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-amber-400">~35</div><div class="text-xs text-neutral-400">Minutes</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-amber-400">Intermediate</div><div class="text-xs text-neutral-400">Level</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-amber-400">Architecture</div><div class="text-xs text-neutral-400">Type</div></div>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="lg:flex lg:gap-10">
+<!-- TOC sticky -->
+<aside class="lg:w-56 lg:flex-shrink-0 mb-8 lg:mb-0">
+<nav aria-label="Page index" class="lg:sticky lg:top-20" data-inema-toc="">
+<p class="text-sm text-neutral-400 mb-2">Section <span class="inema-toc-pos" data-inema-section-counter="">1</span> out of 6</p>
+<ol class="space-y-1 text-sm">
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-amber-400" href="#topico-1">1. The 4 Cs</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-amber-400" href="#topico-2">2. Context</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-amber-400" href="#topico-3">3. Connections</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-amber-400" href="#topico-4">4. Capabilities</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-amber-400" href="#topico-5">5. Cadence</a></li>
+<li><a class="inema-toc-link block py-1 px-2 rounded text-neutral-400 hover:text-amber-400" href="#topico-6">6. Bringing the 6 layers together</a></li>
+</ol>
+<div aria-label="Module 4.2 progress" aria-valuemax="100" aria-valuemin="0" class="mt-4" data-inema-meter="modulo:4-2" role="progressbar">
+<div class="inema-bar h-1.5 rounded-full bg-dark-700 overflow-hidden mb-1"><div class="inema-bar__fill h-full bg-amber-500" data-inema-meter-fill="" style="width:0%"></div></div>
+<span class="text-xs text-neutral-500"><span data-inema-meter-frac="">0 of 6</span> · <span data-inema-meter-pct="">0%</span></span>
+</div>
+</nav>
+</aside>
+<div class="lg:flex-1 min-w-0 inema-prose">
+<!-- TOPICO 1 -->
+<section class="mb-16" data-inema-topic="modulo-4-2#topico-1" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl flex-shrink-0">1</span>
+<h2 class="text-2xl font-bold">🧩 The 4 Cs: the skeleton of any Jarvis</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m42-t1-p1">In Track 3, you learned about six separate pieces: channels, identity, tools, skills, agents, and brains. Knowing the pieces, however, is not the same as having a <strong>architecture</strong>. Architecture is the blueprint that shows where each piece fits and in what order to assemble it. The framework <strong class="text-amber-400">CLAWS</strong> groups everything into four layers with the same initial: <strong>Context, Connections, Capabilities, Cadence</strong> — the “4 C’s.”</p>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> "Architecture" here has nothing to do with buildings — it's how the parts of a system are organized and communicate. "CLAWS" is just a nickname (the claws) to help you remember the 4 C layers. And a "framework" is a reusable mental template: instead of inventing the structure from scratch every time, you fit your project into this template.</p>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m42-t1-p2">The order isn’t decoration: it is <strong class="text-amber-400">1 → 2 → 3 → 4</strong> and it has dependency logic. Without <strong>Context</strong> (who it is and what it knows about you), there’s no point in giving it <strong>Capabilities</strong> (it acts without direction). Without <strong>Connections</strong> (where it talks and what it can reach), there is no <strong>Cadence</strong> (it “wakes up” on its own but can’t act or notify you). Build from the ground up, like a house: foundation before roof.</p>
+<div class="rounded-2xl border border-amber-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="The CLAWS equation: Context plus Connections plus Capabilities plus Cadence make a robust Jarvis, built from the ground up" class="w-full h-auto" role="img" viewbox="0 0 980 250">
+<defs>
+<filter height="180%" id="m42-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m42-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#f59e0b" opacity="0.12" r="1.3"></circle></pattern>
+<marker id="m42-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#fbbf24"></path></marker>
+</defs>
+<rect fill="url(#m42-grid)" height="250" width="980" x="0" y="0"></rect>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="490" y="28">CLAWS · assembled from the bottom (1) up (4)</text>
+<g font-family="Inter,sans-serif">
+<!-- 4 camadas como blocos empilhados a esquerda -->
+<rect fill="#1f1604" height="40" rx="10" stroke="#fbbf24" stroke-width="2" width="300" x="60" y="190"></rect><text fill="#fbbf24" font-size="14" font-weight="700" x="80" y="215">1 · Context</text><text fill="#fde68a" font-size="12" x="200" y="215">identity + memory</text>
+<rect fill="#1f1604" height="40" rx="10" stroke="#f59e0b" stroke-width="2" width="300" x="60" y="142"></rect><text fill="#fbbf24" font-size="14" font-weight="700" x="80" y="167">2 · Connections</text><text fill="#fde68a" font-size="12" x="220" y="167">channels + tools</text>
+<rect fill="#1f1604" height="40" rx="10" stroke="#38bdf8" stroke-width="2" width="300" x="60" y="94"></rect><text fill="#7dd3fc" font-size="14" font-weight="700" x="80" y="119">3 · Capabilities</text><text fill="#bae6fd" font-size="12" x="225" y="119">skills + agents</text>
+<rect fill="#0e1a22" height="40" rx="10" stroke="#38bdf8" stroke-width="2" width="300" x="60" y="46"></rect><text fill="#7dd3fc" font-size="14" font-weight="700" x="80" y="71">4 · Cadence</text><text fill="#bae6fd" font-size="12" x="220" y="71">heartbeat / cron</text>
+<!-- seta de montagem -->
+<path d="M380,210 C440,210 440,70 500,70" fill="none" marker-end="url(#m42-ah)" stroke="#fbbf24" stroke-dasharray="5 5" stroke-width="2"></path>
+<!-- resultado -->
+<g filter="url(#m42-glow)"><rect fill="#1f1604" height="96" rx="18" stroke="#fbbf24" stroke-width="3" width="380" x="540" y="92"></rect></g>
+<text fill="#fbbf24" font-size="22" font-weight="700" text-anchor="middle" x="730" y="132">= robust Jarvis</text>
+<text fill="#fde68a" font-size="13" text-anchor="middle" x="730" y="160">that knows, reaches, does, and acts on its own</text>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">Read from bottom to top: each layer only makes sense when the one below it already exists. Remove <span class="text-amber-400">Context</span> and the other three are left without direction; remove <span class="text-sky-400">Connections</span> e a <span class="text-sky-400">Cadence</span> has no way to act. Together, they make an agent that lasts.</p>
+</div>
+<div class="bg-amber-900/20 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-3 flex items-center"><span class="mr-2">🗺️</span> From a loose component to a named layer</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">1.</span><span><strong>Context</strong> = Identity (3.2) + Brains/memory (3.6). “Who it is and what it knows about you.”</span></li>
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">2.</span><span><strong>Connections</strong> = Channels (3.1) + Tools/MCP (3.3). “Where it speaks and what it can reach.”</span></li>
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">3.</span><span><strong>Capabilities</strong> = Skills (3.4) + Agents/sub-agents (3.5). “What it can do.”</span></li>
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">4.</span><span><strong>Cadence</strong> = the autonomous part of Agents (3.5): heartbeat/cron. “When it acts on its own.”</span></li>
+</ul>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">CLAWS</span><p class="text-sm text-neutral-400 mt-1">The nickname for the 4 C layers; a template to make sure you don't forget any.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">The 4 C’s</span><p class="text-sm text-neutral-400 mt-1">Context, Connections, Capabilities, Cadence—in that order.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Dependency</span><p class="text-sm text-neutral-400 mt-1">Each layer depends on the one below; that’s why the 1→4 order matters.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Architecture</span><p class="text-sm text-neutral-400 mt-1">The blueprint that shows where each piece fits, not just the list of pieces.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-400 hover:bg-amber-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" data-inema-topic="modulo-4-2#topico-2" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl flex-shrink-0">2</span>
+<h2 class="text-2xl font-bold">🪪 Context — who it is and what it knows about you</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m42-t2-p1">The first layer—and the most important—is the <strong class="text-amber-400">Context</strong>: the agent’s identity plus its memory. It’s what makes the difference between a generic chatbot that treats you like a stranger in every conversation and an assistant that knows your name, your style, and where you left off. Without Context, all the other layers work, but without direction: the agent acts, but doesn’t know for whom or why.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+<div class="bg-dark-800 rounded-xl border border-amber-500/30 p-5">
+<h4 class="font-bold text-amber-400 mb-2 flex items-center"><span class="mr-2">👤</span> Identity (who it is)</h4>
+<p class="text-sm text-neutral-300 mb-3">It comes from three text files, always injected at the start of the conversation:</p>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li><strong class="text-amber-400">SOUL.md</strong> — the soul: personality, tone, values. "Explain the reasoning, not just the answer."</li>
+<li><strong class="text-amber-400">AGENTS.md</strong> — the contract: what it ALWAYS does and what it NEVER does.</li>
+<li><strong class="text-amber-400">USER</strong> — who you are: name, context, preferences.</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl border border-amber-500/30 p-5">
+<h4 class="font-bold text-amber-400 mb-2 flex items-center"><span class="mr-2">🧠</span> Memory (what it knows)</h4>
+<p class="text-sm text-neutral-300 mb-3">The conversation disappears when you close it; persistent memory remains:</p>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li>Files <strong class="text-amber-400">.md</strong> readable = the truth that survives the hype.</li>
+<li>Index <strong class="text-amber-400">SQLite FTS5/BM25</strong> for quick word searches.</li>
+<li>The <strong class="text-amber-400">3 brains</strong> (3.6): Project, Self, and Knowledge.</li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> “System prompt” is the block of instructions the model reads before any of your messages — that’s where SOUL.md comes in. “SQLite FTS5/BM25” is just a little database file that indexes your notes so the agent can find “that thing we talked about last week” in milliseconds. And “3 brains” means memory separated into drawers: Project (what happened), Self (who it is; changes slowly), and Knowledge (facts that only accumulate).</p>
+</div>
+<div class="bg-amber-900/20 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-3 flex items-center"><span class="mr-2">💡</span> The sentence that sums up Context</h3>
+<p class="text-neutral-300 text-sm italic">“Without the brain rewire, the architecture is just a folder.” — In plain English: without giving it a real personality and memory, all you have is a bunch of files. Context is what turns code into <em>someone</em> that knows you.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">SOUL.md</span><p class="text-sm text-neutral-400 mt-1">The soul: personality, values, and tone, always in the system prompt.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">AGENTS.md</span><p class="text-sm text-neutral-400 mt-1">The ALWAYS/NEVER contract—explicit rules beat guesswork.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Persistent memory</span><p class="text-sm text-neutral-400 mt-1">.md (source of truth) + SQLite (search); it survives because it’s just text.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">3 brains</span><p class="text-sm text-neutral-400 mt-1">Project, Self, and Knowledge — memory organized into drawers.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-400 hover:bg-amber-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" data-inema-topic="modulo-4-2#topico-3" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl flex-shrink-0">3</span>
+<h2 class="text-2xl font-bold">🔌 Connections — where it communicates and what it can access</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m42-t3-p1">The second layer is the <strong class="text-amber-400">Connections</strong>: the <strong>channels</strong> (where you talk to it) plus the <strong>tools</strong> (what it can do in the world). Without Connections, the agent has a soul and memory — but it’s locked in a room with no door or hands. This is where it gets eyes and fingers: reading your calendar, sending an email, searching the web.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-amber-900/20 rounded-xl border border-amber-500/30 p-6">
+<h4 class="font-bold text-amber-400 mb-4">📡 Channels — the way in and out</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-amber-400">•</span><span><strong>Telegram</strong> and it’s the preferred option: just a @BotFather token, with no web server exposed.</span></li>
+<li class="flex items-start gap-2"><span class="text-amber-400">•</span><span><strong>Whitelist</strong>: only YOUR ID is served; everyone else is silently ignored.</span></li>
+<li class="flex items-start gap-2"><span class="text-amber-400">•</span><span>WhatsApp, email, voice, and the terminal itself are also channels.</span></li>
+</ul>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-4">🔧 Tools — the hands (via MCP)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span><strong>MCP</strong> and the "USB for AI tools": each integration is a separate server.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>Connect Gmail, GitHub, and Notion without rewriting the agent.</span></li>
+<li class="flex items-start gap-2"><span class="text-blue-400">•</span><span>MCP only, auditable, &gt; downloading third-party skills (remember the 341 malicious ones).</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> “Token” is a credential Telegram gives you so your bot can communicate (you get it from the @BotFather bot). “Long polling” is Telegram’s way for your agent to <em>asks</em> "any new messages?" — that way it doesn’t need to open any ports on your computer, which is safer. "MCP" (Model Context Protocol) is an Anthropic standard that lets any tool fit into any agent, like a USB plug.</p>
+</div>
+<div class="bg-amber-900/20 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-3 flex items-center"><span class="mr-2">🔓</span> “Without this, it responds like a stranger”</h3>
+<p class="text-neutral-300 text-sm">A model by itself only knows how to talk. Ask "what do I have tomorrow?" and, without tools, it guesses. Connect the calendar via MCP, and the same question gets a real answer. Connections is the step that turns a <em>chat</em> in a <em>assistant</em>.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Channel</span><p class="text-sm text-neutral-400 mt-1">The door you use to talk to it: Telegram, WhatsApp, voice, web.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Long-polling</span><p class="text-sm text-neutral-400 mt-1">The bot checks for messages; no open ports, no exposed server.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">MCP</span><p class="text-sm text-neutral-400 mt-1">The USB for tools: a standard that connects any tool to the agent.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Whitelist</span><p class="text-sm text-neutral-400 mt-1">Only your ID is served—the channel's first security safeguard.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-400 hover:bg-amber-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" data-inema-topic="modulo-4-2#topico-4" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl flex-shrink-0">4</span>
+<h2 class="text-2xl font-bold">⚙️ Capabilities — what it can do</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m42-t4-p1">The third layer is the <strong class="text-amber-400">Capabilities</strong>: the <strong>skills</strong> (packaged recipes) plus the <strong>agents/sub-agents</strong> (the loop that runs on its own). If Connections joined the pieces, Capabilities teaches <em>movements</em>: instead of explaining five steps every time, you say one sentence and the skill carries out the whole procedure.</p>
+<div class="bg-amber-900/20 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-3 flex items-center"><span class="mr-2">🧩</span> Skill = recipe; tool = ingredient</h3>
+<p class="text-neutral-300 text-sm mb-3">A <strong>tool</strong> performs an atomic action (search the web, send an email). A <strong>skill</strong> and it’s a file <code class="text-amber-400 font-mono text-xs">SKILL.md</code> that ORCHESTRATES multiple tools with judgment: "write a LinkedIn post" becomes research → chart → text → review → publish.</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-amber-400">•</span><span>Progressive loading: the skill costs ~100 tokens (header only) until it’s activated—saving context.</span></li>
+<li class="flex items-start gap-2"><span class="text-amber-400">•</span><span>Each run improves the recipe; the skills library is your collection of capabilities.</span></li>
+</ul>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🤝</span> Subagents: delegate without clogging the session</h3>
+<p class="text-neutral-300 text-sm">The main agent can <strong>delegate</strong> a heavy task to a <strong>sub-agent</strong>, which uses up its OWN context and returns only the final answer. The result: the main session stays lightweight, and each specialist (research, writing, review) handles its own part. This makes large tasks possible without the agent “forgetting” the beginning along the way.</p>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> The classic mistake here</h3>
+<p class="text-neutral-300 text-sm">Stacking capabilities without solid Context and Connections. An agent packed with skills but without memory or real tools is powerful in a vacuum: it does a lot, but gets little right. That's why Capabilities is layer 3, not layer 1—it <em>depends</em> the bottom two.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Skill</span><p class="text-sm text-neutral-400 mt-1">A recipe (SKILL.md) that orchestrates tools with judgment.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Progressive loading</span><p class="text-sm text-neutral-400 mt-1">The skill costs little until it’s used; it saves context.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Subagent</span><p class="text-sm text-neutral-400 mt-1">Uses up its own context and returns only the answer; the session stays lightweight.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Agentic loop</span><p class="text-sm text-neutral-400 mt-1">Think → call a tool → read the result → repeat until done.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-400 hover:bg-amber-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" data-inema-topic="modulo-4-2#topico-5" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl flex-shrink-0">5</span>
+<h2 class="text-2xl font-bold">⏰ Cadence — when it acts on its own</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m42-t5-p1">The fourth and final layer is the <strong class="text-amber-400">Cadence</strong>: the agent's own rhythm. Until now, it only acted when you called — it was <strong>reactive</strong>. Cadence makes it <strong>proactive</strong>: it "wakes up" on its own at the scheduled time and does things even when the laptop is closed. It's the leap from an assistant that responds to a partner that anticipates your needs.</p>
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold">⏱</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Cron / routines</h4><p class="text-sm text-neutral-400">Tasks on a timer: “every day at 7 a.m., send me a summary of my calendar and emails.”</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold">💓</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Heartbeat</h4><p class="text-sm text-neutral-400">A periodic “heartbeat” where the agent checks whether there’s anything to do and acts on its own.</p></div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold">🛡</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-neutral-100 mb-1">Safety lock</h4><p class="text-sm text-neutral-400">Iteration caps, approval gates, and an audit log: autonomy with a safety belt.</p></div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<p class="text-sm text-neutral-300"><strong class="text-primary">New here?</strong> "Cron" is a classic computer scheduler: it runs a task at set times. A "heartbeat" is a signal that repeats from time to time to get the agent to "move" on its own. And an "audit log" is a forensic journal: every action it takes is recorded, so you can later audit what happened and why.</p>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> Cadence without limits is dangerous</h3>
+<p class="text-neutral-300 text-sm">Giving an agent schedule autonomy without an iteration limit or confirmation for dangerous actions is like letting a robot loose with your house keys. The golden rule: every Cadence comes with approval gates and an audit log that records everything. Autonomy is good; auditable autonomy is safe.</p>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Cron / routines</span><p class="text-sm text-neutral-400 mt-1">Tasks on a timer, at fixed times.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Heartbeat</span><p class="text-sm text-neutral-400 mt-1">Periodic heartbeat that makes the agent check and act on its own.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Proactive vs. reactive</span><p class="text-sm text-neutral-400 mt-1">From “responds when I call” to “alerts me before I ask.”</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Audit log</span><p class="text-sm text-neutral-400 mt-1">Forensic log of every action; autonomy with traceability.</p></div>
+</div>
+<div class="flex justify-start">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-400 hover:bg-amber-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" data-inema-topic="modulo-4-2#topico-6" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl flex-shrink-0">6</span>
+<h2 class="text-2xl font-bold">🏛️ Bringing the 6 layers together in an architecture</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m42-t6-p1">Now the wrap-up. The six pieces of Anatomy (Track 3) fit perfectly into the four C layers—and when you stack them in the right order, the loose map becomes ONE coherent architecture. Each “C” recruits the pieces it needs, and the whole thing rises like a building: foundation, installation, furniture, routine.</p>
+<div class="rounded-2xl border border-amber-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="The 6 anatomy pieces mapped to the 4 C layers: Context receives Identity and Brains, Connections receives Channels and Tools, Capabilities receives Skills and Agents, Cadence receives heartbeat and cron, all converging into one coherent Jarvis" class="w-full h-auto" role="img" viewbox="0 0 980 270">
+<defs>
+<filter height="180%" id="m42b-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="m42b-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#38bdf8" opacity="0.10" r="1.3"></circle></pattern>
+<marker id="m42b-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m42b-grid)" height="270" width="980" x="0" y="0"></rect>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="245" y="26">6 parts of the anatomy</text>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="730" y="26">4 C layers</text>
+<g font-family="Inter,sans-serif" font-size="12.5">
+<!-- pecas a esquerda -->
+<g class="wf-a"><rect fill="#1a1230" height="30" rx="8" stroke="#c084fc" stroke-width="1.5" width="180" x="40" y="44"></rect><text fill="#e9d5ff" text-anchor="middle" x="130" y="64">Identity</text></g>
+<g class="wf-a"><rect fill="#1a1230" height="30" rx="8" stroke="#c084fc" stroke-width="1.5" width="180" x="40" y="82"></rect><text fill="#e9d5ff" text-anchor="middle" x="130" y="102">Brains / memory</text></g>
+<g class="wf-a"><rect fill="#1a1230" height="30" rx="8" stroke="#c084fc" stroke-width="1.5" width="180" x="40" y="120"></rect><text fill="#e9d5ff" text-anchor="middle" x="130" y="140">Channels</text></g>
+<g class="wf-a"><rect fill="#1a1230" height="30" rx="8" stroke="#c084fc" stroke-width="1.5" width="180" x="40" y="158"></rect><text fill="#e9d5ff" text-anchor="middle" x="130" y="178">Tools / MCP</text></g>
+<g class="wf-a"><rect fill="#1a1230" height="30" rx="8" stroke="#c084fc" stroke-width="1.5" width="180" x="40" y="196"></rect><text fill="#e9d5ff" text-anchor="middle" x="130" y="216">Skills + Agents</text></g>
+<!-- camadas C ao centro -->
+<rect fill="#1f1604" height="36" rx="9" stroke="#fbbf24" stroke-width="2" width="200" x="420" y="46"></rect><text fill="#fbbf24" font-weight="700" text-anchor="middle" x="520" y="69">1 · Context</text>
+<rect fill="#1f1604" height="36" rx="9" stroke="#fbbf24" stroke-width="2" width="200" x="420" y="92"></rect><text fill="#fbbf24" font-weight="700" text-anchor="middle" x="520" y="115">2 · Connections</text>
+<rect fill="#1f1604" height="36" rx="9" stroke="#fbbf24" stroke-width="2" width="200" x="420" y="138"></rect><text fill="#fbbf24" font-weight="700" text-anchor="middle" x="520" y="161">3 · Capabilities</text>
+<rect fill="#0e1a22" height="36" rx="9" stroke="#38bdf8" stroke-width="2" width="200" x="420" y="184"></rect><text fill="#7dd3fc" font-weight="700" text-anchor="middle" x="520" y="207">4 · Cadence</text>
+<!-- conexoes peca -> camada -->
+<path d="M220,59 L420,64" fill="none" stroke="#c084fc" stroke-width="1.5"></path>
+<path d="M220,97 L420,64" fill="none" stroke="#c084fc" stroke-width="1.5"></path>
+<path d="M220,135 L420,110" fill="none" stroke="#c084fc" stroke-width="1.5"></path>
+<path d="M220,173 L420,110" fill="none" stroke="#c084fc" stroke-width="1.5"></path>
+<path d="M220,211 L420,156" fill="none" stroke="#c084fc" stroke-width="1.5"></path>
+<path d="M220,211 L420,202" fill="none" stroke="#38bdf8" stroke-dasharray="4 4" stroke-width="1.5"></path>
+<!-- convergencia -->
+<path d="M620,133 L720,133" fill="none" marker-end="url(#m42b-ah)" stroke="#fbbf24" stroke-width="2"></path>
+<g filter="url(#m42b-glow)"><rect fill="#1f1604" height="66" rx="16" stroke="#fbbf24" stroke-width="2.5" width="220" x="720" y="100"></rect></g>
+<text fill="#fbbf24" font-size="16" font-weight="700" text-anchor="middle" x="830" y="130">Coherent Jarvis</text>
+<text fill="#fde68a" font-size="11" text-anchor="middle" x="830" y="150">one architecture, not 6 pieces</text>
+</g>
+</svg>
+<p class="text-xs text-neutral-400 mt-1 px-1">Each piece <span class="text-purple-400">purple</span> from Anatomy goes into one of the four layers <span class="text-amber-400">amber</span>. Note that the autonomous part of Agents (dashed line <span class="text-sky-400">cyan</span>) powers Cadence. The result: not six loose pieces, but a system that knows, reaches, does, and acts—at the right pace.</p>
+</div>
+<div class="bg-amber-900/20 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-3 flex items-center"><span class="mr-2">🧱</span> Why this structure lasts</h3>
+<p class="text-neutral-300 text-sm italic mb-3">“Tools change every 6 months. The platform and foundation we're building survive.” — Tools change every six months; the platform and foundation you build survive.</p>
+<p class="text-neutral-300 text-sm">New models arrive, MCPs appear and disappear, and channels come in and out of fashion. But the 4 C’s don’t change: every Jarvis will always need to know who it is, how to communicate, what to do, and when to act. That’s why you invest in the ARCHITECTURE, not the tool of the moment.</p>
+</div>
+<div class="bg-gradient-to-br from-amber-900/30 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-3 flex items-center"><span class="mr-2">🎯</span> How to use the 4 Cs in practice</h3>
+<p class="text-neutral-300 text-sm mb-3">Before building (or reviewing) any Jarvis, run through a checklist for the four layers:</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start gap-2"><span class="text-amber-400">1.</span><span><strong>Context:</strong> does it have SOUL/AGENTS/USER and persistent memory? Does it know who you are?</span></li>
+<li class="flex items-start gap-2"><span class="text-amber-400">2.</span><span><strong>Connections:</strong> has a secure channel (Telegram + whitelist) and tools via MCP?</span></li>
+<li class="flex items-start gap-2"><span class="text-amber-400">3.</span><span><strong>Capabilities:</strong> has useful skills and can delegate to sub-agents?</span></li>
+<li class="flex items-start gap-2"><span class="text-amber-400">4.</span><span><strong>Cadence:</strong> acts on its own on a schedule, with gates and an audit log?</span></li>
+</ul>
+</div>
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide mb-3">Key concepts</h3>
+<div class="grid sm:grid-cols-2 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">6→4 mapping</span><p class="text-sm text-neutral-400 mt-1">The 6 anatomy pieces fit into the 4 C layers.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">A foundation that lasts</span><p class="text-sm text-neutral-400 mt-1">Tools change; the 4 C architecture survives.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">CLAWS checklist</span><p class="text-sm text-neutral-400 mt-1">Four questions to validate (or plan) any Jarvis.</p></div>
+<div class="bg-dark-800 rounded-lg border border-dark-600 p-4"><span class="text-amber-400 font-semibold text-sm">Consistency</span><p class="text-sm text-neutral-400 mt-1">Not six separate pieces, but a system that works together.</p></div>
+</div>
+<!-- CHECAGEM LEVE -->
+<div class="inema-check mt-8 bg-dark-800 border border-dark-600 rounded-xl p-6" data-inema-check="modulo-4-2#q1">
+<p class="font-medium mb-4">Self-check (optional): in the 4 C order, why does Context come before Capabilities?</p>
+<div class="inema-check-options space-y-2">
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="0" type="button">Because “C” for Context comes first in the alphabet.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="1" type="button">Because without identity and memory, capabilities act without direction—each layer depends on the one below it.</button>
+<button class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm" data-inema-check-option="2" type="button">The order doesn’t matter; you can assemble it in any sequence.</button>
+</div>
+<div aria-live="polite" class="mt-4 text-sm" data-inema-check-feedback="" role="status"></div>
+</div>
+<div class="flex justify-start mt-6">
+<button aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-400 hover:bg-amber-500/30 transition-colors" data-inema-read-toggle="" type="button">
+<span aria-hidden="true" class="inema-ico-todo">○</span><span aria-hidden="true" class="inema-ico-done">●</span>
+<span class="inema-label-todo">Mark as read</span><span class="inema-label-done">Read ✓</span>
+</button>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-8">
+<div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎯</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-neutral-100">The 4 C’s (CLAWS)</strong><span class="text-neutral-400"> — Context, Connections, Capabilities, Cadence, built from the ground up.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-neutral-100">Context</strong><span class="text-neutral-400"> — identity (SOUL/AGENTS/USER) + memory; who it is and what it knows about you.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-neutral-100">Connections and Capabilities</strong><span class="text-neutral-400"> — channels+tools (how it communicates and reaches things) and skills+agents (what it does).</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-neutral-100">Cadence + the synthesis</strong><span class="text-neutral-400"> — when it acts on its own; the 6 pieces become ONE architecture that lasts even when the tools change.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-amber-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">4-3 — Operate, measure, and evolve (trust, cost, security)</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 justify-start">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Back to the Track</a>
+<a class="flex-1 text-center px-6 py-3 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-500 transition-colors" href="modulo-4-3.html">Next module →</a>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm space-y-2">
+<p>🤖 Jarvis — Your AI Operating System</p>
+<p>Open course · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a> · 2026</p>
+</div>
+</footer>
+<!-- Scripts nucleo v1 -->
+<script>
+    function toggleTopic(button){
+      const item = button.closest('.topic-item');
+      const exp = item.querySelector('.topic-explanation');
+      const card = button.closest('.bg-dark-800');
+      if (card) card.querySelectorAll('.topic-explanation.active').forEach(e=>{ if(e!==exp) e.classList.remove('active'); });
+      const open = exp.classList.toggle('active');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    (function(){
+      const tt=document.getElementById('theme-toggle'), di=document.getElementById('theme-toggle-dark-icon'), li=document.getElementById('theme-toggle-light-icon'), html=document.documentElement;
+      function sync(){ if(html.classList.contains('dark')){ li.classList.remove('hidden'); di.classList.add('hidden'); } else { di.classList.remove('hidden'); li.classList.add('hidden'); } }
+      sync();
+      if(tt) tt.addEventListener('click', ()=>{ html.classList.toggle('dark'); localStorage.setItem('theme', html.classList.contains('dark')?'dark':'light'); if(window.INEMA&&INEMA.setPref){ INEMA.setPref('theme', html.classList.contains('dark')?'inema-dark':'claro'); } sync(); });
+    })();
+    function openModal(id){ const m=document.getElementById(id); if(m){ m.classList.remove('hidden'); document.body.style.overflow='hidden'; } }
+    function closeModal(){ document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden')); document.body.style.overflow='auto'; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+<!-- Camada de aprendizagem -->
+<script src="../../../assets/learn.js"></script>
+<script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    document.addEventListener('click', function(e){
+      var r = e.target.closest('[data-inema-resume]');
+      if (r && window.INEMA && INEMA.resume) { e.preventDefault(); INEMA.resume(); }
+    });
+    document.addEventListener('DOMContentLoaded', function(){
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-4-2#q1', {
+          answer: 1,
+          explain: {
+            0: 'Nao — a inicial "C" e so um truque para lembrar; a ordem real e por dependencia, nao alfabetica.',
+            1: 'Isso! Sem Context (identidade + memoria), as Capabilities agem sem direcao. Cada camada depende da de baixo.',
+            2: 'Importa sim — montar de baixo pra cima (Context primeiro) e o que faz a arquitetura se sustentar.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
